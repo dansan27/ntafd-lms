@@ -1,92 +1,161 @@
 import { useState, useMemo, Suspense } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import {
   Users, BarChart3, MessageSquare, Cloud, RefreshCw, ArrowLeft,
   CheckCircle2, Activity, Gamepad2, Lock, Unlock, Power, KeyRound, Eye, EyeOff,
-  Monitor, ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home
+  ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { COURSE_CONFIG, getClassConfig } from "@/data/courseConfig";
 import { getBlockComponent } from "@/components/blocks/blockRegistry";
 
-function StatCard({ title, value, subtitle, icon: Icon, color }: { title: string; value: string | number; subtitle?: string; icon: any; color: string }) {
+// ─── Stat card ────────────────────────────────────────────────────────────────
+function StatCard({
+  title, value, subtitle, icon: Icon, gradient, delay = 0,
+}: {
+  title: string; value: string | number; subtitle?: string; icon: any;
+  gradient: string; delay?: number;
+}) {
   return (
-    <Card>
-      <CardContent className="p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, type: "spring", stiffness: 100 }}
+    >
+      <div className={`rounded-2xl p-4 bg-gradient-to-br ${gradient} border border-white/5 backdrop-blur-sm`}>
         <div className="flex items-start justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold mt-1">{value}</p>
-            {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+          <div className="space-y-1">
+            <p className="text-[11px] text-white/50 uppercase tracking-widest font-medium">{title}</p>
+            <p className="text-3xl font-bold text-white">{value}</p>
+            {subtitle && <p className="text-[11px] text-white/40">{subtitle}</p>}
           </div>
-          <div className={`w-10 h-10 rounded-lg ${color} text-white flex items-center justify-center`}>
-            <Icon size={20} />
+          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+            <Icon size={18} className="text-white/80" />
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </motion.div>
   );
 }
 
+// ─── Login ────────────────────────────────────────────────────────────────────
 function ProfessorLogin({ onLogin }: { onLogin: (password: string) => void }) {
   const [password, setPassword] = useState("profesor2026");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
   const loginMutation = trpc.professor.login.useMutation({
     onSuccess: () => { onLogin(password); },
     onError: (err) => {
       console.error("Login error:", err);
-      setError("Error al acceder. Por favor intenta de nuevo.");
-      setPassword("profesor2026");
+      setError("Contraseña incorrecta. Intenta de nuevo.");
+      setPassword("");
     },
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Card className="max-w-sm w-full">
-        <CardContent className="p-8 space-y-6">
-          <div className="text-center space-y-2">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#030712] relative overflow-hidden">
+      {/* Ambient glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/10 blur-[120px]" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 80 }}
+        className="relative z-10 w-full max-w-sm"
+      >
+        <div className="rounded-3xl bg-[#0d0d0f]/80 border border-white/8 backdrop-blur-xl shadow-2xl p-8 space-y-8">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto">
               <KeyRound size={28} className="text-primary" />
             </div>
-            <h2 className="text-xl font-bold">Panel del Profesor</h2>
-            <p className="text-sm text-muted-foreground">Contraseña: <strong>profesor2026</strong></p>
+            <div>
+              <h2 className="text-xl font-bold text-white">Panel del Profesor</h2>
+              <p className="text-sm text-white/40 mt-1">NTAFD — Acceso restringido</p>
+            </div>
           </div>
-          <form onSubmit={(e: React.FormEvent) => { e.preventDefault(); if (password.trim()) { setError(""); loginMutation.mutate({ password }); } }} className="space-y-4">
+
+          <form
+            onSubmit={(e: React.FormEvent) => {
+              e.preventDefault();
+              if (password.trim()) { setError(""); loginMutation.mutate({ password }); }
+            }}
+            className="space-y-4"
+          >
             <div className="relative">
-              <Input type={showPassword ? "text" : "password"} placeholder="Contraseña" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value); setError(""); }} className="pr-10" autoFocus />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPassword(e.target.value); setError("");
+                }}
+                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl pr-10 h-11 focus:border-primary/60 focus:ring-0"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors"
+              >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {error && <p className="text-sm text-destructive text-center">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loginMutation.isPending || !password.trim()}>
-              {loginMutation.isPending ? <RefreshCw size={14} className="animate-spin mr-2" /> : null}
+
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-sm text-red-400 text-center"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <Button
+              type="submit"
+              className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold"
+              disabled={loginMutation.isPending || !password.trim()}
+            >
+              {loginMutation.isPending
+                ? <RefreshCw size={14} className="animate-spin mr-2" />
+                : null}
               Ingresar
             </Button>
           </form>
+
           <div className="text-center">
-            <Link href="/"><Button variant="ghost" size="sm" className="text-muted-foreground"><ArrowLeft size={14} className="mr-1" /> Volver al inicio</Button></Link>
+            <Link href="/">
+              <button className="text-xs text-white/30 hover:text-white/60 transition-colors inline-flex items-center gap-1.5">
+                <ArrowLeft size={12} /> Volver al inicio
+              </button>
+            </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </motion.div>
     </div>
   );
 }
 
-// ========== PRESENTATION VIEW ==========
-function PresentationView({ weekId, classId, currentBlock, setCurrentBlock, onBackToDashboard }: {
-  weekId: number; classId: number; currentBlock: number; setCurrentBlock: (b: number) => void; onBackToDashboard: () => void;
+// ─── Presentation View ────────────────────────────────────────────────────────
+function PresentationView({
+  weekId, classId, currentBlock, setCurrentBlock, onBackToDashboard,
+}: {
+  weekId: number; classId: number; currentBlock: number;
+  setCurrentBlock: (b: number) => void; onBackToDashboard: () => void;
 }) {
   const classConfig = getClassConfig(weekId, classId);
   const blocks = classConfig?.blocks ?? [];
@@ -95,15 +164,18 @@ function PresentationView({ weekId, classId, currentBlock, setCurrentBlock, onBa
   const BlockComponent = currentBlockConfig ? getBlockComponent(currentBlockConfig.componentName) : null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-40 bg-sidebar/95 backdrop-blur text-white border-b border-white/10">
+    <div className="min-h-screen bg-[#030712] flex flex-col">
+      <header className="sticky top-0 z-40 bg-[#1C1C1E]/95 backdrop-blur border-b border-white/8">
         <div className="flex items-center justify-between h-12 px-4">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={onBackToDashboard} className="text-white/70 hover:text-white h-8 px-2">
-              <PanelLeftOpen size={16} className="mr-1" /> Panel
-            </Button>
-            <div className="h-5 w-px bg-white/20" />
-            <span className="text-sm font-medium">
+            <button
+              onClick={onBackToDashboard}
+              className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
+            >
+              <PanelLeftOpen size={14} /> Panel
+            </button>
+            <div className="h-4 w-px bg-white/15" />
+            <span className="text-sm font-medium text-white/80">
               Bloque {currentBlock}: {currentBlockConfig?.title ?? ""}
             </span>
           </div>
@@ -114,34 +186,31 @@ function PresentationView({ weekId, classId, currentBlock, setCurrentBlock, onBa
                 <button
                   key={b.id}
                   onClick={() => setCurrentBlock(b.id)}
-                  className={`w-7 h-7 rounded-md text-xs font-bold transition-all ${
+                  className={`w-7 h-7 rounded-lg text-xs font-bold transition-all ${
                     b.id === currentBlock
-                      ? "bg-primary text-white shadow-lg"
-                      : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"
+                      ? "bg-primary text-white shadow-lg shadow-primary/30"
+                      : "bg-white/8 text-white/50 hover:bg-white/15 hover:text-white"
                   }`}
                 >
                   {b.id}
                 </button>
               ))}
             </div>
-
-            <Button
-              variant="ghost" size="sm"
+            <button
               onClick={() => setCurrentBlock(Math.max(1, currentBlock - 1))}
               disabled={currentBlock <= 1}
-              className="text-white/70 hover:text-white h-8 w-8 p-0"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 disabled:opacity-30 transition-all"
             >
               <ChevronLeft size={18} />
-            </Button>
-            <span className="text-xs text-white/60 w-10 text-center">{currentBlock}/{totalBlocks}</span>
-            <Button
-              variant="ghost" size="sm"
+            </button>
+            <span className="text-xs text-white/40 w-10 text-center">{currentBlock}/{totalBlocks}</span>
+            <button
               onClick={() => setCurrentBlock(Math.min(totalBlocks, currentBlock + 1))}
               disabled={currentBlock >= totalBlocks}
-              className="text-white/70 hover:text-white h-8 w-8 p-0"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 disabled:opacity-30 transition-all"
             >
               <ChevronRight size={18} />
-            </Button>
+            </button>
           </div>
         </div>
       </header>
@@ -153,7 +222,7 @@ function PresentationView({ weekId, classId, currentBlock, setCurrentBlock, onBa
           </div>
         }>
           {BlockComponent ? <BlockComponent /> : (
-            <div className="flex items-center justify-center h-64 text-muted-foreground">Bloque no encontrado</div>
+            <div className="flex items-center justify-center h-64 text-white/40">Bloque no encontrado</div>
           )}
         </Suspense>
       </div>
@@ -161,7 +230,7 @@ function PresentationView({ weekId, classId, currentBlock, setCurrentBlock, onBa
   );
 }
 
-// ========== MAIN EXPORT ==========
+// ─── Main export ──────────────────────────────────────────────────────────────
 export default function ProfessorDashboard() {
   const [, setLocation] = useLocation();
   const [password, setPassword] = useState<string | null>(() => {
@@ -213,12 +282,17 @@ export default function ProfessorDashboard() {
   );
 }
 
-// ========== DASHBOARD CONTENT ==========
-function DashboardContent({ password, autoRefresh, setAutoRefresh, selectedWeek, selectedClass, onSelectClass, onLogout, onPresentation }: {
+// ─── Dashboard Content ────────────────────────────────────────────────────────
+function DashboardContent({
+  password, autoRefresh, setAutoRefresh, selectedWeek, selectedClass, onSelectClass, onLogout, onPresentation,
+}: {
   password: string; autoRefresh: boolean; setAutoRefresh: (v: boolean) => void;
-  selectedWeek: number; selectedClass: number; onSelectClass: (w: number, c: number) => void;
+  selectedWeek: number; selectedClass: number;
+  onSelectClass: (w: number, c: number) => void;
   onLogout: () => void; onPresentation: (block: number) => void;
 }) {
+  const [activeTab, setActiveTab] = useState<"students" | "reflections" | "wordcloud">("students");
+
   const classConfig = getClassConfig(selectedWeek, selectedClass);
   const dynamics = classConfig?.dynamics ?? [];
   const blocks = classConfig?.blocks ?? [];
@@ -281,308 +355,501 @@ function DashboardContent({ password, autoRefresh, setAutoRefresh, selectedWeek,
 
   const classTitle = classConfig?.title ?? `Semana ${selectedWeek} Clase ${selectedClass}`;
 
-  // Build class selector options
   const classOptions = COURSE_CONFIG.flatMap(week =>
     week.classes.map(cls => ({
       key: `${week.id}-${cls.id}`,
       weekId: week.id,
       classId: cls.id,
-      label: `S${week.id} - ${cls.title}`,
+      label: `S${week.id}C${cls.id} — ${cls.title}`,
       available: cls.available && cls.blocks.length > 0,
     }))
   );
 
+  const TABS = [
+    { id: "students" as const, label: "Alumnos", icon: Users },
+    { id: "reflections" as const, label: "Reflexiones", icon: MessageSquare },
+    { id: "wordcloud" as const, label: "Nube", icon: Cloud },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#030712] text-white">
+      {/* Ambient glow */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 left-1/3 w-[700px] h-[400px] rounded-full bg-primary/8 blur-[140px]" />
+        <div className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-blue-600/5 blur-[120px]" />
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-sidebar text-white border-b">
-        <div className="container flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
-            <BarChart3 size={20} />
-            <h1 className="font-bold text-sm md:text-base">Panel del Profesor</h1>
-            <div className="h-5 w-px bg-white/20" />
-            <select
-              value={`${selectedWeek}-${selectedClass}`}
-              onChange={(e) => {
-                const [w, c] = e.target.value.split("-").map(Number);
-                onSelectClass(w, c);
-              }}
-              className="bg-white/10 text-white text-xs rounded-md px-2 py-1 border border-white/20 focus:outline-none focus:ring-1 focus:ring-primary"
-            >
+      <header className="sticky top-0 z-30 bg-[#030712]/80 backdrop-blur-xl border-b border-white/8">
+        <div className="container flex items-center justify-between h-14 gap-3">
+          {/* Left: logo + class selector */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
+                <BarChart3 size={14} className="text-primary" />
+              </div>
+              <span className="font-bold text-sm hidden sm:inline">Panel del Profesor</span>
+            </div>
+
+            <div className="h-5 w-px bg-white/10 hidden sm:block" />
+
+            {/* Pill class selector */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
               {classOptions.map(opt => (
-                <option key={opt.key} value={opt.key} className="text-black">
-                  {opt.label} {!opt.available ? "(pendiente)" : ""}
-                </option>
+                <button
+                  key={opt.key}
+                  onClick={() => onSelectClass(opt.weekId, opt.classId)}
+                  disabled={!opt.available}
+                  className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                    selectedWeek === opt.weekId && selectedClass === opt.classId
+                      ? "bg-primary text-white shadow-lg shadow-primary/30"
+                      : opt.available
+                        ? "bg-white/8 text-white/60 hover:bg-white/15 hover:text-white"
+                        : "bg-white/4 text-white/25 cursor-not-allowed"
+                  }`}
+                >
+                  {opt.label}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
+
+          {/* Right: actions */}
+          <div className="flex items-center gap-1.5 shrink-0">
             {blocks.length > 0 && (
-              <Button
-                variant="ghost" size="sm"
+              <button
                 onClick={() => onPresentation(blocks[0]?.id ?? 1)}
-                className="text-white/70 hover:text-white text-xs bg-primary/30 hover:bg-primary/50"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary text-xs font-medium transition-all"
               >
-                <Presentation size={14} className="mr-1" />
+                <Presentation size={13} />
                 <span className="hidden sm:inline">Presentar</span>
-              </Button>
+              </button>
             )}
-            <div className="h-5 w-px bg-white/20 hidden sm:block" />
-            <Button
-              variant="ghost" size="sm"
+
+            <button
               onClick={() => setAutoRefresh(!autoRefresh)}
-              className={`text-white/70 hover:text-white text-xs ${autoRefresh ? "bg-green-600/30" : ""}`}
+              className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all ${
+                autoRefresh ? "bg-green-500/20 text-green-400" : "bg-white/8 text-white/50 hover:bg-white/15"
+              }`}
+              title={autoRefresh ? "Auto-actualización activada" : "Auto-actualización desactivada"}
             >
-              <RefreshCw size={14} className={`mr-1 ${autoRefresh ? "animate-spin" : ""}`} />
-              {autoRefresh ? "Auto" : "Manual"}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={refreshAll} className="text-white/70 hover:text-white">
-              <RefreshCw size={14} />
-            </Button>
+              <RefreshCw size={13} className={autoRefresh ? "animate-spin" : ""} />
+            </button>
+
+            <button
+              onClick={refreshAll}
+              className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/8 text-white/50 hover:bg-white/15 hover:text-white transition-all"
+              title="Actualizar"
+            >
+              <RefreshCw size={13} />
+            </button>
+
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white text-xs">
-                <Home size={14} className="mr-1" />
-                <span className="hidden sm:inline">Inicio</span>
-              </Button>
+              <button className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/8 text-white/50 hover:bg-white/15 hover:text-white transition-all">
+                <Home size={13} />
+              </button>
             </Link>
-            <Button variant="ghost" size="sm" onClick={onLogout} className="text-white/70 hover:text-white text-xs">
-              Salir
-            </Button>
+
+            <button
+              onClick={onLogout}
+              className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/8 text-white/50 hover:bg-red-500/20 hover:text-red-400 transition-all"
+              title="Cerrar sesión"
+            >
+              <LogOut size={13} />
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="container py-6 space-y-6">
-        {/* QUICK PRESENTATION ACCESS */}
+      <div className="container py-6 space-y-6 relative z-10">
+
+        {/* ── Presentation quick-access ── */}
         {blocks.length > 0 && (
-          <Card className="border-blue-500/30 bg-gradient-to-r from-blue-500/5 to-transparent">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <Monitor size={18} className="text-blue-500" />
-                <span className="font-semibold text-sm">Vista de Presentación — {classTitle}</span>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+          >
+            <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 p-5 space-y-3 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                    <Presentation size={14} className="text-blue-400" />
+                  </div>
+                  <span className="text-sm font-semibold">{classTitle}</span>
+                  <Badge className="bg-blue-500/15 text-blue-400 border-blue-500/20 text-[10px] ml-1">
+                    {blocks.length} bloques
+                  </Badge>
+                </div>
               </div>
               <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
-                {blocks.map(b => (
-                  <button
+                {blocks.map((b, i) => (
+                  <motion.button
                     key={b.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 + i * 0.04 }}
                     onClick={() => onPresentation(b.id)}
-                    className="p-2 rounded-lg border border-border hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center group"
+                    className="p-2.5 rounded-xl border border-white/8 hover:border-primary/40 hover:bg-primary/10 transition-all text-center group"
                   >
-                    <span className="text-sm block font-medium text-muted-foreground group-hover:text-blue-500">B{b.id}</span>
-                    <span className="text-[10px] text-muted-foreground group-hover:text-blue-500 truncate block">
+                    <span className="text-xs block font-bold text-white/40 group-hover:text-primary">B{b.id}</span>
+                    <span className="text-[9px] text-white/30 group-hover:text-primary/70 truncate block leading-tight mt-0.5">
                       {b.title}
                     </span>
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
         )}
 
-        {/* CONTROL DE DINÁMICAS */}
+        {/* ── Dynamic controls ── */}
         {dynamics.length > 0 && (
-          <Card className="border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Gamepad2 size={18} className="text-primary" />
-                Control de Dinámicas en Tiempo Real
-                <Badge variant="outline" className="ml-2 text-[10px]">
-                  <Power size={10} className="mr-1" /> LIVE
-                </Badge>
-              </CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">
-                Activa o desactiva cada dinámica. Los alumnos solo pueden responder cuando está activa.
-              </p>
-            </CardHeader>
-            <CardContent className="pt-0">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 p-5 space-y-4 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <Gamepad2 size={14} className="text-primary" />
+                  </div>
+                  <span className="text-sm font-semibold">Control de Dinámicas</span>
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 text-[10px] font-medium">
+                    <Power size={9} /> LIVE
+                  </span>
+                </div>
+                <p className="text-[11px] text-white/30 hidden sm:block">
+                  Activa para que los alumnos puedan responder
+                </p>
+              </div>
+
               <div className={`grid grid-cols-1 sm:grid-cols-2 ${dynamics.length <= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-3`}>
-                {dynamics.map(dyn => {
+                {dynamics.map((dyn, i) => {
                   const active = isDynamicActive(dyn.id);
                   const dynStats = stats?.dynamicStats?.find((ds: any) => ds.dynamicId === dyn.id);
                   const blockConfig = blocks.find(b => b.id === dyn.blockId);
                   return (
-                    <div key={dyn.id} className={`p-4 rounded-lg border-2 transition-all ${active ? "border-green-500 bg-green-500/10 shadow-lg shadow-green-500/10" : "border-muted bg-muted/30"}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-lg">{dyn.icon}</span>
+                    <motion.div
+                      key={dyn.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.15 + i * 0.06 }}
+                      className={`rounded-2xl border-2 p-4 transition-all duration-300 ${
+                        active
+                          ? "border-green-500/60 bg-green-500/8 shadow-lg shadow-green-500/10"
+                          : "border-white/8 bg-white/3 hover:border-white/15"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xl">{dyn.icon}</span>
                         <Switch
                           checked={active}
                           onCheckedChange={(checked: boolean) => {
-                            toggleDynamic.mutate({ password, weekId: selectedWeek, classId: selectedClass, dynamicId: dyn.id, isActive: checked });
+                            toggleDynamic.mutate({
+                              password, weekId: selectedWeek, classId: selectedClass,
+                              dynamicId: dyn.id, isActive: checked,
+                            });
                           }}
                           disabled={toggleDynamic.isPending}
                         />
                       </div>
-                      <p className="font-semibold text-sm">{dyn.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{blockConfig ? `Bloque ${blockConfig.id}: ${blockConfig.title}` : `Bloque ${dyn.blockId}`}</p>
-                      <div className="flex items-center gap-2 mt-2">
+                      <p className="font-semibold text-sm text-white">{dyn.name}</p>
+                      <p className="text-[10px] text-white/30 mt-0.5">
+                        {blockConfig ? `Bloque ${blockConfig.id}: ${blockConfig.title}` : `Bloque ${dyn.blockId}`}
+                      </p>
+                      <div className="flex items-center gap-2 mt-3">
                         {active ? (
-                          <Badge className="bg-green-600 text-white text-[10px]"><Unlock size={10} className="mr-1" /> Activa</Badge>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-[10px] font-medium">
+                            <Unlock size={9} /> Activa
+                          </span>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] text-muted-foreground"><Lock size={10} className="mr-1" /> Bloqueada</Badge>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/8 text-white/30 text-[10px] font-medium">
+                            <Lock size={9} /> Bloqueada
+                          </span>
                         )}
-                        <span className="text-[10px] text-muted-foreground">{dynStats?.totalResponses ?? 0} resp.</span>
+                        <span className="text-[10px] text-white/30">
+                          {dynStats?.totalResponses ?? 0} resp.
+                        </span>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </motion.div>
         )}
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard title="Alumnos conectados" value={stats?.totalStudents ?? 0} icon={Users} color="bg-blue-600" />
-          <StatCard title="Completaron todo" value={stats?.completedAll ?? 0} subtitle={`de ${stats?.totalStudents ?? 0}`} icon={CheckCircle2} color="bg-green-600" />
-          <StatCard title="Reflexiones" value={stats?.totalReflections ?? 0} icon={MessageSquare} color="bg-purple-600" />
-          <StatCard title="Sentimiento" value={`${stats?.sentimentCounts?.positivo ?? 0}+ / ${stats?.sentimentCounts?.neutro ?? 0}= / ${stats?.sentimentCounts?.negativo ?? 0}-`} icon={Activity} color="bg-amber-500" />
+        {/* ── Stats row ── */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard
+            title="Alumnos conectados" value={stats?.totalStudents ?? 0}
+            icon={Users} gradient="from-blue-600/20 to-blue-600/5" delay={0.2}
+          />
+          <StatCard
+            title="Completaron todo" value={stats?.completedAll ?? 0}
+            subtitle={`de ${stats?.totalStudents ?? 0}`}
+            icon={CheckCircle2} gradient="from-green-600/20 to-green-600/5" delay={0.25}
+          />
+          <StatCard
+            title="Reflexiones" value={stats?.totalReflections ?? 0}
+            icon={MessageSquare} gradient="from-purple-600/20 to-purple-600/5" delay={0.3}
+          />
+          <StatCard
+            title="Sentimiento"
+            value={`${stats?.sentimentCounts?.positivo ?? 0}+ / ${stats?.sentimentCounts?.neutro ?? 0}= / ${stats?.sentimentCounts?.negativo ?? 0}-`}
+            icon={Activity} gradient="from-amber-500/20 to-amber-500/5" delay={0.35}
+          />
         </div>
 
-        {/* Dynamic Stats */}
+        {/* ── Dynamic stats ── */}
         {stats?.dynamicStats && stats.dynamicStats.length > 0 && (
-          <div className={`grid grid-cols-2 ${stats.dynamicStats.length <= 4 ? "md:grid-cols-4" : "md:grid-cols-3"} gap-4`}>
-            {stats.dynamicStats.map((ds: any) => {
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className={`grid grid-cols-2 ${stats.dynamicStats.length <= 4 ? "md:grid-cols-4" : "md:grid-cols-3"} gap-3`}
+          >
+            {stats.dynamicStats.map((ds: any, i: number) => {
               const dynConfig = dynamics.find(d => d.id === ds.dynamicId);
               return (
-                <Card key={ds.dynamicId}>
-                  <CardContent className="p-4">
-                    <p className="text-xs text-muted-foreground mb-1">{dynConfig?.name ?? `Dinámica ${ds.dynamicId}`}</p>
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <p className="text-xl font-bold">{ds.totalResponses}</p>
-                        <p className="text-[10px] text-muted-foreground">respuestas</p>
-                      </div>
-                      <Badge variant="outline" className="text-xs">Prom: {ds.avgScore}</Badge>
+                <div key={ds.dynamicId} className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 p-4 backdrop-blur-sm">
+                  <p className="text-[11px] text-white/40 uppercase tracking-widest mb-1">
+                    {dynConfig?.name ?? `Dinámica ${ds.dynamicId}`}
+                  </p>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-2xl font-bold text-white">{ds.totalResponses}</p>
+                      <p className="text-[10px] text-white/30">respuestas</p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <span className="text-xs text-white/50 bg-white/8 px-2 py-0.5 rounded-full">
+                      Prom: {ds.avgScore}
+                    </span>
+                  </div>
+                </div>
               );
             })}
-          </div>
+          </motion.div>
         )}
 
-        {/* Main Tabs */}
-        <Tabs defaultValue="students" className="w-full">
-          <TabsList className="grid grid-cols-3 w-full max-w-md">
-            <TabsTrigger value="students">Alumnos</TabsTrigger>
-            <TabsTrigger value="reflections">Reflexiones</TabsTrigger>
-            <TabsTrigger value="wordcloud">Nube de Palabras</TabsTrigger>
-          </TabsList>
+        {/* ── Tabs ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="space-y-4"
+        >
+          {/* Pill tab switcher */}
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/5 w-fit">
+            {TABS.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                  activeTab === tab.id
+                    ? "bg-white text-[#030712] shadow-sm"
+                    : "text-white/50 hover:text-white/80"
+                }`}
+              >
+                <tab.icon size={13} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-          <TabsContent value="students">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2"><Users size={18} /> Tabla de Alumnos y Respuestas</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ScrollArea className="w-full">
-                  <div className="min-w-[700px]">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3 font-medium">Alumno</th>
-                          <th className="text-left p-3 font-medium">Código</th>
-                          {dynamics.map(d => (
-                            <th key={d.id} className="text-center p-3 font-medium">{d.icon} D{d.id}</th>
-                          ))}
-                          <th className="text-center p-3 font-medium">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {studentTableData.map((s: any) => (
-                          <tr key={s.id} className="border-b hover:bg-muted/30">
-                            <td className="p-3 font-medium">{s.fullName}</td>
-                            <td className="p-3 text-muted-foreground">{s.studentCode}</td>
-                            {dynamics.map(d => {
-                              const resp = s.dynamicScores[d.id];
-                              return (
-                                <td key={d.id} className="p-3 text-center">
-                                  {resp ? (
-                                    <Badge className={`text-xs ${resp.score === resp.maxScore ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}>{resp.score}/{resp.maxScore}</Badge>
-                                  ) : (
-                                    <span className="text-muted-foreground/40">—</span>
-                                  )}
-                                </td>
-                              );
-                            })}
-                            <td className="p-3 text-center">
-                              <Badge variant={s.completedCount === dynamics.length ? "default" : "outline"} className={s.completedCount === dynamics.length ? "bg-green-600" : ""}>{s.completedCount}/{dynamics.length}</Badge>
-                            </td>
-                          </tr>
-                        ))}
-                        {studentTableData.length === 0 && (
-                          <tr><td colSpan={2 + dynamics.length + 1} className="p-8 text-center text-muted-foreground">Aún no hay alumnos conectados</td></tr>
-                        )}
-                      </tbody>
-                    </table>
+          <AnimatePresence mode="wait">
+            {/* Students tab */}
+            {activeTab === "students" && (
+              <motion.div
+                key="students"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 overflow-hidden backdrop-blur-sm">
+                  <div className="flex items-center gap-2 px-5 py-4 border-b border-white/8">
+                    <Users size={16} className="text-white/50" />
+                    <span className="font-semibold text-sm">Tabla de Alumnos y Respuestas</span>
                   </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="reflections">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2"><MessageSquare size={18} /> Reflexiones de los Alumnos</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 space-y-3">
-                {reflections && reflections.length > 0 ? (
-                  reflections.map((r: any, i: number) => {
-                    const student = (students as any[])?.find((s: any) => s.id === r.studentId);
-                    return (
-                      <div key={i} className="p-3 bg-muted/50 rounded-lg">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium">{student?.fullName ?? "Alumno"}</span>
-                          {r.sentiment && (
-                            <Badge className={`text-xs ${r.sentiment === "positivo" ? "bg-green-100 text-green-800" : r.sentiment === "negativo" ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800"}`}>{r.sentiment}</Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">{r.reflectionText}</p>
-                        {r.keywords && (r.keywords as string[]).length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {(r.keywords as string[]).map((kw: string, j: number) => (
-                              <Badge key={j} variant="outline" className="text-[10px]">{kw}</Badge>
+                  <ScrollArea className="w-full">
+                    <div className="min-w-[700px]">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-white/8 bg-white/3">
+                            <th className="text-left p-4 font-medium text-white/50 text-xs uppercase tracking-widest">Alumno</th>
+                            <th className="text-left p-4 font-medium text-white/50 text-xs uppercase tracking-widest">Código</th>
+                            {dynamics.map(d => (
+                              <th key={d.id} className="text-center p-4 font-medium text-white/50 text-xs uppercase tracking-widest">
+                                {d.icon} D{d.id}
+                              </th>
                             ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="text-center text-muted-foreground py-8">Aún no hay reflexiones</p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                            <th className="text-center p-4 font-medium text-white/50 text-xs uppercase tracking-widest">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {studentTableData.map((s: any) => (
+                            <tr key={s.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+                              <td className="p-4 font-medium text-white">{s.fullName}</td>
+                              <td className="p-4 text-white/40">{s.studentCode}</td>
+                              {dynamics.map(d => {
+                                const resp = s.dynamicScores[d.id];
+                                return (
+                                  <td key={d.id} className="p-4 text-center">
+                                    {resp ? (
+                                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                        resp.score === resp.maxScore
+                                          ? "bg-green-500/15 text-green-400"
+                                          : "bg-amber-500/15 text-amber-400"
+                                      }`}>
+                                        {resp.score}/{resp.maxScore}
+                                      </span>
+                                    ) : (
+                                      <span className="text-white/20">—</span>
+                                    )}
+                                  </td>
+                                );
+                              })}
+                              <td className="p-4 text-center">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                  s.completedCount === dynamics.length
+                                    ? "bg-green-500/15 text-green-400"
+                                    : "bg-white/8 text-white/50"
+                                }`}>
+                                  {s.completedCount}/{dynamics.length}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                          {studentTableData.length === 0 && (
+                            <tr>
+                              <td colSpan={2 + dynamics.length + 1} className="p-10 text-center text-white/25">
+                                Aún no hay alumnos conectados
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </ScrollArea>
+                </div>
+              </motion.div>
+            )}
 
-          <TabsContent value="wordcloud">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2"><Cloud size={18} /> Nube de Palabras — Conceptos Clave</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                {wordCloud && wordCloud.length > 0 ? (
-                  <div className="flex flex-wrap gap-2 justify-center items-center min-h-[200px]">
-                    {wordCloud.map((item: { word: string; count: number }, i: number) => {
-                      const maxCount = wordCloud[0]?.count ?? 1;
-                      const scale = 0.7 + (item.count / maxCount) * 1.3;
-                      const opacity = 0.5 + (item.count / maxCount) * 0.5;
-                      const colors = ["text-primary", "text-blue-600", "text-purple-600", "text-green-600", "text-amber-600", "text-cyan-600"];
-                      return (
-                        <motion.span key={item.word} initial={{ opacity: 0, scale: 0 }} animate={{ opacity, scale }} transition={{ delay: i * 0.05 }} className={`font-bold ${colors[i % colors.length]} cursor-default`} style={{ fontSize: `${scale}rem` }} title={`${item.word}: ${item.count} menciones`}>
-                          {item.word}
-                        </motion.span>
-                      );
-                    })}
+            {/* Reflections tab */}
+            {activeTab === "reflections" && (
+              <motion.div
+                key="reflections"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 overflow-hidden backdrop-blur-sm">
+                  <div className="flex items-center gap-2 px-5 py-4 border-b border-white/8">
+                    <MessageSquare size={16} className="text-white/50" />
+                    <span className="font-semibold text-sm">Reflexiones de los Alumnos</span>
                   </div>
-                ) : (
-                  <p className="text-center text-muted-foreground py-8">La nube de palabras se generará cuando los alumnos envíen sus reflexiones</p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                  <div className="p-5 space-y-3">
+                    {reflections && reflections.length > 0 ? (
+                      reflections.map((r: any, i: number) => {
+                        const student = (students as any[])?.find((s: any) => s.id === r.studentId);
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.04 }}
+                            className="p-4 rounded-2xl bg-white/5 border border-white/8 space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-white">{student?.fullName ?? "Alumno"}</span>
+                              {r.sentiment && (
+                                <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-medium ${
+                                  r.sentiment === "positivo"
+                                    ? "bg-green-500/15 text-green-400"
+                                    : r.sentiment === "negativo"
+                                      ? "bg-red-500/15 text-red-400"
+                                      : "bg-white/8 text-white/50"
+                                }`}>
+                                  {r.sentiment}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-white/50">{r.reflectionText}</p>
+                            {r.keywords && (r.keywords as string[]).length > 0 && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {(r.keywords as string[]).map((kw: string, j: number) => (
+                                  <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-white/8 text-white/40">
+                                    {kw}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </motion.div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-center text-white/25 py-10">Aún no hay reflexiones</p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Word cloud tab */}
+            {activeTab === "wordcloud" && (
+              <motion.div
+                key="wordcloud"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 overflow-hidden backdrop-blur-sm">
+                  <div className="flex items-center gap-2 px-5 py-4 border-b border-white/8">
+                    <Cloud size={16} className="text-white/50" />
+                    <span className="font-semibold text-sm">Nube de Palabras — Conceptos Clave</span>
+                  </div>
+                  <div className="p-8">
+                    {wordCloud && wordCloud.length > 0 ? (
+                      <div className="flex flex-wrap gap-3 justify-center items-center min-h-[200px]">
+                        {wordCloud.map((item: { word: string; count: number }, i: number) => {
+                          const maxCount = wordCloud[0]?.count ?? 1;
+                          const scale = 0.75 + (item.count / maxCount) * 1.5;
+                          const opacity = 0.45 + (item.count / maxCount) * 0.55;
+                          const colors = [
+                            "text-primary", "text-blue-400", "text-purple-400",
+                            "text-emerald-400", "text-amber-400", "text-cyan-400",
+                          ];
+                          return (
+                            <motion.span
+                              key={item.word}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity, scale }}
+                              transition={{ delay: i * 0.05, type: "spring", stiffness: 120 }}
+                              className={`font-bold ${colors[i % colors.length]} cursor-default select-none`}
+                              style={{ fontSize: `${scale}rem` }}
+                              title={`${item.word}: ${item.count} menciones`}
+                            >
+                              {item.word}
+                            </motion.span>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-center text-white/25 py-10">
+                        La nube se generará cuando los alumnos envíen sus reflexiones
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );
