@@ -165,20 +165,23 @@ function PresentationView({
   const BlockComponent = currentBlockConfig ? getBlockComponent(currentBlockConfig.componentName) : null;
 
   return (
-    <div className="min-h-screen bg-[#030712] flex flex-col">
-      <header className="sticky top-0 z-40 bg-[#1C1C1E]/95 backdrop-blur border-b border-white/8">
-        <div className="flex items-center justify-between h-12 px-4">
-          <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="flex items-center justify-between h-14 px-4">
+          <div className="flex items-center gap-3">
             <button
               onClick={onBackToDashboard}
-              className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-lg hover:bg-accent"
             >
               <PanelLeftOpen size={14} /> Panel
             </button>
-            <div className="h-4 w-px bg-white/15" />
-            <span className="text-sm font-medium text-white/80">
-              Bloque {currentBlock}: {currentBlockConfig?.title ?? ""}
-            </span>
+            <div className="h-4 w-px bg-border" />
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-sm font-medium">
+                Bloque {currentBlock}: {currentBlockConfig?.title ?? ""}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-1">
@@ -189,8 +192,8 @@ function PresentationView({
                   onClick={() => setCurrentBlock(b.id)}
                   className={`w-7 h-7 rounded-lg text-xs font-bold transition-all ${
                     b.id === currentBlock
-                      ? "bg-primary text-white shadow-lg shadow-primary/30"
-                      : "bg-white/8 text-white/50 hover:bg-white/15 hover:text-white"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                      : "bg-accent text-muted-foreground hover:bg-accent/80 hover:text-foreground"
                   }`}
                 >
                   {b.id}
@@ -200,15 +203,15 @@ function PresentationView({
             <button
               onClick={() => setCurrentBlock(Math.max(1, currentBlock - 1))}
               disabled={currentBlock <= 1}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 disabled:opacity-30 transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30 transition-all"
             >
               <ChevronLeft size={18} />
             </button>
-            <span className="text-xs text-white/40 w-10 text-center">{currentBlock}/{totalBlocks}</span>
+            <span className="text-xs text-muted-foreground w-10 text-center">{currentBlock}/{totalBlocks}</span>
             <button
               onClick={() => setCurrentBlock(Math.min(totalBlocks, currentBlock + 1))}
               disabled={currentBlock >= totalBlocks}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 disabled:opacity-30 transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30 transition-all"
             >
               <ChevronRight size={18} />
             </button>
@@ -223,7 +226,7 @@ function PresentationView({
           </div>
         }>
           {BlockComponent ? <BlockComponent /> : (
-            <div className="flex items-center justify-center h-64 text-white/40">Bloque no encontrado</div>
+            <div className="flex items-center justify-center h-64 text-muted-foreground">Bloque no encontrado</div>
           )}
         </Suspense>
       </div>
