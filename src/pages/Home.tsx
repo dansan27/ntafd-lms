@@ -156,6 +156,15 @@ function LoginPage() {
           />
         </motion.div>
 
+        {/* UPC Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <img src="/logo-upc.png" alt="Universidad Peruana de Ciencias Aplicadas" className="h-10 mx-auto opacity-90" />
+        </motion.div>
+
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -164,7 +173,7 @@ function LoginPage() {
           className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 text-[11px] font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          NTAFD · Universidad · 2025
+          NTAFD · UPC · 2026
         </motion.div>
 
         {/* Title */}
@@ -325,16 +334,8 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-white/6 bg-[#030712]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
-            <div className="relative">
-              <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                <Activity className="w-5 h-5 text-blue-400" />
-              </div>
-              <motion.div
-                className="absolute inset-0 rounded-xl border border-blue-400/30"
-                animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
-                transition={{ duration: 2.5, repeat: Infinity }}
-              />
-            </div>
+            <img src="/logo-upc.png" alt="UPC" className="h-7 opacity-90" />
+            <div className="h-5 w-px bg-white/10" />
             <div>
               <p className="font-bold text-white text-sm leading-tight">NTAFD</p>
               <p className="text-[11px] text-white/40">Nuevas Tecnologías en el Deporte</p>

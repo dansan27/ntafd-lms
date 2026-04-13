@@ -76,12 +76,13 @@ function ProfessorLogin({ onLogin }: { onLogin: (password: string) => void }) {
       >
         <div className="rounded-3xl bg-[#0d0d0f]/80 border border-white/8 backdrop-blur-xl shadow-2xl p-8 space-y-8">
           <div className="text-center space-y-3">
+            <img src="/logo-upc.png" alt="UPC" className="h-9 mx-auto opacity-90" />
             <div className="w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto">
               <KeyRound size={28} className="text-primary" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Panel del Profesor</h2>
-              <p className="text-sm text-white/40 mt-1">NTAFD — Acceso restringido</p>
+              <p className="text-sm text-white/40 mt-1">NTAFD · UPC — Acceso restringido</p>
             </div>
           </div>
 
@@ -355,15 +356,7 @@ function DashboardContent({
 
   const classTitle = classConfig?.title ?? `Semana ${selectedWeek} Clase ${selectedClass}`;
 
-  const classOptions = COURSE_CONFIG.flatMap(week =>
-    week.classes.map(cls => ({
-      key: `${week.id}-${cls.id}`,
-      weekId: week.id,
-      classId: cls.id,
-      label: `S${week.id}C${cls.id} — ${cls.title}`,
-      available: cls.available && cls.blocks.length > 0,
-    }))
-  );
+  const selectedKey = `${selectedWeek}-${selectedClass}`;
 
   const TABS = [
     { id: "students" as const, label: "Alumnos", icon: Users },
@@ -393,25 +386,34 @@ function DashboardContent({
 
             <div className="h-5 w-px bg-white/10 hidden sm:block" />
 
-            {/* Pill class selector */}
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-              {classOptions.map(opt => (
-                <button
-                  key={opt.key}
-                  onClick={() => onSelectClass(opt.weekId, opt.classId)}
-                  disabled={!opt.available}
-                  className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                    selectedWeek === opt.weekId && selectedClass === opt.classId
-                      ? "bg-primary text-white shadow-lg shadow-primary/30"
-                      : opt.available
-                        ? "bg-white/8 text-white/60 hover:bg-white/15 hover:text-white"
-                        : "bg-white/4 text-white/25 cursor-not-allowed"
-                  }`}
-                >
-                  {opt.label}
-                </button>
+            {/* Class selector dropdown */}
+            <select
+              value={selectedKey}
+              onChange={(e) => {
+                const [w, c] = e.target.value.split("-").map(Number);
+                onSelectClass(w, c);
+              }}
+              className="bg-white/8 border border-white/10 text-white text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-primary/60 cursor-pointer appearance-none pr-7 relative"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center" }}
+            >
+              {COURSE_CONFIG.map(week => (
+                <optgroup key={week.id} label={week.title} style={{ background: "#1c1c1e", color: "rgba(255,255,255,0.5)" }}>
+                  {week.classes.map(cls => {
+                    const available = cls.available && cls.blocks.length > 0;
+                    return (
+                      <option
+                        key={`${week.id}-${cls.id}`}
+                        value={`${week.id}-${cls.id}`}
+                        disabled={!available}
+                        style={{ background: "#1c1c1e", color: available ? "white" : "rgba(255,255,255,0.3)" }}
+                      >
+                        S{week.id}C{cls.id} — {cls.title}
+                      </option>
+                    );
+                  })}
+                </optgroup>
               ))}
-            </div>
+            </select>
           </div>
 
           {/* Right: actions */}
