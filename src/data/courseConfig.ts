@@ -1,6 +1,7 @@
 import {
   Zap, Rocket, Lightbulb, Clock, Cpu, Activity, Gamepad2, Flag,
   Heart, BookOpen, Layers, FlaskConical, Wifi, Smartphone, GraduationCap,
+  BarChart2, TrendingUp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -98,6 +99,57 @@ export const COURSE_CONFIG: WeekConfig[] = [
           { id: 2, name: "Tabla Comparativa", description: "Compara características de las tecnologías de medición", icon: "📊", blockId: 5, componentName: "S2_Dynamic2TablaComparativa" },
           { id: 3, name: "Quiz Composición", description: "Pon a prueba tus conocimientos sobre composición corporal", icon: "🧠", blockId: 6, componentName: "S2_Dynamic3QuizComposicion" },
           { id: 4, name: "Identifica la Tecnología", description: "¿Qué tecnología se describe en cada escenario?", icon: "🔍", blockId: 7, componentName: "S2_Dynamic4IdentificaTech" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: "Semana 3: Capacidad Cardiovascular",
+    description: "VO₂ Máx, ECG y tecnologías para medir la capacidad cardiovascular en el deporte.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: VO₂ Máx — Fisiología y Medición",
+        description: "Fundamentos de la capacidad aeróbica, métodos de medición y prescripción de ejercicio",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "El límite del oxígeno", icon: Zap, time: "0-5 min", componentName: "S3_Block1Gancho" },
+          { id: 2, title: "Capacidad Cardiovascular", subtitle: "Corazón, pulmones y músculos", icon: Heart, time: "5-12 min", componentName: "S3_Block2ConceptosCV" },
+          { id: 3, title: "Fisiología del VO₂ Máx", subtitle: "ATP, mitocondrias y ecuación de Fick", icon: Layers, time: "12-22 min", componentName: "S3_Block3FisiologiaVO2" },
+          { id: 4, title: "Métodos de Medición", subtitle: "Cooper, Bruce, gases y lactato", icon: FlaskConical, time: "22-32 min", hasDynamic: true, componentName: "S3_Block4MetodosMedicion" },
+          { id: 5, title: "Laboratorio de Gases", subtitle: "Equipamiento y protocolo directo", icon: Cpu, time: "32-42 min", hasDynamic: true, componentName: "S3C1_Block5Laboratorio" },
+          { id: 6, title: "Valores de Referencia", subtitle: "VO₂ Máx por edad, sexo y deporte", icon: BarChart2, time: "42-50 min", hasDynamic: true, componentName: "S3C1_Block6Valores" },
+          { id: 7, title: "Prescripción de Ejercicio", subtitle: "Zonas de entrenamiento aeróbico", icon: TrendingUp, time: "50-57 min", hasDynamic: true, componentName: "S3C1_Block7Prescripcion" },
+          { id: 8, title: "Cierre", subtitle: "Reflexión final", icon: GraduationCap, time: "57-60 min", componentName: "S3C1_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Clasifica el Test", description: "¿Directo o indirecto? ¿Máximo o submáximo?", icon: "🧪", blockId: 4, componentName: "S3_Dynamic1ClasificaMetodo" },
+          { id: 2, name: "Identifica el Equipo", description: "¿Para qué sirve cada componente del laboratorio?", icon: "🔬", blockId: 5, componentName: "S3C1_Dynamic2EquipoLab" },
+          { id: 3, name: "Interpreta el VO₂", description: "Clasifica al atleta según su VO₂ Máx", icon: "📊", blockId: 6, componentName: "S3C1_Dynamic3InterpretaVO2" },
+          { id: 4, name: "Zonas de Entrenamiento", description: "¿A qué zona corresponde esta intensidad?", icon: "🏃", blockId: 7, componentName: "S3C1_Dynamic4ZonasTren" },
+        ],
+      },
+      {
+        id: 2,
+        title: "Clase 2: Electrocardiografía Deportiva",
+        description: "ECG, procesamiento de señal y dispositivos cardíacos en el deporte",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "Tu corazón habla en eléctrico", icon: Zap, time: "0-5 min", componentName: "S3C2_Block1Gancho" },
+          { id: 2, title: "El ECG / EKG", subtitle: "Ondas P, QRS y T", icon: Activity, time: "5-15 min", hasDynamic: true, componentName: "S3_Block5ECG" },
+          { id: 3, title: "Procesamiento de Señal", subtitle: "Filtros y módulo AD8232", icon: Cpu, time: "15-25 min", hasDynamic: true, componentName: "S3_Block6Procesamiento" },
+          { id: 4, title: "Derivaciones ECG", subtitle: "12 derivaciones vs simplificado", icon: Wifi, time: "25-35 min", componentName: "S3C2_Block4Derivaciones" },
+          { id: 5, title: "Dispositivos: Polar H10", subtitle: "Gold standard deportivo", icon: Smartphone, time: "35-45 min", hasDynamic: true, componentName: "S3_Block7Dispositivos" },
+          { id: 6, title: "Variabilidad de FC (HRV)", subtitle: "El marcador de recuperación", icon: Heart, time: "45-52 min", componentName: "S3C2_Block6HRV" },
+          { id: 7, title: "Apps y Plataformas", subtitle: "Ecosistema de monitoreo cardíaco", icon: Layers, time: "52-57 min", componentName: "S3C2_Block7Apps" },
+          { id: 8, title: "Cierre", subtitle: "Reflexión final", icon: GraduationCap, time: "57-60 min", componentName: "S3C2_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Identifica la Onda", description: "Reconoce los componentes del ECG", icon: "📈", blockId: 2, componentName: "S3_Dynamic2IdentificaOnda" },
+          { id: 2, name: "Quiz ECG y Señal", description: "Pon a prueba tus conocimientos", icon: "🧠", blockId: 3, componentName: "S3_Dynamic3QuizVO2" },
+          { id: 3, name: "Clasifica el Dispositivo", description: "¿Clínico o deportivo? Elige el correcto", icon: "⌚", blockId: 5, componentName: "S3C2_Dynamic3ClasificaDispositivo" },
+          { id: 4, name: "Elige el Dispositivo", description: "¿Qué tecnología usar para cada atleta?", icon: "🏆", blockId: 7, componentName: "S3_Dynamic4ComparaDispositivo" },
         ],
       },
     ],

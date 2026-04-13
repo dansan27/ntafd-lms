@@ -131,8 +131,8 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
                       : "text-white/60 hover:text-white/90 hover:bg-sidebar-accent/50"
                   }`}
                 >
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
-                    isActive ? "bg-[oklch(0.55_0.22_25)] text-white" : "bg-white/10 text-white/50"
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center ${
+                    isActive ? "bg-primary text-primary-foreground" : "bg-white/10 text-white/50"
                   }`}>
                     <Icon size={16} />
                   </div>
@@ -186,7 +186,7 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
                 <Menu size={20} />
               </Button>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[oklch(0.55_0.22_25)] animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 <span className="text-sm font-medium">
                   Bloque {currentBlock}: {currentBlockConfig?.title ?? ""}
                 </span>
@@ -208,7 +208,7 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
                 size="sm"
                 onClick={() => goToBlock(Math.min(totalBlocks, currentBlock + 1))}
                 disabled={currentBlock >= totalBlocks}
-                className="h-8 bg-[oklch(0.55_0.22_25)] hover:bg-[oklch(0.50_0.22_25)]"
+                className="h-8 bg-primary hover:bg-primary/90"
               >
                 <span className="hidden sm:inline mr-1">Siguiente</span>
                 <ChevronRight size={16} />

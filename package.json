@@ -35,6 +35,8 @@
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
     "nanoid": "^5.1.7",
+    "pdfjs-dist": "^5.6.205",
+    "puppeteer": "^24.40.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "sonner": "^2.0.7",

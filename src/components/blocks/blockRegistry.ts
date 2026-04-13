@@ -27,6 +27,26 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S2_Block6BIA: lazy(() => import("./S2_Block6BIA")),
   S2_Block7Escaneo: lazy(() => import("./S2_Block7Escaneo")),
   S2_Block8Cierre: lazy(() => import("./S2_Block8Cierre")),
+
+  // Semana 3, Clase 1 — VO₂ Máx
+  S3_Block1Gancho: lazy(() => import("./S3_Block1Gancho")),
+  S3_Block2ConceptosCV: lazy(() => import("./S3_Block2ConceptosCV")),
+  S3_Block3FisiologiaVO2: lazy(() => import("./S3_Block3FisiologiaVO2")),
+  S3_Block4MetodosMedicion: lazy(() => import("./S3_Block4MetodosMedicion")),
+  S3C1_Block5Laboratorio: lazy(() => import("./S3C1_Block5Laboratorio")),
+  S3C1_Block6Valores: lazy(() => import("./S3C1_Block6Valores")),
+  S3C1_Block7Prescripcion: lazy(() => import("./S3C1_Block7Prescripcion")),
+  S3C1_Block8Cierre: lazy(() => import("./S3C1_Block8Cierre")),
+
+  // Semana 3, Clase 2 — ECG
+  S3C2_Block1Gancho: lazy(() => import("./S3C2_Block1Gancho")),
+  S3_Block5ECG: lazy(() => import("./S3_Block5ECG")),
+  S3_Block6Procesamiento: lazy(() => import("./S3_Block6Procesamiento")),
+  S3C2_Block4Derivaciones: lazy(() => import("./S3C2_Block4Derivaciones")),
+  S3_Block7Dispositivos: lazy(() => import("./S3_Block7Dispositivos")),
+  S3C2_Block6HRV: lazy(() => import("./S3C2_Block6HRV")),
+  S3C2_Block7Apps: lazy(() => import("./S3C2_Block7Apps")),
+  S3C2_Block8Cierre: lazy(() => import("./S3C2_Block8Cierre")),
 };
 
 export function getBlockComponent(componentName: string): LazyBlock | null {

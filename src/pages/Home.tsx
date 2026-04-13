@@ -1,280 +1,616 @@
 import { useStudent } from "@/contexts/StudentContext";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
-import { BookOpen, LogOut, TrendingUp, Zap, Clock, Target, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LogOut, TrendingUp, Zap, Target, Heart, Activity,
+  Cpu, Layers, PlayCircle, Lock, ArrowRight, ChevronDown,
+  FlaskConical,
+} from "lucide-react";
 import { COURSE_CONFIG, isClassAvailable } from "@/data/courseConfig";
 import { useEffect, useState } from "react";
-import { StatCard } from "@/components/ui/stat-card";
-import { ProgressBar } from "@/components/ui/progress-bar";
-import { AnimatedCard } from "@/components/ui/animated-card";
-import { ClassCard } from "@/components/ui/class-card";
 
+// ── ECG background path (9 beats × 160px = 1440px wide, baseline y=65) ─────
+function buildECGPath(): string {
+  const beats = 9, bw = 160, by = 65;
+  const pts: string[] = [`M 0,${by}`];
+  for (let i = 0; i < beats; i++) {
+    const x = i * bw;
+    pts.push(
+      `L ${x + bw * 0.12},${by}`,
+      `C ${x + bw * 0.16},${by} ${x + bw * 0.19},${by - 14} ${x + bw * 0.22},${by - 16}`,
+      `C ${x + bw * 0.25},${by - 14} ${x + bw * 0.28},${by} ${x + bw * 0.34},${by}`,
+      `L ${x + bw * 0.46},${by}`,
+      `L ${x + bw * 0.50},${by + 8}`,
+      `L ${x + bw * 0.54},${by - 42}`,
+      `L ${x + bw * 0.58},${by + 9}`,
+      `L ${x + bw * 0.68},${by}`,
+      `C ${x + bw * 0.72},${by} ${x + bw * 0.76},${by - 16} ${x + bw * 0.80},${by - 18}`,
+      `C ${x + bw * 0.84},${by - 16} ${x + bw * 0.88},${by} ${x + bw},${by}`,
+    );
+  }
+  return pts.join(" ");
+}
+const ECG_PATH = buildECGPath();
+
+// ── Animated counter ──────────────────────────────────────────────────────────
+function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    let frame = 0;
+    const total = 60;
+    const id = setInterval(() => {
+      frame++;
+      setV(Math.round((frame / total) * to));
+      if (frame >= total) clearInterval(id);
+    }, 20);
+    return () => clearInterval(id);
+  }, [to]);
+  return <>{v}{suffix}</>;
+}
+
+// ── Floating metric chip ──────────────────────────────────────────────────────
+function FloatingChip({ label, value, unit, color, x, y, delay }: {
+  label: string; value: string; unit: string;
+  color: string; x: string; y: string; delay: number;
+}) {
+  return (
+    <motion.div
+      className={`absolute hidden lg:flex flex-col gap-0.5 px-3 py-2 rounded-2xl backdrop-blur-md border ${color} select-none pointer-events-none`}
+      style={{ left: x, top: y }}
+      initial={{ opacity: 0, scale: 0.85 }}
+      animate={{ opacity: 1, scale: 1, y: [0, -7, 0] }}
+      transition={{
+        opacity: { delay, duration: 0.5 },
+        scale: { delay, duration: 0.5 },
+        y: { delay, duration: 3 + delay, repeat: Infinity, ease: "easeInOut" },
+      }}
+    >
+      <span className="text-[10px] uppercase tracking-widest text-white/40 font-medium">{label}</span>
+      <span className="text-lg font-bold text-white leading-none">{value} <span className="text-xs font-normal text-white/50">{unit}</span></span>
+    </motion.div>
+  );
+}
+
+// ── Week color themes ─────────────────────────────────────────────────────────
+const WEEK_THEMES = [
+  {
+    gradient: "from-amber-500/20 to-orange-500/10",
+    border: "border-amber-500/20 hover:border-amber-500/40",
+    accent: "bg-amber-500/20 text-amber-400",
+    glow: "shadow-amber-500/10",
+    badge: "Semana 1",
+    icon: Zap,
+    iconColor: "text-amber-400",
+    tagColor: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    tags: ["Hardware & Software", "Sensores", "Gamificación"],
+  },
+  {
+    gradient: "from-cyan-500/20 to-blue-500/10",
+    border: "border-cyan-500/20 hover:border-cyan-500/40",
+    accent: "bg-cyan-500/20 text-cyan-400",
+    glow: "shadow-cyan-500/10",
+    badge: "Semana 2",
+    icon: Layers,
+    iconColor: "text-cyan-400",
+    tagColor: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+    tags: ["DEXA · BIA", "Escaneo 3D", "Bod Pod"],
+  },
+  {
+    gradient: "from-rose-500/20 to-red-500/10",
+    border: "border-rose-500/20 hover:border-rose-500/40",
+    accent: "bg-rose-500/20 text-rose-400",
+    glow: "shadow-rose-500/10",
+    badge: "Semana 3",
+    icon: Heart,
+    iconColor: "text-rose-400",
+    tagColor: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+    tags: ["VO₂ Máx", "ECG Deportivo", "Polar H10"],
+  },
+];
+
+const WEEK_ICONS_MAP: Record<string, React.ElementType> = {
+  "Semana 1": Cpu,
+  "Semana 2": FlaskConical,
+  "Semana 3": Activity,
+};
+
+// ── Login Page ────────────────────────────────────────────────────────────────
+function LoginPage() {
+  return (
+    <div className="min-h-screen bg-[#030712] flex flex-col overflow-hidden relative">
+      {/* Background glow spots */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-emerald-600/6 rounded-full blur-[100px] pointer-events-none" />
+
+      {/* ECG background */}
+      <div className="absolute bottom-24 left-0 right-0 pointer-events-none overflow-hidden">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-20 opacity-10">
+          <motion.path
+            d={ECG_PATH} fill="none" stroke="#22c55e" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round"
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ duration: 4, ease: "easeInOut", repeat: Infinity, repeatDelay: 1 }}
+          />
+        </svg>
+      </div>
+
+      {/* Floating chips */}
+      <FloatingChip label="VO₂ Máx" value="68.5" unit="ml/kg/min" color="border-blue-500/20 bg-blue-500/10" x="8%" y="20%" delay={0.3} />
+      <FloatingChip label="Frecuencia Cardíaca" value="142" unit="bpm" color="border-rose-500/20 bg-rose-500/10" x="75%" y="15%" delay={0.6} />
+      <FloatingChip label="HRV" value="78" unit="ms" color="border-emerald-500/20 bg-emerald-500/10" x="5%" y="65%" delay={0.9} />
+      <FloatingChip label="Masa Grasa" value="12.4" unit="%" color="border-cyan-500/20 bg-cyan-500/10" x="78%" y="60%" delay={1.1} />
+
+      {/* Center content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center relative z-10">
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, type: "spring" }}
+          className="mb-8"
+        >
+          <div className="relative inline-flex">
+            <div className="p-4 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm">
+              <Activity className="w-10 h-10 text-blue-400" />
+            </div>
+            <motion.div
+              className="absolute inset-0 rounded-3xl border border-blue-400/30"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+              transition={{ duration: 2.5, repeat: Infinity }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Tagline */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+          NTAFD · Ciencias del Deporte · 2025
+        </motion.div>
+
+        {/* Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+          className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.05] mb-5"
+        >
+          Nuevas<br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400">
+            Tecnologías
+          </span>
+          <br />
+          en el Deporte
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="text-white/50 text-lg max-w-md mb-10"
+        >
+          Domina las tecnologías que están transformando el rendimiento deportivo. 3 semanas, 5 clases, ciencia aplicada.
+        </motion.p>
+
+        {/* Week pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex flex-wrap gap-2 justify-center mb-10"
+        >
+          {[
+            { label: "Fundamentos Tech", color: "bg-amber-500/10 border-amber-500/20 text-amber-400" },
+            { label: "Composición Corporal", color: "bg-cyan-500/10 border-cyan-500/20 text-cyan-400" },
+            { label: "VO₂ Máx & ECG", color: "bg-rose-500/10 border-rose-500/20 text-rose-400" },
+          ].map((t) => (
+            <span key={t.label} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${t.color}`}>{t.label}</span>
+          ))}
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.75, type: "spring" }}
+        >
+          <Link href="/login">
+            <motion.button
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold px-8 py-4 rounded-full shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-shadow text-base"
+            >
+              Ingresar al curso <ArrowRight size={18} />
+            </motion.button>
+          </Link>
+        </motion.div>
+
+        {/* Scroll hint */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/20"
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <span className="text-[10px] uppercase tracking-widest">Explorar</span>
+          <ChevronDown size={16} />
+        </motion.div>
+      </div>
+
+      {/* Course overview below fold */}
+      <CourseOverview />
+    </div>
+  );
+}
+
+// ── Course overview (used in login page bottom) ───────────────────────────────
+function CourseOverview() {
+  return (
+    <section className="relative z-10 max-w-6xl mx-auto px-6 pb-24">
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-3xl font-bold text-white text-center mb-12"
+      >
+        Ruta de aprendizaje
+      </motion.h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {COURSE_CONFIG.map((week, wi) => {
+          const theme = WEEK_THEMES[wi] ?? WEEK_THEMES[0];
+          const WeekIcon = WEEK_ICONS_MAP[theme.badge] ?? Zap;
+          return (
+            <motion.div
+              key={week.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: wi * 0.15 }}
+              whileHover={{ y: -6, transition: { duration: 0.25 } }}
+              className={`relative overflow-hidden rounded-3xl border bg-gradient-to-br ${theme.gradient} ${theme.border} backdrop-blur-sm p-6 shadow-xl ${theme.glow}`}
+            >
+              <div className={`inline-flex p-3 rounded-2xl ${theme.accent} mb-4`}>
+                <WeekIcon size={22} />
+              </div>
+              <div className={`text-xs font-bold uppercase tracking-widest mb-1 ${theme.iconColor}`}>{theme.badge}</div>
+              <h3 className="text-white font-bold text-lg mb-1">{week.title.split(":")[1]?.trim() ?? week.title}</h3>
+              <p className="text-white/50 text-sm mb-4 line-clamp-2">{week.description}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {theme.tags.map(tag => (
+                  <span key={tag} className={`text-[11px] px-2.5 py-1 rounded-full border ${theme.tagColor}`}>{tag}</span>
+                ))}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// ── Dashboard (logged in) ─────────────────────────────────────────────────────
 export default function Home() {
   const { student, loading, logout } = useStudent();
   const [stats, setStats] = useState({ totalDynamics: 0, totalClasses: 0, completionPercent: 0, recentClass: null as any });
+  const [expandedWeek, setExpandedWeek] = useState<number | null>(null);
 
   useEffect(() => {
     if (!student?.sessionToken) return;
-
     const fetchStats = async () => {
       try {
-        let totalDynamicsCompleted = 0;
-        let classesAccessed = 0;
-        const allProgressData = [];
-
+        let totalDynamicsCompleted = 0, classesAccessed = 0;
+        const allProgressData: any[] = [];
         for (const week of COURSE_CONFIG) {
           for (const cls of week.classes) {
             if (isClassAvailable(week.id, cls.id)) {
               const res = await fetch("/api/trpc/student.getProgress", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  json: { token: student.sessionToken!, weekId: week.id, classId: cls.id }
-                }),
+                body: JSON.stringify({ json: { token: student.sessionToken!, weekId: week.id, classId: cls.id } }),
               });
               const data = await res.json();
               const progress = data.result?.data;
-
               if (progress) {
                 const completed = (progress.completedDynamics as number[] | null) ?? [];
                 if (completed.length > 0) {
                   classesAccessed++;
                   totalDynamicsCompleted += completed.length;
-                  allProgressData.push({
-                    week: week.id,
-                    class: cls.id,
-                    classTitle: cls.title,
-                    completed: completed.length,
-                    total: cls.dynamics.length,
-                    updatedAt: progress.updatedAt,
-                  });
+                  allProgressData.push({ week: week.id, class: cls.id, classTitle: cls.title, completed: completed.length, total: cls.dynamics.length, updatedAt: progress.updatedAt });
                 }
               }
             }
           }
         }
-
-        const totalDynamicsInCourse = COURSE_CONFIG.reduce((acc, w) =>
-          acc + w.classes.filter(c => isClassAvailable(w.id, c.id)).reduce((sum, c) => sum + c.dynamics.length, 0), 0
-        );
-
-        const mostRecent = allProgressData.length > 0
-          ? allProgressData.sort((a, b) => (b.updatedAt as any) - (a.updatedAt as any))[0]
-          : null;
-
-        setStats({
-          totalDynamics: totalDynamicsCompleted,
-          totalClasses: classesAccessed,
-          completionPercent: totalDynamicsInCourse > 0 ? Math.round((totalDynamicsCompleted / totalDynamicsInCourse) * 100) : 0,
-          recentClass: mostRecent,
-        });
-      } catch (err) {
-        console.error("Error fetching stats:", err);
-      }
+        const totalAvailable = COURSE_CONFIG.reduce((acc, w) =>
+          acc + w.classes.filter(c => isClassAvailable(w.id, c.id)).reduce((s, c) => s + c.dynamics.length, 0), 0);
+        const mostRecent = allProgressData.length > 0 ? allProgressData.sort((a, b) => (b.updatedAt as any) - (a.updatedAt as any))[0] : null;
+        setStats({ totalDynamics: totalDynamicsCompleted, totalClasses: classesAccessed, completionPercent: totalAvailable > 0 ? Math.round((totalDynamicsCompleted / totalAvailable) * 100) : 0, recentClass: mostRecent });
+      } catch {}
     };
-
     fetchStats();
   }, [student?.sessionToken]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-950">
-      <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }} className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full" />
+    <div className="min-h-screen flex items-center justify-center bg-[#030712]">
+      <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+        className="w-10 h-10 border-2 border-blue-400/20 border-t-blue-400 rounded-full" />
     </div>
   );
 
-  if (!student) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 to-slate-950">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-md w-full"
-        >
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/40 to-slate-800/20 backdrop-blur-xl p-8 shadow-2xl">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center mb-6"
-            >
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-                <BookOpen className="w-8 h-8 text-blue-400" />
-              </div>
-            </motion.div>
-            <h1 className="text-3xl font-bold text-white text-center mb-2">Bienvenido</h1>
-            <p className="text-center text-white/60 mb-8">Inicia sesión con tu código de alumno para continuar tu aprendizaje.</p>
-            <Link href="/login">
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 h-12 text-base">
-                Ingresar
-              </Button>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
+  if (!student) return <LoginPage />;
 
-  const level = stats.completionPercent < 25 ? "Novato" : stats.completionPercent < 50 ? "Aprendiz" : stats.completionPercent < 75 ? "Experto" : "Maestro";
+  const levelMap = [
+    { min: 0, label: "Explorador", color: "text-slate-400", bg: "bg-slate-400/10 border-slate-400/20" },
+    { min: 25, label: "Aprendiz", color: "text-blue-400", bg: "bg-blue-400/10 border-blue-400/20" },
+    { min: 50, label: "Experto", color: "text-emerald-400", bg: "bg-emerald-400/10 border-emerald-400/20" },
+    { min: 75, label: "Maestro", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/20" },
+  ];
+  const level = [...levelMap].reverse().find(l => stats.completionPercent >= l.min) ?? levelMap[0];
+  const firstName = student.fullName.split(" ")[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10">
-              <BookOpen className="w-5 h-5 text-blue-400" />
+    <div className="min-h-screen bg-[#030712] overflow-x-hidden">
+      {/* ── Ambient glow spots ── */}
+      <div className="fixed top-0 left-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-emerald-600/5 rounded-full blur-[130px] pointer-events-none" />
+
+      {/* ── Sticky header ── */}
+      <header className="sticky top-0 z-50 border-b border-white/6 bg-[#030712]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
+            <div className="relative">
+              <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                <Activity className="w-5 h-5 text-blue-400" />
+              </div>
+              <motion.div
+                className="absolute inset-0 rounded-xl border border-blue-400/30"
+                animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0, 0.6] }}
+                transition={{ duration: 2.5, repeat: Infinity }}
+              />
             </div>
             <div>
-              <h1 className="font-bold text-white">Nuevas Tecnologías</h1>
-              <p className="text-xs text-white/60">Hola, {student.fullName.split(' ')[0]}</p>
+              <p className="font-bold text-white text-sm leading-tight">NTAFD</p>
+              <p className="text-[11px] text-white/40">Nuevas Tecnologías en el Deporte</p>
             </div>
           </motion.div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={logout}
-            className="text-white/60 hover:text-white hover:bg-white/10"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
+
+          <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2">
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${level.bg} ${level.color}`}>
+                {level.label}
+              </span>
+              <span className="text-white/50 text-sm">{firstName}</span>
+            </div>
+            <button onClick={logout} className="p-2 rounded-xl text-white/40 hover:text-white hover:bg-white/8 transition-colors">
+              <LogOut size={17} />
+            </button>
+          </motion.div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6 mt-6">
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 space-y-4"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Bienvenido de vuelta, <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">{student.fullName.split(' ')[0]}</span>
-          </h2>
-          <p className="text-lg text-white/60 max-w-2xl">
-            Continúa tu viaje de aprendizaje en nuevas tecnologías aplicadas al deporte. ¡Sigue progresando!
-          </p>
-        </motion.div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard
-            icon={Zap}
-            label="Dinámicas Completadas"
-            value={stats.totalDynamics}
-            description="actividades interactivas"
-            color="blue"
-            delay={0.1}
-          />
-          <StatCard
-            icon={Target}
-            label="Clases Iniciadas"
-            value={stats.totalClasses}
-            description="en progreso"
-            color="green"
-            delay={0.15}
-          />
-          <StatCard
-            icon={TrendingUp}
-            label="Progreso Total"
-            value={`${stats.completionPercent}%`}
-            description="del curso completado"
-            color="purple"
-            delay={0.2}
-          />
-          <StatCard
-            icon={Sparkles}
-            label="Tu Nivel"
-            value={level}
-            description="en el curso"
-            color="orange"
-            delay={0.25}
-          />
-        </div>
-
-        {/* Progress Section */}
-        <AnimatedCard className="mb-12 p-8" delay={0.3}>
-          <div className="flex items-center gap-3 mb-6">
-            <Clock className="w-5 h-5 text-blue-400" />
-            <h3 className="text-xl font-bold text-white">Progreso del Curso</h3>
+      <main className="max-w-7xl mx-auto px-6">
+        {/* ── Hero greeting ── */}
+        <section className="relative py-16 md:py-20">
+          {/* Background ECG line */}
+          <div className="absolute inset-x-0 bottom-0 pointer-events-none overflow-hidden opacity-8">
+            <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-16">
+              <motion.path d={ECG_PATH} fill="none" stroke="#22c55e" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+                transition={{ duration: 3.5, ease: "easeInOut", repeat: Infinity, repeatDelay: 2 }}
+              />
+            </svg>
           </div>
-          <ProgressBar
-            percentage={stats.completionPercent}
-            showPercentage={true}
-            animated={true}
-          />
-          <p className="text-sm text-white/60 mt-4">
-            Has completado <span className="text-blue-400 font-semibold">{stats.totalDynamics}</span> dinámicas de las disponibles
-          </p>
-        </AnimatedCard>
 
-        {/* Recent Activity */}
-        {stats.recentClass && (
-          <AnimatedCard className="mb-12 p-8" delay={0.35}>
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-white mb-2">Actividad Reciente</h3>
-                <p className="text-white/80 font-medium mb-1">{stats.recentClass.classTitle}</p>
-                <p className="text-sm text-white/60">
-                  Completaste {stats.recentClass.completed} de {stats.recentClass.total} dinámicas
-                </p>
-              </div>
-              <Link href={`/week/${stats.recentClass.week}/class/${stats.recentClass.class}`}>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0">
-                    Continuar →
-                  </Button>
-                </motion.div>
-              </Link>
-            </div>
-          </AnimatedCard>
-        )}
-
-        {/* Course Structure */}
-        <div className="mb-10">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-3xl font-bold text-white mb-8"
-          >
-            Tu Ruta de Aprendizaje
-          </motion.h2>
-          <div className="space-y-8">
-            {COURSE_CONFIG.map((week, weekIdx) => (
-              <motion.div
-                key={week.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45 + weekIdx * 0.1 }}
-              >
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-white mb-2">{week.title}</h3>
-                  <p className="text-white/60">{week.description}</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                  {week.classes.map((cls, classIdx) => {
-                    const available = isClassAvailable(week.id, cls.id);
-                    return (
-                      <ClassCard
-                        key={cls.id}
-                        weekId={week.id}
-                        classId={cls.id}
-                        title={cls.title}
-                        description={cls.description}
-                        available={available}
-                        delay={0.5 + weekIdx * 0.1 + classIdx * 0.05}
-                      />
-                    );
-                  })}
-                </div>
+          <div className="relative z-10 grid md:grid-cols-2 gap-10 items-center">
+            {/* Left: greeting */}
+            <div className="space-y-5">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/60 text-xs font-medium uppercase tracking-widest px-4 py-1.5 rounded-full">
+                <motion.span className="w-1.5 h-1.5 rounded-full bg-green-400"
+                  animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
+                Sesión activa
               </motion.div>
-            ))}
+
+              <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-[1.1]">
+                Hola,{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
+                  {firstName}
+                </span>
+              </motion.h1>
+
+              <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                className="text-white/50 text-lg leading-relaxed max-w-sm">
+                Continúa dominando las tecnologías del rendimiento deportivo.
+              </motion.p>
+
+              {stats.recentClass && (
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+                  <Link href={`/week/${stats.recentClass.week}/class/${stats.recentClass.class}`}>
+                    <motion.div whileHover={{ scale: 1.02, x: 4 }} whileTap={{ scale: 0.98 }}
+                      className="inline-flex items-center gap-3 bg-blue-500/10 hover:bg-blue-500/15 border border-blue-500/20 rounded-2xl px-5 py-3 transition-colors cursor-pointer">
+                      <PlayCircle className="text-blue-400" size={18} />
+                      <div>
+                        <p className="text-xs text-white/40">Continuar donde quedaste</p>
+                        <p className="text-sm font-semibold text-white">{stats.recentClass.classTitle.split(":")[1]?.trim() ?? stats.recentClass.classTitle}</p>
+                      </div>
+                      <ArrowRight className="text-blue-400 ml-2" size={16} />
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Right: stats ring + metrics */}
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, type: "spring" }}
+              className="flex flex-col items-center gap-6">
+              {/* Circular progress */}
+              <div className="relative flex items-center justify-center">
+                <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90">
+                  <defs>
+                    <linearGradient id="cpg" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#3B82F6" />
+                      <stop offset="100%" stopColor="#06B6D4" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="90" cy="90" r="72" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
+                  <motion.circle cx="90" cy="90" r="72" fill="none" stroke="url(#cpg)"
+                    strokeWidth="10" strokeLinecap="round"
+                    strokeDasharray={2 * Math.PI * 72}
+                    initial={{ strokeDashoffset: 2 * Math.PI * 72 }}
+                    animate={{ strokeDashoffset: 2 * Math.PI * 72 * (1 - stats.completionPercent / 100) }}
+                    transition={{ duration: 1.8, delay: 0.6, ease: "easeOut" }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <motion.span className="text-4xl font-bold text-white"
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+                    {stats.completionPercent}%
+                  </motion.span>
+                  <span className="text-xs text-white/40 mt-0.5">completado</span>
+                </div>
+              </div>
+
+              {/* Stat chips */}
+              <div className="grid grid-cols-3 gap-3 w-full">
+                {[
+                  { icon: Zap, label: "Dinámicas", value: stats.totalDynamics, color: "text-blue-400", bg: "bg-blue-400/10" },
+                  { icon: Target, label: "Clases", value: stats.totalClasses, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+                  { icon: TrendingUp, label: "Nivel", value: level.label, color: level.color, bg: level.bg.split(" ")[0] },
+                ].map((s, i) => (
+                  <motion.div key={i}
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + i * 0.1 }}
+                    className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-white/4 border border-white/8">
+                    <div className={`p-1.5 rounded-xl ${s.bg}`}><s.icon size={14} className={s.color} /></div>
+                    <span className={`text-base font-bold ${s.color}`}>{typeof s.value === "number" ? <Counter to={s.value} /> : s.value}</span>
+                    <span className="text-[10px] text-white/40">{s.label}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </div>
-        </div>
+        </section>
+
+        {/* ── Course weeks ── */}
+        <section className="pb-24">
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="flex items-center gap-4 mb-8">
+            <h2 className="text-2xl font-bold text-white">Ruta de aprendizaje</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent" />
+          </motion.div>
+
+          <div className="space-y-4">
+            {COURSE_CONFIG.map((week, wi) => {
+              const theme = WEEK_THEMES[wi] ?? WEEK_THEMES[0];
+              const WeekIcon = theme.icon;
+              const isExpanded = expandedWeek === week.id;
+              const availableClasses = week.classes.filter(c => isClassAvailable(week.id, c.id)).length;
+
+              return (
+                <motion.div key={week.id}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: wi * 0.1 }}>
+
+                  {/* Week header card */}
+                  <motion.div
+                    onClick={() => setExpandedWeek(isExpanded ? null : week.id)}
+                    whileHover={{ scale: 1.005 }}
+                    whileTap={{ scale: 0.998 }}
+                    className={`relative overflow-hidden rounded-3xl border bg-gradient-to-r ${theme.gradient} ${theme.border} p-5 md:p-6 cursor-pointer transition-all`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-2xl ${theme.accent} flex-shrink-0`}>
+                        <WeekIcon size={22} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className={`text-xs font-bold uppercase tracking-widest ${theme.iconColor}`}>{theme.badge}</span>
+                          {availableClasses > 0 && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${theme.tagColor} border`}>
+                              {availableClasses} {availableClasses === 1 ? "clase disponible" : "clases disponibles"}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-white font-bold text-lg leading-tight truncate">{week.title}</h3>
+                        <p className="text-white/50 text-sm mt-0.5 line-clamp-1">{week.description}</p>
+                      </div>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="hidden md:flex gap-1.5">
+                          {theme.tags.map(tag => (
+                            <span key={tag} className={`text-[11px] px-2.5 py-1 rounded-full border ${theme.tagColor}`}>{tag}</span>
+                          ))}
+                        </div>
+                        <motion.div
+                          animate={{ rotate: isExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="text-white/40"
+                        >
+                          <ChevronDown size={20} />
+                        </motion.div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Expanded classes */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {week.classes.map((cls, ci) => {
+                            const avail = isClassAvailable(week.id, cls.id);
+                            return (
+                              <motion.div key={cls.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: ci * 0.07 }}
+                                className={`group relative overflow-hidden rounded-2xl border bg-white/3 backdrop-blur-sm p-5 transition-all ${avail ? `${theme.border} hover:bg-white/5` : "border-white/6 opacity-60"}`}
+                              >
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className={`p-2.5 rounded-xl ${avail ? theme.accent : "bg-white/8"}`}>
+                                    {avail ? <PlayCircle size={18} className={theme.iconColor} /> : <Lock size={18} className="text-white/30" />}
+                                  </div>
+                                  <span className="text-[10px] text-white/30 font-medium">{cls.dynamics.length} dinámicas</span>
+                                </div>
+                                <h4 className="text-white font-semibold mb-1 text-sm leading-snug">{cls.title}</h4>
+                                <p className="text-white/40 text-xs mb-4 line-clamp-2">{cls.description}</p>
+                                {avail ? (
+                                  <Link href={`/week/${week.id}/class/${cls.id}`}>
+                                    <motion.button
+                                      whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                                      className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${wi === 0 ? "from-amber-500 to-orange-500" : wi === 1 ? "from-cyan-500 to-blue-500" : "from-rose-500 to-red-500"} opacity-90 hover:opacity-100 transition-opacity`}
+                                    >
+                                      Comenzar clase <ArrowRight size={15} />
+                                    </motion.button>
+                                  </Link>
+                                ) : (
+                                  <div className="w-full py-2 rounded-xl text-center text-xs text-white/25 bg-white/4 border border-white/8 font-medium">
+                                    Próximamente
+                                  </div>
+                                )}
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
       </main>
     </div>
   );
