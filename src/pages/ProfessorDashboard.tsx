@@ -612,7 +612,7 @@ function DashboardContent({
             transition={{ delay: 0.4 }}
             className={`grid grid-cols-2 ${stats.dynamicStats.length <= 4 ? "md:grid-cols-4" : "md:grid-cols-3"} gap-3`}
           >
-            {stats.dynamicStats.map((ds: any, i: number) => {
+            {stats.dynamicStats.map((ds: any) => {
               const dynConfig = dynamics.find(d => d.id === ds.dynamicId);
               return (
                 <div key={ds.dynamicId} className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 p-4 backdrop-blur-sm">
