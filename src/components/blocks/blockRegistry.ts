@@ -47,6 +47,16 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S3C2_Block6HRV: lazy(() => import("./S3C2_Block6HRV")),
   S3C2_Block7Apps: lazy(() => import("./S3C2_Block7Apps")),
   S3C2_Block8Cierre: lazy(() => import("./S3C2_Block8Cierre")),
+
+  // Semana 4, Clase 1 — Capacidad Cardiovascular: EKG, Polar H10, Pulsioxímetro
+  S4_Block1Gancho: lazy(() => import("./S4_Block1Gancho")),
+  S4_Block2EKGElectrico: lazy(() => import("./S4_Block2EKGElectrico")),
+  S4_Block3SenalEKG: lazy(() => import("./S4_Block3SenalEKG")),
+  S4_Block4FiltradoEKG: lazy(() => import("./S4_Block4FiltradoEKG")),
+  S4_Block5EquiposEKG: lazy(() => import("./S4_Block5EquiposEKG")),
+  S4_Block6PolarH10: lazy(() => import("./S4_Block6PolarH10")),
+  S4_Block7Pulsioximetro: lazy(() => import("./S4_Block7Pulsioximetro")),
+  S4_Block8Cierre: lazy(() => import("./S4_Block8Cierre")),
 };
 
 export function getBlockComponent(componentName: string): LazyBlock | null {

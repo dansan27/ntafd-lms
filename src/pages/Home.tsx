@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LogOut, TrendingUp, Zap, Target, Heart, Activity,
   Layers, PlayCircle, Lock, ArrowRight, ChevronDown,
-  BarChart3,
+  BarChart3, Radio,
 } from "lucide-react";
 import { COURSE_CONFIG, isClassAvailable } from "@/data/courseConfig";
 import { useEffect, useState } from "react";
@@ -105,6 +105,17 @@ const WEEK_THEMES = [
     iconColor: "text-rose-400",
     tagColor: "bg-rose-500/10 text-rose-400 border-rose-500/20",
     tags: ["VO₂ Máx", "ECG Deportivo", "Polar H10"],
+  },
+  {
+    gradient: "from-green-500/20 to-emerald-500/10",
+    border: "border-green-500/20 hover:border-green-500/40",
+    accent: "bg-green-500/20 text-green-400",
+    glow: "shadow-green-500/10",
+    badge: "Semana 4",
+    icon: Radio,
+    iconColor: "text-green-400",
+    tagColor: "bg-green-500/10 text-green-400 border-green-500/20",
+    tags: ["EKG / ECG", "Polar H10", "Pulsioxímetro"],
   },
 ];
 

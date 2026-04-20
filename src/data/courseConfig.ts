@@ -1,7 +1,7 @@
 import {
   Zap, Rocket, Lightbulb, Clock, Cpu, Activity, Gamepad2, Flag,
   Heart, BookOpen, Layers, FlaskConical, Wifi, Smartphone, GraduationCap,
-  BarChart2, TrendingUp,
+  BarChart2, TrendingUp, Radio, Eye,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -150,6 +150,35 @@ export const COURSE_CONFIG: WeekConfig[] = [
           { id: 2, name: "Quiz ECG y Señal", description: "Pon a prueba tus conocimientos", icon: "🧠", blockId: 3, componentName: "S3_Dynamic3QuizVO2" },
           { id: 3, name: "Clasifica el Dispositivo", description: "¿Clínico o deportivo? Elige el correcto", icon: "⌚", blockId: 5, componentName: "S3C2_Dynamic3ClasificaDispositivo" },
           { id: 4, name: "Elige el Dispositivo", description: "¿Qué tecnología usar para cada atleta?", icon: "🏆", blockId: 7, componentName: "S3_Dynamic4ComparaDispositivo" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "Semana 4: Capacidad Cardiovascular",
+    description: "EKG/ECG, Polar H10 y Pulsioxímetro — tecnologías para medir la capacidad cardiovascular en el deporte.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: EKG, Polar H10 y Pulsioxímetro",
+        description: "Métodos de aplicación tecnológica para monitorear el sistema cardiovascular deportivo",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "Capacidad cardiovascular", icon: Zap, time: "0-5 min", componentName: "S4_Block1Gancho" },
+          { id: 2, title: "El Corazón Eléctrico", subtitle: "Ondas P, QRS y T", icon: Activity, time: "5-15 min", hasDynamic: true, componentName: "S4_Block2EKGElectrico" },
+          { id: 3, title: "Señal EKG", subtitle: "Electrodos y módulo AD8232", icon: Cpu, time: "15-25 min", hasDynamic: true, componentName: "S4_Block3SenalEKG" },
+          { id: 4, title: "Módulo AD8232", subtitle: "Pines, circuito y cadena de señal", icon: Cpu, time: "25-35 min", componentName: "S4_Block4FiltradoEKG" },
+          { id: 5, title: "Filtrado de Señales", subtitle: "Paso alto, bajo, notch y bandas", icon: Radio, time: "35-45 min", componentName: "S4_Block5EquiposEKG" },
+          { id: 6, title: "Equipos EKG", subtitle: "EMAY, KardiaMobile y lectura ECG", icon: Smartphone, time: "45-52 min", componentName: "S4_Block6PolarH10" },
+          { id: 7, title: "Polar H10", subtitle: "Gold standard deportivo", icon: Heart, time: "52-57 min", hasDynamic: true, componentName: "S4_Block7Pulsioximetro" },
+          { id: 8, title: "Pulsioxímetro", subtitle: "SpO₂, espectro de color y reflexión", icon: Eye, time: "57-60 min", hasDynamic: true, componentName: "S4_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Identifica la Onda", description: "¿Qué onda del ECG es esta? Demuestra que conoces el ciclo eléctrico", icon: "📈", blockId: 2, componentName: "S4_Dynamic1IdentificaOnda" },
+          { id: 2, name: "Clasifica el Equipo", description: "¿Clínico o deportivo? Clasifica cada dispositivo de monitoreo", icon: "⌚", blockId: 3, componentName: "S4_Dynamic2ClasificaEquipo" },
+          { id: 3, name: "Quiz Polar H10", description: "Pon a prueba tus conocimientos sobre el sensor de referencia", icon: "🫀", blockId: 7, componentName: "S4_Dynamic3QuizPolarH10" },
+          { id: 4, name: "Test Pulsioxímetro", description: "Escenarios clínicos de SpO₂ y pulsioximetría deportiva", icon: "💡", blockId: 8, componentName: "S4_Dynamic4TestPulsioximetro" },
         ],
       },
     ],

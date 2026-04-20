@@ -40,6 +40,39 @@ const CLASS_STRUCTURES: Record<string, ClassStructure> = {
       { id: 4, name: "Identifica la Tecnología", blockId: 7 },
     ],
   },
+  "3-1": {
+    title: "Clase 1: VO₂ Máx — Fisiología y Medición",
+    description: "Fundamentos de la capacidad aeróbica, métodos de medición y prescripción de ejercicio",
+    blockCount: 8,
+    dynamics: [
+      { id: 1, name: "Clasifica el Test", blockId: 4 },
+      { id: 2, name: "Identifica el Equipo", blockId: 5 },
+      { id: 3, name: "Interpreta el VO₂", blockId: 6 },
+      { id: 4, name: "Zonas de Entrenamiento", blockId: 7 },
+    ],
+  },
+  "3-2": {
+    title: "Clase 2: Electrocardiografía Deportiva",
+    description: "ECG, procesamiento de señal y dispositivos cardíacos en el deporte",
+    blockCount: 8,
+    dynamics: [
+      { id: 1, name: "Identifica la Onda", blockId: 2 },
+      { id: 2, name: "Quiz ECG y Señal", blockId: 3 },
+      { id: 3, name: "Clasifica el Dispositivo", blockId: 5 },
+      { id: 4, name: "Elige el Dispositivo", blockId: 7 },
+    ],
+  },
+  "4-1": {
+    title: "Clase 1: EKG, Polar H10 y Pulsioxímetro",
+    description: "Métodos de aplicación tecnológica para monitorear el sistema cardiovascular deportivo",
+    blockCount: 8,
+    dynamics: [
+      { id: 1, name: "Identifica la Onda", blockId: 2 },
+      { id: 2, name: "Clasifica el Equipo", blockId: 3 },
+      { id: 3, name: "Quiz Polar H10", blockId: 6 },
+      { id: 4, name: "Test Pulsioxímetro", blockId: 7 },
+    ],
+  },
 };
 
 export function getClassStructure(weekId: number, classId: number): ClassStructure | undefined {
