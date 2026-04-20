@@ -61,10 +61,10 @@ export default function S4_Block2EKGElectrico() {
                 {[
                   { id:"P", cx:51, cy:52, hx:51, hy:80 },
                   { id:"Q", cx:95, cy:78, hx:95, hy:55 },
-                  { id:"R", cx:99, cy:16, hx:99, hy:90 },
-                  { id:"S", cx:103, cy:88, hx:103, hy:50 },
-                  { id:"T", cx:140, cy:44, hx:140, hy:80 },
-                ].map(({ id, cx, cy, hx, hy }) => {
+                  { id:"R", cx:99, cy:16 },
+                  { id:"S", cx:103, cy:88 },
+                  { id:"T", cx:140, cy:44 },
+                ].map(({ id, cx, cy }) => {
                   const w = WAVES.find(w => w.id === id)!;
                   const isActive = sel === id;
                   return (

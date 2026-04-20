@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, XCircle } from "lucide-react";
@@ -167,7 +166,6 @@ export default function S4_Dynamic1IdentificaOnda({ weekId = 4, classId = 1 }: P
 
               <div className="grid grid-cols-1 gap-2">
                 {current.options.map((option) => {
-                  let variant: "outline" | "default" | "destructive" = "outline";
                   let extra = "";
                   if (showFeedback) {
                     if (option === current.answer) { extra = "border-green-500 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400"; }
