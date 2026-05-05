@@ -558,6 +558,30 @@ const statsRouter = router({
 const systemRouter = router({});
 const getSessionCookieOptions = (_req: any) => ({});
 
+const imagesRouter = router({
+  search: publicProcedure
+    .input(z.object({ query: z.string().min(1), page: z.number().default(1) }))
+    .query(async ({ input }) => {
+      const apiKey = process.env.PEXELS_API_KEY;
+      if (!apiKey) throw new Error("PEXELS_API_KEY no configurada");
+      const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(input.query)}&per_page=20&page=${input.page}&locale=es-ES`;
+      const res = await fetch(url, { headers: { Authorization: apiKey } });
+      if (!res.ok) throw new Error("Error al conectar con Pexels");
+      const data = await res.json() as any;
+      return {
+        photos: (data.photos ?? []).map((p: any) => ({
+          id: p.id,
+          photographer: p.photographer,
+          alt: p.alt ?? "",
+          src: { medium: p.src.medium, large: p.src.large, original: p.src.original },
+          url: p.url,
+        })),
+        totalResults: data.total_results ?? 0,
+        page: data.page ?? 1,
+      };
+    }),
+});
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -576,6 +600,7 @@ export const appRouter = router({
   notes: notesRouter,
   chat: chatRouter,
   stats: statsRouter,
+  images: imagesRouter,
 });
 
 export type AppRouter = typeof appRouter;

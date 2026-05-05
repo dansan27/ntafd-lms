@@ -9,7 +9,8 @@ import { Switch } from "@/components/ui/switch";
 import {
   Users, BarChart3, MessageSquare, Cloud, RefreshCw, ArrowLeft,
   CheckCircle2, Activity, Gamepad2, Lock, Unlock, Power, KeyRound, Eye, EyeOff,
-  ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut, Trophy
+  ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut, Trophy,
+  ImageIcon, Search, Copy, Check, ChevronLeft as ChevLeft, ChevronRight as ChevRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
@@ -295,7 +296,11 @@ function DashboardContent({
   onSelectClass: (w: number, c: number) => void;
   onLogout: () => void; onPresentation: (block: number) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"students" | "reflections" | "wordcloud" | "leaderboard">("students");
+  const [activeTab, setActiveTab] = useState<"students" | "reflections" | "wordcloud" | "leaderboard" | "images">("students");
+  const [imageQuery, setImageQuery] = useState("");
+  const [imageSearch, setImageSearch] = useState("");
+  const [imagePage, setImagePage] = useState(1);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   const classConfig = getClassConfig(selectedWeek, selectedClass);
   const dynamics = classConfig?.dynamics ?? [];
@@ -328,6 +333,10 @@ function DashboardContent({
   const { data: leaderboard } = trpc.professor.leaderboard.useQuery(
     { password },
     { refetchInterval: autoRefresh ? 10000 : false }
+  );
+  const { data: imageResults, isFetching: imagesFetching } = trpc.images.search.useQuery(
+    { query: imageSearch, page: imagePage },
+    { enabled: imageSearch.length > 0 }
   );
 
   const toggleDynamic = trpc.professor.toggleDynamic.useMutation({
@@ -370,6 +379,7 @@ function DashboardContent({
     { id: "reflections" as const, label: "Reflexiones", icon: MessageSquare },
     { id: "wordcloud" as const, label: "Nube", icon: Cloud },
     { id: "leaderboard" as const, label: "Ranking", icon: Trophy },
+    { id: "images" as const, label: "Imágenes", icon: ImageIcon },
   ];
 
   return (
@@ -910,6 +920,124 @@ function DashboardContent({
                       })
                     ) : (
                       <p className="text-center text-white/25 py-10">Aún no hay datos de ranking</p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            {/* Images tab */}
+            {activeTab === "images" && (
+              <motion.div
+                key="images"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-5"
+              >
+                <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 overflow-hidden backdrop-blur-sm">
+                  <div className="flex items-center gap-2 px-5 py-4 border-b border-white/8">
+                    <ImageIcon size={16} className="text-blue-400" />
+                    <span className="font-semibold text-sm">Buscador de Imágenes — Pexels</span>
+                    <span className="text-xs text-white/30 ml-auto">Haz clic en una imagen para copiar su URL</span>
+                  </div>
+                  <div className="p-5 space-y-5">
+                    {/* Search bar */}
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        setImageSearch(imageQuery);
+                        setImagePage(1);
+                      }}
+                      className="flex gap-2"
+                    >
+                      <Input
+                        value={imageQuery}
+                        onChange={e => setImageQuery(e.target.value)}
+                        placeholder="Ej: fuerza muscular, fibras musculares, laboratorio deportivo..."
+                        className="flex-1 bg-white/5 border-white/15 text-white placeholder:text-white/30 focus-visible:ring-blue-500/50"
+                      />
+                      <Button type="submit" className="gap-2 shrink-0" disabled={imagesFetching}>
+                        <Search size={14} />
+                        {imagesFetching ? "Buscando..." : "Buscar"}
+                      </Button>
+                    </form>
+
+                    {/* Results grid */}
+                    {imageResults && imageResults.photos.length > 0 && (
+                      <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {imageResults.photos.map((photo: { id: number; photographer: string; alt: string; src: { medium: string; large: string } }) => (
+                            <div key={photo.id} className="group relative rounded-xl overflow-hidden border border-white/10 aspect-video cursor-pointer"
+                              onClick={() => {
+                                navigator.clipboard.writeText(photo.src.large);
+                                setCopiedId(photo.id);
+                                toast.success("URL copiada al portapapeles");
+                                setTimeout(() => setCopiedId(null), 2000);
+                              }}
+                            >
+                              <img
+                                src={photo.src.medium}
+                                alt={photo.alt || photo.photographer}
+                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center">
+                                <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1">
+                                  {copiedId === photo.id
+                                    ? <Check size={20} className="text-green-400" />
+                                    : <Copy size={20} className="text-white" />}
+                                  <span className="text-[10px] text-white/80">
+                                    {copiedId === photo.id ? "¡Copiada!" : "Copiar URL"}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <p className="text-[9px] text-white/60 truncate">📷 {photo.photographer}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Pagination */}
+                        <div className="flex items-center justify-between pt-2">
+                          <p className="text-xs text-white/30">
+                            {imageResults.totalResults.toLocaleString()} resultados · Página {imageResults.page}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={imagePage <= 1 || imagesFetching}
+                              onClick={() => setImagePage(p => p - 1)}
+                              className="border-white/15 text-white/60 hover:text-white gap-1"
+                            >
+                              <ChevLeft size={14} /> Anterior
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={imagesFetching || imageResults.photos.length < 20}
+                              onClick={() => setImagePage(p => p + 1)}
+                              className="border-white/15 text-white/60 hover:text-white gap-1"
+                            >
+                              Siguiente <ChevRight size={14} />
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {imageSearch && !imagesFetching && imageResults?.photos.length === 0 && (
+                      <p className="text-center text-white/25 py-10">Sin resultados para "{imageSearch}"</p>
+                    )}
+
+                    {!imageSearch && (
+                      <div className="text-center py-12 space-y-2">
+                        <ImageIcon size={32} className="mx-auto text-white/15" />
+                        <p className="text-white/30 text-sm">Escribe un término para buscar imágenes</p>
+                        <p className="text-white/20 text-xs">Sugerencias: "fuerza muscular" · "plataforma de fuerza" · "electromiografía" · "atleta laboratorio"</p>
+                      </div>
                     )}
                   </div>
                 </div>
