@@ -15,6 +15,7 @@ import { getClassConfig, COURSE_CONFIG } from "@/data/courseConfig";
 import { getBlockComponent } from "@/components/blocks/blockRegistry";
 import ChatBot from "@/components/ChatBot";
 import NotesPanel from "@/components/NotesPanel";
+import ImageSearchPanel from "@/components/ImageSearchPanel";
 import { ACHIEVEMENTS } from "@/data/achievements";
 
 export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: number; classId?: number }) {
@@ -306,6 +307,7 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
           weekTitle={weekTitle}
         />
       )}
+      <ImageSearchPanel />
     </div>
   );
 }
