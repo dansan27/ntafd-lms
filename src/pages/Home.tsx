@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LogOut, TrendingUp, Zap, Target, Heart, Activity,
   Layers, PlayCircle, Lock, ArrowRight, ChevronDown,
-  BarChart3, Radio,
+  BarChart3, Radio, Smartphone, BookOpen, Trophy,
 } from "lucide-react";
 import { COURSE_CONFIG, isClassAvailable } from "@/data/courseConfig";
 import { useEffect, useState } from "react";
@@ -116,6 +116,17 @@ const WEEK_THEMES = [
     iconColor: "text-green-400",
     tagColor: "bg-green-500/10 text-green-400 border-green-500/20",
     tags: ["EKG / ECG", "Polar H10", "Pulsioxímetro"],
+  },
+  {
+    gradient: "from-violet-500/20 to-purple-500/10",
+    border: "border-violet-500/20 hover:border-violet-500/40",
+    accent: "bg-violet-500/20 text-violet-400",
+    glow: "shadow-violet-500/10",
+    badge: "Semana 5",
+    icon: Smartphone,
+    iconColor: "text-violet-400",
+    tagColor: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    tags: ["Pulsioxímetro", "Smartwatch", "SpO₂"],
   },
 ];
 
@@ -472,6 +483,65 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Quick tools ── */}
+        <section className="pb-10">
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="flex items-center gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-white">Herramientas</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent" />
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                href: "/mi-progreso",
+                icon: Trophy,
+                label: "Mi Progreso",
+                desc: "Logros, puntuación, tiempo y notas",
+                gradient: "from-yellow-500/15 to-orange-500/15",
+                border: "border-yellow-500/20",
+                color: "text-yellow-400",
+              },
+              {
+                href: "/flashcards",
+                icon: BookOpen,
+                label: "Modo Repaso",
+                desc: "Flashcards de conceptos clave por semana",
+                gradient: "from-blue-500/15 to-indigo-500/15",
+                border: "border-blue-500/20",
+                color: "text-blue-400",
+              },
+              {
+                href: "/simuladores",
+                icon: Activity,
+                label: "Simuladores",
+                desc: "ECG interactivo y calculadora VO₂ máx",
+                gradient: "from-green-500/15 to-cyan-500/15",
+                border: "border-green-500/20",
+                color: "text-green-400",
+              },
+            ].map((tool, i) => {
+              const Icon = tool.icon;
+              return (
+                <motion.div key={tool.href}
+                  initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
+                  <Link href={tool.href}>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                      className={`rounded-2xl border bg-gradient-to-br ${tool.gradient} ${tool.border} p-5 cursor-pointer transition-all hover:brightness-110`}>
+                      <div className={`w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-3 ${tool.color}`}>
+                        <Icon size={20} />
+                      </div>
+                      <h3 className="text-white font-semibold mb-1">{tool.label}</h3>
+                      <p className="text-white/40 text-xs leading-relaxed">{tool.desc}</p>
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
+
         {/* ── Course weeks ── */}
         <section className="pb-24">
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -586,6 +656,7 @@ export default function Home() {
             })}
           </div>
         </section>
+
       </main>
     </div>
   );

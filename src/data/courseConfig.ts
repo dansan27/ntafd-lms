@@ -1,7 +1,7 @@
 import {
   Zap, Rocket, Lightbulb, Clock, Cpu, Activity, Gamepad2, Flag,
   Heart, BookOpen, Layers, FlaskConical, Wifi, Smartphone, GraduationCap,
-  BarChart2, TrendingUp, Radio, Eye,
+  BarChart2, TrendingUp, Radio, Eye, Dumbbell,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -179,6 +179,82 @@ export const COURSE_CONFIG: WeekConfig[] = [
           { id: 2, name: "Clasifica el Equipo", description: "¿Clínico o deportivo? Clasifica cada dispositivo de monitoreo", icon: "⌚", blockId: 3, componentName: "S4_Dynamic2ClasificaEquipo" },
           { id: 3, name: "Quiz Polar H10", description: "Pon a prueba tus conocimientos sobre el sensor de referencia", icon: "🫀", blockId: 7, componentName: "S4_Dynamic3QuizPolarH10" },
           { id: 4, name: "Test Pulsioxímetro", description: "Escenarios clínicos de SpO₂ y pulsioximetría deportiva", icon: "💡", blockId: 8, componentName: "S4_Dynamic4TestPulsioximetro" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "Semana 5: Capacidad Cardiovascular - Métodos de Aplicación II",
+    description: "Pulsioxímetro en profundidad, Smartwatch como sensor cardíaco y aplicaciones en ciclismo y levantamiento de pesas.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: Pulsioxímetro y Smartwatch",
+        description: "Principio óptico, factores de error, comparativa tecnológica y uso en deporte",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Tu smartwatch te miente?", icon: Eye, time: "0-5 min", componentName: "S5_Block1Gancho" },
+          { id: 2, title: "Pulsioxímetro: Principio Óptico", subtitle: "LED rojo (660 nm) e infrarrojo (940 nm)", icon: Eye, time: "5-15 min", hasDynamic: true, componentName: "S5_Block2Pulsioximetro" },
+          { id: 3, title: "SpO₂ y Pulso", subtitle: "Del fotón al porcentaje", icon: Activity, time: "15-25 min", componentName: "S5_Block3SpO2Pulso" },
+          { id: 4, title: "Factores que Alteran la Medición", subtitle: "8 causas de error del pulsioxímetro", icon: Radio, time: "25-35 min", hasDynamic: true, componentName: "S5_Block4ErroresMedicion" },
+          { id: 5, title: "Smartwatch vs Pulsioxímetro", subtitle: "LED verde, PPG y fotopletismografía", icon: Smartphone, time: "35-45 min", hasDynamic: true, componentName: "S5_Block5Smartwatch" },
+          { id: 6, title: "¿Cuál Smartwatch?", subtitle: "Comparativa de modelos deportivos", icon: BarChart2, time: "45-52 min", componentName: "S5_Block6ComparativaSmartwatch" },
+          { id: 7, title: "Smartwatch en el Deporte", subtitle: "Ciclismo indoor, outdoor y pesas", icon: TrendingUp, time: "52-57 min", hasDynamic: true, componentName: "S5_Block7DeporteSmart" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis y reflexión final", icon: GraduationCap, time: "57-60 min", componentName: "S5_Block8Cierre" },
+          { id: 9, title: "Simulador Pulsioxímetro", subtitle: "Animación interactiva LED rojo/IR y SpO₂", icon: Activity, time: "Bonus", componentName: "S5_SimuladorPulsioximetro" },
+        ],
+        dynamics: [
+          { id: 1, name: "¿Qué Longitud de Onda?", description: "Identifica el LED y su función en la oximetría", icon: "🔴", blockId: 2, componentName: "S5_Dynamic1LuzSpO2" },
+          { id: 2, name: "¿Qué Falla?", description: "Dado un escenario, identifica el factor que altera la lectura", icon: "⚠️", blockId: 4, componentName: "S5_Dynamic2ErrorPulso" },
+          { id: 3, name: "Smartwatch vs Pulsioxímetro", description: "¿Cuándo usar cada uno? Quiz comparativo", icon: "⌚", blockId: 5, componentName: "S5_Dynamic3SmartvsOxi" },
+          { id: 4, name: "Elige el Dispositivo", description: "Para cada deporte y escenario, ¿qué sensor usar?", icon: "🏆", blockId: 7, componentName: "S5_Dynamic4EligeDispositivo" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 6,
+    title: "Semana 6: Fuerza Muscular",
+    description: "Métodos de medición de la fuerza muscular: celdas de carga, dinamómetros, plataforma de fuerza, FlexiForce y EMG.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: Métodos de Aplicación",
+        description: "Instrumentos para medir fuerza: galgas extensométricas, dinamómetros isométrico/isocinético, plataforma de fuerza Kistler, FlexiForce y electromiografía",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Cuánta fuerza genera un atleta?", icon: Zap, time: "0-5 min", componentName: "S6C1_Block1Gancho" },
+          { id: 2, title: "La fuerza tiene un número", subtitle: "De la sensación subjetiva a los Newtons", icon: Dumbbell, time: "5-10 min", componentName: "S6C1_Block2Puente" },
+          { id: 3, title: "Celda de Carga (Load Cell)", subtitle: "Galga extensométrica y puente de Wheatstone", icon: Cpu, time: "10-22 min", hasDynamic: true, componentName: "S6C1_Block3LoadCell" },
+          { id: 4, title: "Dinamómetros", subtitle: "Isométrico (Jamar), isotónico y isocinético (Biodex)", icon: Activity, time: "22-34 min", hasDynamic: true, componentName: "S6C1_Block4Dinamometros" },
+          { id: 5, title: "Plataforma de Fuerza", subtitle: "6 canales Kistler: Fx, Fy, Fz, Mx, My, Mz", icon: Layers, time: "34-46 min", componentName: "S6C1_Block5Plataforma" },
+          { id: 6, title: "FlexiForce y EMG", subtitle: "Sensor piezoresistivo y electromiografía", icon: Radio, time: "46-55 min", hasDynamic: true, componentName: "S6C1_Block6EMG" },
+          { id: 7, title: "Reflexión", subtitle: "¿Qué otra forma hay de medir la fuerza?", icon: Lightbulb, time: "55-58 min", componentName: "S6C1_Block7Reflexion" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis y reflexión final", icon: GraduationCap, time: "58-60 min", componentName: "S6C1_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Identifica el Sensor", description: "Dado un escenario deportivo, ¿qué instrumento de medición de fuerza usarías?", icon: "⚖️", blockId: 3, componentName: "S6C1_Dynamic1IdentificaSensor" },
+          { id: 2, name: "Clasifica el Dinamómetro", description: "¿Isométrico, isotónico o isocinético? Clasifica el escenario", icon: "🦾", blockId: 4, componentName: "S6C1_Dynamic2ClasificaDinamometro" },
+          { id: 3, name: "Quiz Fuerza Muscular", description: "Pon a prueba tus conocimientos sobre los instrumentos de fuerza", icon: "🧠", blockId: 6, componentName: "S6C1_Dynamic3QuizFuerza" },
+        ],
+      },
+      {
+        id: 2,
+        title: "Clase 2: Fisiología de la Fuerza Muscular",
+        description: "Definición de fuerza muscular, sistemas de contracción y tipos de fibras musculares (Type I, IIa, IIx)",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Qué formas tenemos de medir la fuerza?", icon: Zap, time: "0-5 min", componentName: "S6C2_Block1Gancho" },
+          { id: 2, title: "Fuerza Muscular", subtitle: "Definición y sistemas de contracción", icon: Dumbbell, time: "5-15 min", componentName: "S6C2_Block2Definicion" },
+          { id: 3, title: "Tipos de Fibras Musculares", subtitle: "Type I · Type IIa · Type IIx", icon: Layers, time: "15-30 min", hasDynamic: true, componentName: "S6C2_Block3FibrasTipos" },
+          { id: 4, title: "¿Cómo medimos la fuerza?", subtitle: "Dinamometría, plataformas, MMT y evaluación funcional", icon: Activity, time: "30-45 min", hasDynamic: true, componentName: "S6C2_Block4MedicionFuerza" },
+          { id: 5, title: "Fibras y Rendimiento", subtitle: "Genética, entrenamiento y distribución Z-score", icon: BarChart2, time: "45-55 min", componentName: "S6C2_Block5QuizFibras" },
+          { id: 6, title: "Cierre", subtitle: "Síntesis y reflexión final", icon: GraduationCap, time: "55-60 min", componentName: "S6C2_Block6Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Clasifica la Fibra", description: "Dado un escenario deportivo, identifica qué tipo de fibra muscular predomina", icon: "🧬", blockId: 4, componentName: "S6C2_Dynamic1ClasificaFibra" },
+          { id: 2, name: "Quiz Fibras Musculares", description: "Pon a prueba tus conocimientos sobre Type I, IIa e IIx", icon: "🧠", blockId: 5, componentName: "S6C2_Dynamic2QuizFibras" },
         ],
       },
     ],

@@ -19,6 +19,17 @@ import {
   setDynamicActive,
   getStudentProgress,
   getProgressByClass,
+  getStudentAchievements,
+  awardAchievement,
+  getStudentNote,
+  saveStudentNote,
+  getStudentAllNotes,
+  saveChatMessage,
+  getChatHistory,
+  clearChatHistory,
+  getLeaderboard,
+  getStudentStats,
+  getAllAchievements,
 } from "../db/db";
 import type {
   DynamicResponse,
@@ -313,6 +324,20 @@ const professorRouter = router({
       return { success: true, dynamicId: input.dynamicId, isActive: input.isActive };
     }),
 
+  leaderboard: publicProcedure
+    .input(z.object({ password: z.string() }))
+    .query(async ({ input }) => {
+      if (input.password !== VALID_PASSWORD) throw new Error("ACCESO DENEGADO - PASSWORD MISMATCH");
+      return getLeaderboard();
+    }),
+
+  allAchievements: publicProcedure
+    .input(z.object({ password: z.string() }))
+    .query(async ({ input }) => {
+      if (input.password !== VALID_PASSWORD) throw new Error("ACCESO DENEGADO - PASSWORD MISMATCH");
+      return getAllAchievements();
+    }),
+
   stats: publicProcedure
     .input(z.object({ password: z.string(), weekId: z.number().default(1), classId: z.number().default(1) }))
     .query(async ({ input }) => {
@@ -367,6 +392,169 @@ const professorRouter = router({
     }),
 });
 
+// ========== ACHIEVEMENTS ROUTER ==========
+const achievementsRouter = router({
+  mine: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) return [];
+      return getStudentAchievements(student.id);
+    }),
+
+  award: publicProcedure
+    .input(z.object({
+      token: z.string(),
+      achievementId: z.string(),
+      achievementName: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) throw new Error("Sesión no válida");
+      const result = await awardAchievement(student.id, input.achievementId, input.achievementName);
+      return { success: true, isNew: result !== null };
+    }),
+});
+
+// ========== NOTES ROUTER ==========
+const notesRouter = router({
+  get: publicProcedure
+    .input(z.object({
+      token: z.string(),
+      weekId: z.number(),
+      classId: z.number(),
+      blockId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) return null;
+      return getStudentNote(student.id, input.weekId, input.classId, input.blockId);
+    }),
+
+  save: publicProcedure
+    .input(z.object({
+      token: z.string(),
+      weekId: z.number(),
+      classId: z.number(),
+      blockId: z.number(),
+      noteText: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) throw new Error("Sesión no válida");
+      await saveStudentNote(student.id, input.weekId, input.classId, input.blockId, input.noteText);
+      return { success: true };
+    }),
+
+  allMine: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) return [];
+      return getStudentAllNotes(student.id);
+    }),
+});
+
+// ========== CHATBOT ROUTER ==========
+const chatRouter = router({
+  ask: publicProcedure
+    .input(z.object({
+      token: z.string(),
+      weekId: z.number(),
+      classId: z.number(),
+      blockId: z.number(),
+      blockTitle: z.string(),
+      weekTitle: z.string(),
+      message: z.string().min(1).max(1000),
+    }))
+    .mutation(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) throw new Error("Sesión no válida");
+
+      // Save user message
+      await saveChatMessage({
+        studentId: student.id,
+        weekId: input.weekId,
+        classId: input.classId,
+        blockId: input.blockId,
+        role: "user",
+        content: input.message,
+      });
+
+      // Get history for context
+      const history = await getChatHistory(student.id, input.weekId, input.classId, input.blockId);
+      const recentHistory = history.slice(-10);
+
+      try {
+        const llmResult = await invokeLLM({
+          messages: [
+            {
+              role: "system",
+              content: `Eres un tutor experto en tecnología deportiva y ciencias del deporte. El alumno está viendo: "${input.blockTitle}" de "${input.weekTitle}". Responde de forma clara, concisa y en español. Usa ejemplos deportivos cuando sea posible. Máximo 3 párrafos.`,
+            },
+            ...recentHistory.map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
+            { role: "user", content: input.message },
+          ],
+        });
+
+        const rawContent = llmResult.choices[0]?.message?.content;
+        const answer = typeof rawContent === "string" ? rawContent : "Lo siento, no pude procesar tu pregunta.";
+
+        await saveChatMessage({
+          studentId: student.id,
+          weekId: input.weekId,
+          classId: input.classId,
+          blockId: input.blockId,
+          role: "assistant",
+          content: answer,
+        });
+
+        return { success: true, answer };
+      } catch (e) {
+        console.warn("Chatbot LLM failed:", e);
+        return { success: false, answer: "El asistente no está disponible en este momento. Intenta más tarde." };
+      }
+    }),
+
+  history: publicProcedure
+    .input(z.object({
+      token: z.string(),
+      weekId: z.number(),
+      classId: z.number(),
+      blockId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) return [];
+      return getChatHistory(student.id, input.weekId, input.classId, input.blockId);
+    }),
+
+  clear: publicProcedure
+    .input(z.object({
+      token: z.string(),
+      weekId: z.number(),
+      classId: z.number(),
+      blockId: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) throw new Error("Sesión no válida");
+      await clearChatHistory(student.id, input.weekId, input.classId, input.blockId);
+      return { success: true };
+    }),
+});
+
+// ========== STUDENT STATS ROUTER ==========
+const statsRouter = router({
+  mine: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const student = await getStudentByToken(input.token);
+      if (!student) return null;
+      return getStudentStats(student.id);
+    }),
+});
+
 const systemRouter = router({});
 const getSessionCookieOptions = (_req: any) => ({});
 
@@ -384,6 +572,10 @@ export const appRouter = router({
   dynamics: dynamicsRouter,
   reflection: reflectionRouter,
   professor: professorRouter,
+  achievements: achievementsRouter,
+  notes: notesRouter,
+  chat: chatRouter,
+  stats: statsRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -83,3 +83,41 @@ export const classActivitiesStatus = sqliteTable("class_activities_status", {
 
 export type ClassActivityStatus = typeof classActivitiesStatus.$inferSelect;
 export type InsertClassActivityStatus = typeof classActivitiesStatus.$inferInsert;
+
+export const studentAchievements = sqliteTable("student_achievements", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  studentId: integer("studentId").notNull(),
+  achievementId: text("achievementId").notNull(),
+  achievementName: text("achievementName").notNull(),
+  earnedAt: integer("earnedAt", { mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export type StudentAchievement = typeof studentAchievements.$inferSelect;
+export type InsertStudentAchievement = typeof studentAchievements.$inferInsert;
+
+export const studentNotes = sqliteTable("student_notes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  studentId: integer("studentId").notNull(),
+  weekId: integer("weekId").notNull(),
+  classId: integer("classId").notNull(),
+  blockId: integer("blockId").notNull(),
+  noteText: text("noteText").notNull().default(""),
+  updatedAt: integer("updatedAt", { mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export type StudentNote = typeof studentNotes.$inferSelect;
+export type InsertStudentNote = typeof studentNotes.$inferInsert;
+
+export const chatMessages = sqliteTable("chat_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  studentId: integer("studentId").notNull(),
+  weekId: integer("weekId").notNull(),
+  classId: integer("classId").notNull(),
+  blockId: integer("blockId").notNull(),
+  role: text("role").notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("createdAt", { mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export type ChatMessage = typeof chatMessages.$inferSelect;
+export type InsertChatMessage = typeof chatMessages.$inferInsert;

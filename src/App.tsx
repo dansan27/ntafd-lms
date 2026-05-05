@@ -14,6 +14,9 @@ import Home from "./pages/Home";
 import ClassViewer from "./pages/course/ClassViewer";
 import StudentLogin from "./pages/StudentLogin";
 import ProfessorDashboard from "./pages/ProfessorDashboard";
+import MiProgreso from "./pages/MiProgreso";
+import Flashcards from "./pages/Flashcards";
+import Simuladores from "./pages/Simuladores";
 
 function Router() {
   return (
@@ -22,6 +25,9 @@ function Router() {
       <Route path={"/week/:week/class/:class"} component={ClassViewer} />
       <Route path={"/profesor"} component={ProfessorDashboard} />
       <Route path={"/login"} component={StudentLogin} />
+      <Route path={"/mi-progreso"} component={MiProgreso} />
+      <Route path={"/flashcards"} component={Flashcards} />
+      <Route path={"/simuladores"} component={Simuladores} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

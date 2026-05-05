@@ -57,6 +57,35 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S4_Block6PolarH10: lazy(() => import("./S4_Block6PolarH10")),
   S4_Block7Pulsioximetro: lazy(() => import("./S4_Block7Pulsioximetro")),
   S4_Block8Cierre: lazy(() => import("./S4_Block8Cierre")),
+
+  // Semana 5, Clase 1 — Capacidad Cardiovascular: Pulsioxímetro y Smartwatch
+  S5_Block1Gancho: lazy(() => import("./S5_Block1Gancho")),
+  S5_Block2Pulsioximetro: lazy(() => import("./S5_Block2Pulsioximetro")),
+  S5_Block3SpO2Pulso: lazy(() => import("./S5_Block3SpO2Pulso")),
+  S5_Block4ErroresMedicion: lazy(() => import("./S5_Block4ErroresMedicion")),
+  S5_Block5Smartwatch: lazy(() => import("./S5_Block5Smartwatch")),
+  S5_Block6ComparativaSmartwatch: lazy(() => import("./S5_Block6ComparativaSmartwatch")),
+  S5_Block7DeporteSmart: lazy(() => import("./S5_Block7DeporteSmart")),
+  S5_Block8Cierre: lazy(() => import("./S5_Block8Cierre")),
+  S5_SimuladorPulsioximetro: lazy(() => import("./S5_SimuladorPulsioximetro")),
+
+  // Semana 6, Clase 1 — Fuerza Muscular: Métodos de Aplicación
+  S6C1_Block1Gancho: lazy(() => import("./S6C1_Block1Gancho")),
+  S6C1_Block2Puente: lazy(() => import("./S6C1_Block2Puente")),
+  S6C1_Block3LoadCell: lazy(() => import("./S6C1_Block3LoadCell")),
+  S6C1_Block4Dinamometros: lazy(() => import("./S6C1_Block4Dinamometros")),
+  S6C1_Block5Plataforma: lazy(() => import("./S6C1_Block5Plataforma")),
+  S6C1_Block6EMG: lazy(() => import("./S6C1_Block6EMG")),
+  S6C1_Block7Reflexion: lazy(() => import("./S6C1_Block7Reflexion")),
+  S6C1_Block8Cierre: lazy(() => import("./S6C1_Block8Cierre")),
+
+  // Semana 6, Clase 2 — Fuerza Muscular: Fisiología y Tipos de Fibras
+  S6C2_Block1Gancho: lazy(() => import("./S6C2_Block1Gancho")),
+  S6C2_Block2Definicion: lazy(() => import("./S6C2_Block2Definicion")),
+  S6C2_Block3FibrasTipos: lazy(() => import("./S6C2_Block3FibrasTipos")),
+  S6C2_Block4MedicionFuerza: lazy(() => import("./S6C2_Block4MedicionFuerza")),
+  S6C2_Block5QuizFibras: lazy(() => import("./S6C2_Block5QuizFibras")),
+  S6C2_Block6Cierre: lazy(() => import("./S6C2_Block6Cierre")),
 };
 
 export function getBlockComponent(componentName: string): LazyBlock | null {

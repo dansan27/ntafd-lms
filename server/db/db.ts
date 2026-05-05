@@ -1,11 +1,13 @@
 import { eq, desc, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
-import { 
-  users, students, studentProgress, dynamicResponses, 
+import {
+  users, students, studentProgress, dynamicResponses,
   reflections, classActivitiesStatus,
+  studentAchievements, studentNotes, chatMessages,
   type InsertUser,
-  type InsertDynamicResponse, type InsertReflection
+  type InsertDynamicResponse, type InsertReflection,
+  type InsertChatMessage,
 } from "./schema";
 import { ENV } from '../api/env';
 import { nanoid } from "nanoid";
@@ -81,6 +83,32 @@ sqlite.exec(`
     isActive INTEGER NOT NULL DEFAULT 0,
     activatedAt INTEGER,
     deactivatedAt INTEGER
+  );
+  CREATE TABLE IF NOT EXISTS student_achievements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    studentId INTEGER NOT NULL,
+    achievementId TEXT NOT NULL,
+    achievementName TEXT NOT NULL,
+    earnedAt INTEGER NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS student_notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    studentId INTEGER NOT NULL,
+    weekId INTEGER NOT NULL,
+    classId INTEGER NOT NULL,
+    blockId INTEGER NOT NULL,
+    noteText TEXT NOT NULL DEFAULT '',
+    updatedAt INTEGER NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS chat_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    studentId INTEGER NOT NULL,
+    weekId INTEGER NOT NULL,
+    classId INTEGER NOT NULL,
+    blockId INTEGER NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    createdAt INTEGER NOT NULL
   );
 `);
 
@@ -312,4 +340,144 @@ export async function setDynamicActive(weekId: number, classId: number, dynamicI
       ...(isActive ? { activatedAt: now } : { deactivatedAt: now }),
     }).run();
   }
+}
+
+// ========== ACHIEVEMENTS ==========
+
+export async function getStudentAchievements(studentId: number) {
+  return db.select().from(studentAchievements)
+    .where(eq(studentAchievements.studentId, studentId))
+    .orderBy(desc(studentAchievements.earnedAt)).all();
+}
+
+export async function hasAchievement(studentId: number, achievementId: string) {
+  const result = db.select().from(studentAchievements)
+    .where(and(
+      eq(studentAchievements.studentId, studentId),
+      eq(studentAchievements.achievementId, achievementId)
+    )).limit(1).all();
+  return result.length > 0;
+}
+
+export async function awardAchievement(studentId: number, achievementId: string, achievementName: string) {
+  const already = await hasAchievement(studentId, achievementId);
+  if (already) return null;
+  db.insert(studentAchievements).values({ studentId, achievementId, achievementName, earnedAt: new Date() }).run();
+  return { studentId, achievementId, achievementName };
+}
+
+export async function getAllAchievements() {
+  return db.select().from(studentAchievements).orderBy(desc(studentAchievements.earnedAt)).all();
+}
+
+// ========== NOTES ==========
+
+export async function getStudentNote(studentId: number, weekId: number, classId: number, blockId: number) {
+  const result = db.select().from(studentNotes)
+    .where(and(
+      eq(studentNotes.studentId, studentId),
+      eq(studentNotes.weekId, weekId),
+      eq(studentNotes.classId, classId),
+      eq(studentNotes.blockId, blockId)
+    )).limit(1).all();
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function saveStudentNote(studentId: number, weekId: number, classId: number, blockId: number, noteText: string) {
+  const existing = await getStudentNote(studentId, weekId, classId, blockId);
+  const now = new Date();
+  if (existing) {
+    db.update(studentNotes).set({ noteText, updatedAt: now })
+      .where(eq(studentNotes.id, existing.id)).run();
+  } else {
+    db.insert(studentNotes).values({ studentId, weekId, classId, blockId, noteText, updatedAt: now }).run();
+  }
+}
+
+export async function getStudentAllNotes(studentId: number) {
+  return db.select().from(studentNotes)
+    .where(eq(studentNotes.studentId, studentId))
+    .orderBy(desc(studentNotes.updatedAt)).all();
+}
+
+// ========== CHAT MESSAGES ==========
+
+export async function saveChatMessage(data: InsertChatMessage) {
+  db.insert(chatMessages).values(data).run();
+}
+
+export async function getChatHistory(studentId: number, weekId: number, classId: number, blockId: number) {
+  return db.select().from(chatMessages)
+    .where(and(
+      eq(chatMessages.studentId, studentId),
+      eq(chatMessages.weekId, weekId),
+      eq(chatMessages.classId, classId),
+      eq(chatMessages.blockId, blockId)
+    ))
+    .orderBy(chatMessages.createdAt).all();
+}
+
+export async function clearChatHistory(studentId: number, weekId: number, classId: number, blockId: number) {
+  db.delete(chatMessages).where(and(
+    eq(chatMessages.studentId, studentId),
+    eq(chatMessages.weekId, weekId),
+    eq(chatMessages.classId, classId),
+    eq(chatMessages.blockId, blockId)
+  )).run();
+}
+
+// ========== LEADERBOARD ==========
+
+export async function getLeaderboard() {
+  const allStudents = await getAllStudents();
+  const allResponses = await getAllDynamicResponses();
+
+  return allStudents.map(s => {
+    const sResponses = allResponses.filter(r => r.studentId === s.id);
+    const totalScore = sResponses.reduce((sum, r) => sum + r.score, 0);
+    const totalMax = sResponses.reduce((sum, r) => sum + r.maxScore, 0);
+    const avgTime = sResponses.length > 0
+      ? sResponses.reduce((sum, r) => sum + (r.timeSpentMs ?? 0), 0) / sResponses.length
+      : 0;
+    return {
+      studentId: s.id,
+      fullName: s.fullName,
+      studentCode: s.studentCode,
+      totalScore,
+      totalMax,
+      completedDynamics: sResponses.length,
+      avgTimeMs: Math.round(avgTime),
+    };
+  }).sort((a, b) => b.totalScore - a.totalScore);
+}
+
+// ========== STUDENT STATS (for Mi Progreso page) ==========
+
+export async function getStudentStats(studentId: number) {
+  const allResponses = await getStudentDynamicResponses(studentId);
+  const allNotesResult = await getStudentAllNotes(studentId);
+  const allAchievementsResult = await getStudentAchievements(studentId);
+
+  const totalScore = allResponses.reduce((sum, r) => sum + r.score, 0);
+  const totalMax = allResponses.reduce((sum, r) => sum + r.maxScore, 0);
+  const totalTimeMs = allResponses.reduce((sum, r) => sum + (r.timeSpentMs ?? 0), 0);
+
+  // Group by week/class to find completed classes
+  const classMap = new Map<string, number[]>();
+  for (const r of allResponses) {
+    const key = `${r.weekId}-${r.classId}`;
+    if (!classMap.has(key)) classMap.set(key, []);
+    classMap.get(key)!.push(r.dynamicId);
+  }
+
+  return {
+    totalScore,
+    totalMax,
+    totalDynamicsCompleted: allResponses.length,
+    totalTimeMs,
+    classesAttempted: classMap.size,
+    notesCount: allNotesResult.length,
+    achievementsCount: allAchievementsResult.length,
+    achievements: allAchievementsResult,
+  };
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo, Suspense } from "react";
+import { useState, useMemo, Suspense, useEffect, useRef } from "react";
 import { useStudent } from "@/contexts/StudentContext";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -7,21 +7,29 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import {
   ChevronLeft, ChevronRight, Menu, X, LogOut, Gamepad2, Loader2, Home,
+  Flame, Trophy,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
-import { getClassConfig } from "@/data/courseConfig";
+import { getClassConfig, COURSE_CONFIG } from "@/data/courseConfig";
 import { getBlockComponent } from "@/components/blocks/blockRegistry";
+import ChatBot from "@/components/ChatBot";
+import NotesPanel from "@/components/NotesPanel";
+import { ACHIEVEMENTS } from "@/data/achievements";
 
 export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: number; classId?: number }) {
   const { student, token, logout } = useStudent();
   const [currentBlock, setCurrentBlock] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const awardedRef = useRef<Set<string>>(new Set());
 
   const classConfig = getClassConfig(weekId, classId);
   const blocks = classConfig?.blocks ?? [];
   const dynamics = classConfig?.dynamics ?? [];
   const totalBlocks = blocks.length;
+
+  const weekConfig = COURSE_CONFIG.find(w => w.id === weekId);
+  const weekTitle = weekConfig?.title ?? `Semana ${weekId}`;
 
   const { data: progressInfo } = trpc.student.getProgress.useQuery(
     { token: token ?? "", weekId, classId },
@@ -35,20 +43,65 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
     { enabled: !!token }
   );
 
+  const { data: myAchievements, refetch: refetchAchievements } = trpc.achievements.mine.useQuery(
+    { token: token ?? "" },
+    { enabled: !!token }
+  );
+
+  const { data: statsData } = trpc.stats.mine.useQuery(
+    { token: token ?? "" },
+    { enabled: !!token }
+  );
+
+  const awardMutation = trpc.achievements.award.useMutation({
+    onSuccess: (data, vars) => {
+      if (data.isNew) {
+        const def = ACHIEVEMENTS.find(a => a.id === vars.achievementId);
+        if (def) {
+          toast.success(`¡Logro desbloqueado! ${def.icon} ${def.name}`, {
+            description: def.description,
+            duration: 4000,
+          });
+          refetchAchievements();
+        }
+      }
+    },
+  });
+
   const completedDynamics = useMemo(() => {
     if (!myResponses) return new Set<number>();
     return new Set(myResponses.map(r => r.dynamicId));
   }, [myResponses]);
 
+  const earnedIds = useMemo(() => new Set((myAchievements ?? []).map(a => a.achievementId)), [myAchievements]);
+
+  // Check and award achievements when responses change
+  useEffect(() => {
+    if (!token || !myResponses) return;
+    const totalDynamics = statsData?.totalDynamicsCompleted ?? myResponses.length;
+
+    const tryAward = (id: string, name: string) => {
+      if (!earnedIds.has(id) && !awardedRef.current.has(id)) {
+        awardedRef.current.add(id);
+        awardMutation.mutate({ token, achievementId: id, achievementName: name });
+      }
+    };
+
+    if (myResponses.length > 0) tryAward("primera_dinamica", "Primer Paso");
+    if (myResponses.length >= dynamics.length && dynamics.length > 0) tryAward("clase_completa", "Clase Completa");
+    if (myResponses.some(r => r.score > 0 && r.score === r.maxScore)) tryAward("perfecto", "Perfección");
+    if (myResponses.some(r => (r.timeSpentMs ?? 999999) < 45000 && r.score > 0)) tryAward("rapido", "Relámpago");
+    if (totalDynamics >= 10) tryAward("maratonista", "Maratonista");
+  }, [myResponses, statsData, earnedIds, token, dynamics.length]);
+
+  const streak = statsData?.classesAttempted ?? 0;
+
   const goToBlock = (block: number) => {
     setCurrentBlock(block);
-    if (token) {
-      updateBlockMutation.mutate({ token, weekId, classId, block });
-    }
+    if (token) updateBlockMutation.mutate({ token, weekId, classId, block });
     setSidebarOpen(false);
   };
 
-  // Sync initial block from server
   useMemo(() => {
     if (progressInfo && progressInfo.currentBlock && currentBlock === 1) {
       setCurrentBlock(progressInfo.currentBlock);
@@ -56,24 +109,19 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
   }, [progressInfo]);
 
   const progress = totalBlocks > 0 ? (currentBlock / totalBlocks) * 100 : 0;
-
-  // Dynamic block rendering via registry
   const currentBlockConfig = blocks.find(b => b.id === currentBlock);
   const BlockComponent = currentBlockConfig ? getBlockComponent(currentBlockConfig.componentName) : null;
-
   const classTitle = classConfig?.title ?? `Semana ${weekId} Clase ${classId}`;
   const classSubtitle = classConfig?.description ?? "";
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Sidebar overlay for mobile */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-sidebar text-sidebar-foreground z-50 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} flex flex-col`}>
-        {/* Sidebar Header */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center justify-between">
             <div>
@@ -87,10 +135,30 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
         </div>
 
         {/* Student info */}
-        <div className="px-4 py-3 border-b border-sidebar-border">
-          <p className="text-xs text-white/40">Alumno</p>
-          <p className="text-sm font-medium text-white/90 truncate">{student?.fullName}</p>
-          <p className="text-xs text-white/50">{student?.studentCode}</p>
+        <div className="px-4 py-3 border-b border-sidebar-border space-y-2">
+          <div>
+            <p className="text-xs text-white/40">Alumno</p>
+            <p className="text-sm font-medium text-white/90 truncate">{student?.fullName}</p>
+            <p className="text-xs text-white/50">{student?.studentCode}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {streak > 0 && (
+              <div className="flex items-center gap-1 bg-orange-500/20 border border-orange-500/30 rounded-lg px-2 py-1">
+                <Flame size={12} className="text-orange-400" />
+                <span className="text-xs font-semibold text-orange-300">{streak}</span>
+                <span className="text-[10px] text-orange-400/70">clases</span>
+              </div>
+            )}
+            {(myAchievements?.length ?? 0) > 0 && (
+              <Link href="/mi-progreso">
+                <div className="flex items-center gap-1 bg-yellow-500/20 border border-yellow-500/30 rounded-lg px-2 py-1 cursor-pointer hover:bg-yellow-500/30 transition-colors">
+                  <Trophy size={12} className="text-yellow-400" />
+                  <span className="text-xs font-semibold text-yellow-300">{myAchievements!.length}</span>
+                  <span className="text-[10px] text-yellow-400/70">logros</span>
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Progress */}
@@ -137,15 +205,11 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
                     <Icon size={16} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-medium truncate ${isActive ? "text-white" : ""}`}>
-                      {block.title}
-                    </p>
+                    <p className={`text-sm font-medium truncate ${isActive ? "text-white" : ""}`}>{block.title}</p>
                     <p className="text-[10px] text-white/40 truncate">{block.subtitle}</p>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    {block.hasDynamic && (
-                      <Gamepad2 size={10} className="text-white/30" />
-                    )}
+                    {block.hasDynamic && <Gamepad2 size={10} className="text-white/30" />}
                     <span className="text-[10px] text-white/30">{block.time}</span>
                   </div>
                 </button>
@@ -154,13 +218,16 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
           </nav>
         </ScrollArea>
 
-        {/* Footer actions */}
+        {/* Footer */}
         <div className="p-3 border-t border-sidebar-border space-y-1">
+          <Link href="/mi-progreso">
+            <Button variant="ghost" className="w-full justify-start text-white/50 hover:text-white hover:bg-sidebar-accent/50 text-sm">
+              <Trophy size={16} className="mr-2" />
+              Mi Progreso
+            </Button>
+          </Link>
           <Link href="/">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-white/50 hover:text-white hover:bg-sidebar-accent/50 text-sm"
-            >
+            <Button variant="ghost" className="w-full justify-start text-white/50 hover:text-white hover:bg-sidebar-accent/50 text-sm">
               <Home size={16} className="mr-2" />
               Menú Principal
             </Button>
@@ -178,7 +245,6 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen">
-        {/* Top bar */}
         <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border">
           <div className="flex items-center justify-between px-4 h-14">
             <div className="flex items-center gap-3">
@@ -194,8 +260,7 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
             </div>
             <div className="flex items-center gap-2">
               <Button
-                variant="outline"
-                size="sm"
+                variant="outline" size="sm"
                 onClick={() => goToBlock(Math.max(1, currentBlock - 1))}
                 disabled={currentBlock <= 1}
                 className="h-8"
@@ -204,8 +269,7 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
                 <span className="hidden sm:inline ml-1">Anterior</span>
               </Button>
               <Button
-                variant="default"
-                size="sm"
+                variant="default" size="sm"
                 onClick={() => goToBlock(Math.min(totalBlocks, currentBlock + 1))}
                 disabled={currentBlock >= totalBlocks}
                 className="h-8 bg-primary hover:bg-primary/90"
@@ -217,7 +281,6 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
           </div>
         </header>
 
-        {/* Block Content */}
         <div className="flex-1 overflow-y-auto">
           <Suspense fallback={
             <div className="flex items-center justify-center h-64">
@@ -230,8 +293,19 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
               </div>
             )}
           </Suspense>
+          {token && <NotesPanel weekId={weekId} classId={classId} blockId={currentBlock} />}
         </div>
       </main>
+
+      {token && (
+        <ChatBot
+          weekId={weekId}
+          classId={classId}
+          blockId={currentBlock}
+          blockTitle={currentBlockConfig?.title ?? ""}
+          weekTitle={weekTitle}
+        />
+      )}
     </div>
   );
 }

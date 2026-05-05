@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Users, BarChart3, MessageSquare, Cloud, RefreshCw, ArrowLeft,
   CheckCircle2, Activity, Gamepad2, Lock, Unlock, Power, KeyRound, Eye, EyeOff,
-  ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut
+  ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut, Trophy
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
@@ -295,7 +295,7 @@ function DashboardContent({
   onSelectClass: (w: number, c: number) => void;
   onLogout: () => void; onPresentation: (block: number) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"students" | "reflections" | "wordcloud">("students");
+  const [activeTab, setActiveTab] = useState<"students" | "reflections" | "wordcloud" | "leaderboard">("students");
 
   const classConfig = getClassConfig(selectedWeek, selectedClass);
   const dynamics = classConfig?.dynamics ?? [];
@@ -324,6 +324,10 @@ function DashboardContent({
   const { data: dynamicStatuses, refetch: refetchStatuses } = trpc.professor.dynamicStatuses.useQuery(
     { password },
     { refetchInterval: autoRefresh ? 3000 : false }
+  );
+  const { data: leaderboard } = trpc.professor.leaderboard.useQuery(
+    { password },
+    { refetchInterval: autoRefresh ? 10000 : false }
   );
 
   const toggleDynamic = trpc.professor.toggleDynamic.useMutation({
@@ -365,6 +369,7 @@ function DashboardContent({
     { id: "students" as const, label: "Alumnos", icon: Users },
     { id: "reflections" as const, label: "Reflexiones", icon: MessageSquare },
     { id: "wordcloud" as const, label: "Nube", icon: Cloud },
+    { id: "leaderboard" as const, label: "Ranking", icon: Trophy },
   ];
 
   return (
@@ -848,6 +853,63 @@ function DashboardContent({
                       <p className="text-center text-white/25 py-10">
                         La nube se generará cuando los alumnos envíen sus reflexiones
                       </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            {/* Leaderboard tab */}
+            {activeTab === "leaderboard" && (
+              <motion.div
+                key="leaderboard"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="rounded-2xl bg-[#0d0d0f]/60 border border-white/8 overflow-hidden backdrop-blur-sm">
+                  <div className="flex items-center gap-2 px-5 py-4 border-b border-white/8">
+                    <Trophy size={16} className="text-yellow-400" />
+                    <span className="font-semibold text-sm">Ranking General de Alumnos</span>
+                    <span className="text-xs text-white/30 ml-auto">Por puntuación total acumulada</span>
+                  </div>
+                  <div className="p-5 space-y-2">
+                    {leaderboard && leaderboard.length > 0 ? (
+                      leaderboard.map((entry: any, i: number) => {
+                        const pct = entry.totalMax > 0 ? Math.round((entry.totalScore / entry.totalMax) * 100) : 0;
+                        const medals = ["🥇", "🥈", "🥉"];
+                        return (
+                          <motion.div
+                            key={entry.studentId}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.04 }}
+                            className={`flex items-center gap-4 p-4 rounded-2xl border transition-colors ${
+                              i === 0
+                                ? "bg-yellow-500/10 border-yellow-500/30"
+                                : i === 1
+                                  ? "bg-white/8 border-white/10"
+                                  : i === 2
+                                    ? "bg-amber-700/10 border-amber-700/20"
+                                    : "bg-white/4 border-white/6"
+                            }`}
+                          >
+                            <span className="text-xl w-7 text-center shrink-0">
+                              {medals[i] ?? <span className="text-white/30 text-sm font-bold">{i + 1}</span>}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-white truncate">{entry.fullName}</p>
+                              <p className="text-xs text-white/40">{entry.studentCode} · {entry.completedDynamics} actividades</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-lg font-bold text-white">{entry.totalScore} <span className="text-xs text-white/30">pts</span></p>
+                              <p className="text-[11px] text-white/40">{pct}% precisión</p>
+                            </div>
+                          </motion.div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-center text-white/25 py-10">Aún no hay datos de ranking</p>
                     )}
                   </div>
                 </div>
