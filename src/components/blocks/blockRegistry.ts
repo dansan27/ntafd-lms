@@ -86,6 +86,26 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S6C2_Block4MedicionFuerza: lazy(() => import("./S6C2_Block4MedicionFuerza")),
   S6C2_Block5QuizFibras: lazy(() => import("./S6C2_Block5QuizFibras")),
   S6C2_Block6Cierre: lazy(() => import("./S6C2_Block6Cierre")),
+
+  // Semana 9, Clase 1 — ECNT: HTA y Obesidad
+  S9C1_Block1Gancho: lazy(() => import("./S9C1_Block1Gancho")),
+  S9C1_Block2ECNT: lazy(() => import("./S9C1_Block2ECNT")),
+  S9C1_Block3TecnologiaSalud: lazy(() => import("./S9C1_Block3TecnologiaSalud")),
+  S9C1_Block4HTAObesidad: lazy(() => import("./S9C1_Block4HTAObesidad")),
+  S9C1_Block5Wearables: lazy(() => import("./S9C1_Block5Wearables")),
+  S9C1_Block6Telemedicina: lazy(() => import("./S9C1_Block6Telemedicina")),
+  S9C1_Block7Reflexion: lazy(() => import("./S9C1_Block7Reflexion")),
+  S9C1_Block8Cierre: lazy(() => import("./S9C1_Block8Cierre")),
+
+  // Semana 9, Clase 2 — Diabetes, Cáncer y Tendencias Futuras
+  S9C2_Block1Gancho: lazy(() => import("./S9C2_Block1Gancho")),
+  S9C2_Block2Diabetes: lazy(() => import("./S9C2_Block2Diabetes")),
+  S9C2_Block3MCG: lazy(() => import("./S9C2_Block3MCG")),
+  S9C2_Block4EducacionDigital: lazy(() => import("./S9C2_Block4EducacionDigital")),
+  S9C2_Block5Cancer: lazy(() => import("./S9C2_Block5Cancer")),
+  S9C2_Block6RVRehabilitacion: lazy(() => import("./S9C2_Block6RVRehabilitacion")),
+  S9C2_Block7Tendencias: lazy(() => import("./S9C2_Block7Tendencias")),
+  S9C2_Block8Cierre: lazy(() => import("./S9C2_Block8Cierre")),
 };
 
 export function getBlockComponent(componentName: string): LazyBlock | null {

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guion Semana 9 — Tecnología Aplicada en ECNT</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #1a1a1a;
+      background: #fff;
+      padding: 40px 52px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 32px;
+      border-bottom: 2px solid #0d9488;
+      padding-bottom: 12px;
+    }
+    h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0d9488;
+      margin-top: 28px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    h3 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+    p { margin-bottom: 10px; }
+    blockquote {
+      border-left: 3px solid #99f6e4;
+      background: #f0fdfa;
+      padding: 8px 14px;
+      margin: 10px 0;
+      color: #134e4a;
+      font-style: italic;
+      font-size: 12px;
+      border-radius: 0 6px 6px 0;
+    }
+    ul, ol { margin: 8px 0 10px 20px; }
+    li { margin-bottom: 5px; }
+    strong { font-weight: 700; }
+    em { font-style: italic; color: #374151; }
+    .highlight {
+      background: #f0fdfa;
+      border: 1px solid #5eead4;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 12.5px;
+    }
+    .callout-info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 3px solid #3b82f6;
+      border-radius: 0 6px 6px 0;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-size: 12px;
+      color: #1e3a5f;
+    }
+    .callout-warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 3px solid #f59e0b;
+      border-radius: 0 6px 6px 0;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-size: 12px;
+      color: #78350f;
+    }
+    .callout-tip {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 3px solid #22c55e;
+      border-radius: 0 6px 6px 0;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-size: 12px;
+      color: #14532d;
+    }
+    .callout-clinical {
+      background: #fdf4ff;
+      border: 1px solid #e9d5ff;
+      border-left: 3px solid #9333ea;
+      border-radius: 0 6px 6px 0;
+      padding: 9px 14px;
+      margin: 10px 0;
+      font-size: 12px;
+      color: #4a1d96;
+    }
+    .dynamic-box {
+      background: #f5f3ff;
+      border: 1px solid #c4b5fd;
+      border-radius: 8px;
+      padding: 11px 16px;
+      margin: 14px 0;
+      font-size: 12px;
+      color: #4c1d95;
+    }
+    .dynamic-box strong { color: #6d28d9; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 12px;
+    }
+    th {
+      background: #0d9488;
+      color: #fff;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 700;
+    }
+    td {
+      padding: 7px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f9fafb; }
+    .time-badge {
+      display: inline-block;
+      background: #ccfbf1;
+      color: #0f766e;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 8px;
+    }
+    .block-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+    .block-num {
+      background: #0d9488;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .screen-note {
+      display: inline-block;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: #475569;
+      font-style: normal;
+      margin-bottom: 8px;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .step-card {
+      border: 1px solid #99f6e4;
+      border-radius: 6px;
+      padding: 9px 11px;
+      background: #f0fdfa;
+      font-size: 11.5px;
+    }
+    .step-card .step-num { font-weight: 800; color: #0d9488; margin-bottom: 3px; }
+    .step-card .step-title { font-weight: 700; margin-bottom: 3px; }
+    .step-card .step-desc { color: #6b7280; line-height: 1.4; }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .summary-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      background: #fafafa;
+    }
+    .summary-card .icon { font-size: 22px; margin-bottom: 5px; }
+    .summary-card .label { font-size: 12px; font-weight: 700; }
+    .summary-card .sub { font-size: 10.5px; color: #6b7280; margin-top: 2px; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .metric-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 10px;
+      background: #f9fafb;
+    }
+    .metric-card .m-val { font-size: 18px; font-weight: 800; color: #0d9488; }
+    .metric-card .m-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+    .metric-card .m-desc { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    .page-break { page-break-before: always; }
+    .footer {
+      margin-top: 40px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 11px;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+    }
+    .nota-docente {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 24px;
+      font-size: 12px;
+    }
+    .nota-docente h4 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+    .nota-docente ul { margin-left: 16px; }
+    .nota-docente li { margin-bottom: 4px; color: #374151; }
+    .clase-header {
+      background: #f0fdfa;
+      border: 2px solid #0d9488;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 32px 0 24px;
+    }
+    .clase-header h2 {
+      color: #0f766e;
+      margin: 0 0 4px;
+      font-size: 17px;
+    }
+    .clase-header p { color: #374151; margin: 0; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <h1>Guion — Semana 9</h1>
+  <div class="subtitle">
+    Tecnología Aplicada en la Prevención y Tratamiento de ECNT &nbsp;·&nbsp;
+    <strong>2 clases · 60 min c/u</strong> &nbsp;·&nbsp;
+    NTAFD — Universidad Peruana de Ciencias Aplicadas &nbsp;·&nbsp;
+    Profesores: Sergio Bravo · José Luis Carrión
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       CLASE 1: ECNT, HTA Y OBESIDAD
+  ════════════════════════════════════════════════ -->
+  <div class="clase-header">
+    <h2>Clase 1: ECNT, HTA y Obesidad</h2>
+    <p>Introducción a las ECNT · Rol de la tecnología en salud · Wearables, apps y telemedicina para HTA y obesidad</p>
+  </div>
+
+  <!-- BLOQUE 1 -->
+  <div class="block-header">
+    <span class="block-num">1</span>
+    <h2 style="margin:0">El Gancho <span class="time-badge">0–5 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: fondo oscuro teal → negro, texto "71%" en gradiente grande</div>
+
+  <blockquote>
+    "Quiero que piensen en este número antes de abrir la plataforma: <strong>71%</strong>. Ese es el porcentaje de todas las muertes en el mundo que tienen el mismo origen."
+  </blockquote>
+  <p><em>[Pausa 4 segundos — dejar que el número impacte]</em></p>
+  <blockquote>
+    "No son accidentes. No son guerras. No son infecciones. Son enfermedades que se desarrollan lentamente, durante años, en silencio. Enfermedades crónicas no transmisibles. La OMS dice que matan a 41 millones de personas cada año."
+  </blockquote>
+  <blockquote>
+    "La pregunta que vamos a responder hoy es: <strong>¿qué hace la tecnología cuando la medicina sola no alcanza?</strong> Wearables, apps, sensores de glucosa y plataformas de telemedicina están cambiando la vida de pacientes con HTA, obesidad, diabetes y cáncer."
+  </blockquote>
+  <blockquote>
+    "La tecnología ya no es un lujo — es una herramienta de salud pública. Empecemos."
+  </blockquote>
+
+  <!-- BLOQUE 2 -->
+  <div class="block-header">
+    <span class="block-num">2</span>
+    <h2 style="margin:0">¿Qué son las ECNT? <span class="time-badge">5–15 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock teal — 4 métricas de tipos ECNT + tabla factores de riesgo</div>
+
+  <blockquote>
+    "Las Enfermedades Crónicas No Transmisibles tienen tres características en común: son de <strong>larga duración</strong>, tienen <strong>progresión lenta</strong>, y en su mayoría son <strong>prevenibles</strong>."
+  </blockquote>
+
+  <h3>Las 4 principales ECNT (OMS)</h3>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="m-val">🫀 44%</div>
+      <div class="m-label">Cardiovasculares</div>
+      <div class="m-desc">HTA, infarto, ACV — causa #1 de muerte ECNT</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-val">🎗️ 22%</div>
+      <div class="m-label">Cáncer</div>
+      <div class="m-desc">+10 M de muertes anuales. Ejercicio = factor protector</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-val">💉 4%</div>
+      <div class="m-label">Diabetes</div>
+      <div class="m-desc">537 M de adultos afectados globalmente</div>
+    </div>
+  </div>
+
+  <blockquote>
+    "Lo importante de esta clasificación es que los factores de riesgo son compartidos: sedentarismo, mala alimentación, tabaco y alcohol. Eso significa que una sola intervención — como el ejercicio físico — puede impactar varias ECNT al mismo tiempo."
+  </blockquote>
+
+  <h3>Factores de riesgo modificables</h3>
+  <table>
+    <tr><th>Factor</th><th>ECNT asociada</th><th>Intervención tecnológica</th></tr>
+    <tr><td>Sedentarismo</td><td>HTA, DM2, obesidad, cáncer colon</td><td>Smartwatch, apps de pasos, telemedicina</td></tr>
+    <tr><td>Dieta hipercalórica</td><td>Obesidad, DM2, cardiovascular</td><td>MyFitnessPal, registro nutricional</td></tr>
+    <tr><td>Tabaquismo</td><td>Cáncer pulmón, EPOC, cardiovascular</td><td>Apps de cesación con IA</td></tr>
+    <tr><td>Alcohol excesivo</td><td>Hepática, cardiovascular, cáncer</td><td>Apps de seguimiento y coaching digital</td></tr>
+  </table>
+
+  <div class="dynamic-box">
+    <strong>🎮 Dinámica 1 — Clasifica la ECNT</strong> (activar en plataforma)<br>
+    Los estudiantes ven 6 condiciones y responden: ¿es ECNT o no? Casos incluyen HTA, gripe, diabetes tipo 2, apendicitis, cáncer de colon y fractura. Feedback inmediato con explicación.
+  </div>
+
+  <!-- BLOQUE 3 -->
+  <div class="block-header">
+    <span class="block-num">3</span>
+    <h2 style="margin:0">Tecnología en Salud <span class="time-badge">15–23 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: 3 tarjetas — Prevención · Monitoreo continuo · Adherencia</div>
+
+  <blockquote>
+    "La tecnología en salud no es nueva. Lo nuevo es la <strong>integración</strong>. Pasamos de termómetros y tensiómetros manuales a ecosistemas conectados que monitorean al paciente las 24 horas del día."
+  </blockquote>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">🔍</div>
+      <div class="step-title">Prevención y detección temprana</div>
+      <div class="step-desc">Identificar factores de riesgo antes de que se conviertan en enfermedad crónica establecida.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">📡</div>
+      <div class="step-title">Monitoreo continuo</div>
+      <div class="step-desc">Datos en tiempo real: glucosa, presión arterial, FC, sueño — sin ir al médico cada semana.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">💊</div>
+      <div class="step-title">Adherencia al tratamiento</div>
+      <div class="step-desc">Apps con recordatorios y feedback mejoran el seguimiento del plan médico y de ejercicio.</div>
+    </div>
+  </div>
+
+  <blockquote>
+    "El ejercicio físico es el denominador común de todas las ECNT. La tecnología no reemplaza al profesional — lo <strong>potencia</strong>. Le da datos que antes no tenía, y le permite llegar a más pacientes."
+  </blockquote>
+
+  <!-- BLOQUE 4 -->
+  <div class="block-header">
+    <span class="block-num">4</span>
+    <h2 style="margin:0">HTA y Obesidad <span class="time-badge">23–35 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock teal — métricas HTA + tabla clasificación IMC</div>
+
+  <blockquote>
+    "La hipertensión arterial afecta a <strong>1.28 billones de personas</strong> en el mundo. La OMS la llama 'el asesino silencioso' porque la mayoría no siente síntomas — hasta que ocurre el infarto o el ACV."
+  </blockquote>
+
+  <h3>Hipertensión Arterial</h3>
+  <div class="callout-info">
+    <strong>Definición (AHA 2017):</strong> PA ≥ 130/80 mmHg en dos mediciones separadas. Se clasifican en Estadio 1 (130–139/80–89) y Estadio 2 (≥140/90).
+  </div>
+
+  <blockquote>
+    "El ejercicio aeróbico moderado — caminar a paso rápido, ciclismo, natación — reduce la presión arterial sistólica en promedio <strong>5 a 8 mmHg</strong>. Eso equivale al efecto de un medicamento antihipertensivo de primera línea."
+  </blockquote>
+  <blockquote>
+    "¿Y la obesidad? Las causas son las mismas: sedentarismo y dieta. Y el impacto del ejercicio también es doble — pierde peso <em>y</em> baja la presión."
+  </blockquote>
+
+  <h3>Clasificación IMC (OMS)</h3>
+  <table>
+    <tr><th>IMC (kg/m²)</th><th>Clasificación</th><th>Riesgo cardiovascular</th></tr>
+    <tr><td>18.5 – 24.9</td><td>Normopeso</td><td>Bajo</td></tr>
+    <tr><td>25 – 29.9</td><td>Sobrepeso</td><td>Moderado</td></tr>
+    <tr><td>30 – 34.9</td><td>Obesidad Grado I</td><td>Alto</td></tr>
+    <tr><td>35 – 39.9</td><td>Obesidad Grado II</td><td>Muy alto</td></tr>
+    <tr><td>≥ 40</td><td>Obesidad Grado III (mórbida)</td><td>Extremo</td></tr>
+  </table>
+
+  <div class="dynamic-box">
+    <strong>🎮 Dinámica 2 — Elige la Tecnología</strong> (activar en plataforma)<br>
+    4 casos clínicos de pacientes con HTA u obesidad. Los estudiantes eligen entre tensiómetro digital+app, smartwatch deportivo, pulsera de actividad+telemedicina, báscula BIA+MyFitnessPal. Feedback con justificación clínica.
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- BLOQUE 5 -->
+  <div class="block-header">
+    <span class="block-num">5</span>
+    <h2 style="margin:0">Apps y Wearables <span class="time-badge">35–43 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — apps + tabla comparativa wearables</div>
+
+  <blockquote>
+    "Hay dos grandes categorías de herramientas digitales para HTA y obesidad: las <strong>apps de actividad física y nutrición</strong>, y los <strong>wearables</strong>."
+  </blockquote>
+
+  <h3>Apps principales</h3>
+  <ul>
+    <li><strong>MyFitnessPal</strong> — Registro de calorías, macros y actividad. Más de 200 millones de usuarios. Base de datos de alimentos enorme.</li>
+    <li><strong>Runtastic</strong> — GPS para running y cardio. Ritmo, distancia, planes de entrenamiento personalizados.</li>
+    <li><strong>Google Fit / Apple Health</strong> — Hub integrador: consolida datos de múltiples apps y sensores en un perfil de salud único.</li>
+  </ul>
+
+  <h3>Wearables para ECNT</h3>
+  <table>
+    <tr><th>Dispositivo</th><th>Métricas clave</th><th>Ventaja para ECNT</th></tr>
+    <tr><td>Apple Watch Series 9</td><td>FC, SpO₂, ECG, PA estimada</td><td>Alerta de FA; integra con historial médico</td></tr>
+    <tr><td>Fitbit Charge 6</td><td>Pasos, sueño, FC en reposo</td><td>Reto de pasos diarios — ideal para sedentarios</td></tr>
+    <tr><td>Garmin Vívosmart 5</td><td>Estrés (HRV), FC, calorías</td><td>Monitoreo de variabilidad de FC 24/7</td></tr>
+    <tr><td>Omron HeartGuide</td><td>Presión arterial en muñeca</td><td>Único wearable con PA clínicamente validada ISO</td></tr>
+  </table>
+
+  <div class="callout-tip">
+    <strong>Clave pedagógica:</strong> Los wearables ofrecen retroalimentación en tiempo real y establecimiento de metas — dos factores que mejoran la adherencia al ejercicio. Pero recalquen: el Omron es el único con validación clínica real para PA.
+  </div>
+
+  <!-- BLOQUE 6 -->
+  <div class="block-header">
+    <span class="block-num">6</span>
+    <h2 style="margin:0">Telemedicina <span class="time-badge">43–52 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — métricas + tabs HTA / Obesidad</div>
+
+  <blockquote>
+    "La telemedicina elimina la barrera más grande del seguimiento crónico: <strong>el desplazamiento</strong>. El paciente con HTA no necesita ir al consultorio cada mes — puede enviar sus registros de PA y el médico ajusta la medicación desde la plataforma."
+  </blockquote>
+
+  <h3>Evidencia clínica en HTA</h3>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="m-val">+23%</div>
+      <div class="m-label">Adherencia a medicación</div>
+      <div class="m-desc">Con seguimiento remoto vs. atención estándar</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-val">−7.6 mmHg</div>
+      <div class="m-label">Reducción PA sistólica</div>
+      <div class="m-desc">Adicional vs. consulta presencial sola</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-val">−31%</div>
+      <div class="m-label">Visitas de emergencia</div>
+      <div class="m-desc">En pacientes con seguimiento telemédico activo</div>
+    </div>
+  </div>
+
+  <div class="callout-warning">
+    <strong>Importante:</strong> La telemedicina <em>no</em> reemplaza la consulta presencial de diagnóstico inicial. Es para el <strong>seguimiento crónico</strong>, ajuste de medicación y coaching de ejercicio.
+  </div>
+
+  <div class="dynamic-box">
+    <strong>🎮 Dinámica 3 — Quiz HTA y Wearables</strong> (activar en plataforma)<br>
+    6 preguntas: definición de HTA, efecto del ejercicio aeróbico en PA, limitaciones de la PA en smartwatch, beneficios de telemedicina, apps de actividad, clasificación IMC. Feedback con explicación clínica.
+  </div>
+
+  <!-- BLOQUE 7 -->
+  <div class="block-header">
+    <span class="block-num">7</span>
+    <h2 style="margin:0">Reflexión <span class="time-badge">52–57 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: 4 opciones tecnológicas para caso clínico</div>
+
+  <blockquote>
+    "Antes de cerrar, un caso para reflexionar. Tienen 2 minutos para pensar: <strong>Paciente, 52 años, HTA estadio 1, trabaja sentado 8 horas al día, no hace ejercicio, tiene smartphone pero poca experiencia tecnológica</strong>. Las opciones son estas cuatro —"
+  </blockquote>
+
+  <ul>
+    <li>⌚ Smartwatch con monitor de FC y PA</li>
+    <li>📱 App de seguimiento de pasos y calorías</li>
+    <li>🩺 Consulta de telemedicina semanal</li>
+    <li>🏥 Tensiómetro digital con Bluetooth</li>
+  </ul>
+
+  <p><em>[Abrir discusión — 3 min. No hay una sola respuesta correcta; la combinación ideal puede incluir varias.]</em></p>
+
+  <div class="callout-tip">
+    <strong>Respuesta orientadora:</strong> Para un paciente poco tecnológico, lo más accesible es el tensiómetro digital + Bluetooth con app simple + telemedicina quincenal. El smartwatch es ideal si tiene mayor alfabetización digital.
+  </div>
+
+  <!-- BLOQUE 8 -->
+  <div class="block-header">
+    <span class="block-num">8</span>
+    <h2 style="margin:0">Cierre — Clase 1 <span class="time-badge">57–60 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: slide de cierre teal — anticipo Clase 2</div>
+
+  <blockquote>
+    "Hoy vieron que las ECNT representan el mayor desafío de salud pública del siglo XXI — y que la tecnología tiene herramientas concretas para cada una: wearables para monitoreo, apps para adherencia, telemedicina para seguimiento."
+  </blockquote>
+  <blockquote>
+    "En la próxima clase vamos a ir más profundo: cómo el ejercicio interactúa con la glucosa en diabetes y cómo los sensores MCG — FreeStyle Libre y Dexcom — cambian la vida del paciente activo. También veremos qué hace la tecnología en oncología y cuál es el futuro: IA, IoT y medicina de precisión."
+  </blockquote>
+
+  <div class="nota-docente">
+    <h4>📋 Nota para el docente — Clase 1</h4>
+    <ul>
+      <li>Activar las 3 dinámicas en el momento indicado desde el <strong>Professor Dashboard</strong></li>
+      <li>Dinámica 1 (Bloque 2): clasificación de ECNT — buena para arrancar participación</li>
+      <li>Dinámica 2 (Bloque 4): casos clínicos — invitar a justificar la elección en voz alta</li>
+      <li>Dinámica 3 (Bloque 6): quiz evaluativo — revisar resultados al terminar</li>
+      <li>El buscador de imágenes Pexels está disponible en el panel flotante (ícono foto)</li>
+    </ul>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- ════════════════════════════════════════════════
+       CLASE 2: DIABETES, CÁNCER Y TENDENCIAS FUTURAS
+  ════════════════════════════════════════════════ -->
+  <div class="clase-header">
+    <h2>Clase 2: Diabetes, Cáncer y Tendencias Futuras</h2>
+    <p>MCG para diabetes · Ejercicio en oncología · Realidad virtual en rehabilitación · IA, IoT y medicina de precisión</p>
+  </div>
+
+  <!-- BLOQUE 1 -->
+  <div class="block-header">
+    <span class="block-num">1</span>
+    <h2 style="margin:0">El Gancho <span class="time-badge">0–5 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: fondo oscuro teal, texto impactante sobre glucosa y ejercicio</div>
+
+  <blockquote>
+    "Pregunta de arranque: ¿puede el ejercicio físico controlar el azúcar en sangre mejor que la medicación?"
+  </blockquote>
+  <p><em>[Esperar respuestas — 30 segundos]</em></p>
+  <blockquote>
+    "La respuesta es sí, en muchos casos. Una sola sesión de ejercicio moderado puede reducir la glucemia hasta 30 mg/dL durante las siguientes 24 horas en diabetes tipo 2. Es el equivalente a una dosis de metformina. Pero sin tecnología de monitoreo, el paciente no lo sabe — y no puede ajustar su insulina de forma segura."
+  </blockquote>
+  <blockquote>
+    "Hoy vamos a ver los sensores que cambian eso: <strong>FreeStyle Libre y Dexcom</strong>. Y después iremos a oncología — donde el ejercicio hace algo que la quimioterapia no puede: reducir la fatiga y mejorar la función inmune."
+  </blockquote>
+
+  <!-- BLOQUE 2 -->
+  <div class="block-header">
+    <span class="block-num">2</span>
+    <h2 style="margin:0">Diabetes y Glucemia <span class="time-badge">5–15 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — 3 tipos + tabla ejercicio/glucosa</div>
+
+  <blockquote>
+    "La diabetes no es una sola enfermedad — son tres."
+  </blockquote>
+
+  <h3>Tipos de diabetes</h3>
+  <table>
+    <tr><th>Tipo</th><th>Mecanismo</th><th>Prevalencia</th></tr>
+    <tr><td><strong>DM1</strong></td><td>Autoinmune — destrucción células β pancreáticas. Requiere insulina exógena siempre.</td><td>~10% de casos</td></tr>
+    <tr><td><strong>DM2</strong></td><td>Resistencia periférica a insulina. Fuertemente asociada a obesidad y sedentarismo.</td><td>~90% de casos</td></tr>
+    <tr><td><strong>Gestacional</strong></td><td>Intolerancia a glucosa durante embarazo. Riesgo de DM2 posterior para madre e hijo.</td><td>Variable</td></tr>
+  </table>
+
+  <h3>Efecto del ejercicio sobre la glucemia</h3>
+  <table>
+    <tr><th>Tipo de ejercicio</th><th>Efecto</th><th>Mecanismo</th></tr>
+    <tr><td>Aeróbico moderado</td><td>↓ 20–30 mg/dL</td><td>Captación muscular GLUT-4 independiente de insulina</td></tr>
+    <tr><td>Resistencia (pesas)</td><td>↓ post-ejercicio</td><td>Mayor masa muscular → más depósito de glucógeno</td></tr>
+    <tr><td>HIIT</td><td>Variable (↓ o ↑ transitorio)</td><td>Activación simpática puede elevar glucosa brevemente</td></tr>
+    <tr><td>Ejercicio prolongado (&gt;60 min)</td><td>Riesgo hipoglucemia tardía</td><td>Sensibilidad insulínica elevada 12–48 h post</td></tr>
+  </table>
+
+  <div class="callout-clinical">
+    <strong>Clave clínica:</strong> El ejercicio aeróbico moderado mejora la sensibilidad a la insulina hasta 48 horas después de una sola sesión. Es la intervención no farmacológica más potente en DM2.
+  </div>
+
+  <div class="dynamic-box">
+    <strong>🎮 Dinámica 1 — MCG en Acción</strong> (activar en plataforma)<br>
+    5 preguntas sobre monitoreo continuo de glucosa: qué mide el MCG (intersticial vs. capilar), ventaja Dexcom vs. FreeStyle, qué hacer con glucemia &lt;90 mg/dL pre-ejercicio, qué significa MARD &lt;9%, riesgo de hipoglucemia post-ejercicio en DM1.
+  </div>
+
+  <!-- BLOQUE 3 -->
+  <div class="block-header">
+    <span class="block-num">3</span>
+    <h2 style="margin:0">Monitoreo Continuo de Glucosa (MCG) <span class="time-badge">15–25 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — FreeStyle Libre vs Dexcom + tabla glucemia/ejercicio</div>
+
+  <blockquote>
+    "Los sensores MCG son pequeños filamentos subcutáneos que miden la glucosa en el líquido intersticial cada 1 a 5 minutos, sin pinchazo. Se adhieren al brazo o abdomen y duran de 10 a 14 días."
+  </blockquote>
+
+  <h3>Dispositivos líderes</h3>
+  <table>
+    <tr><th>Dispositivo</th><th>Duración</th><th>Característica diferencial</th><th>Costo relativo</th></tr>
+    <tr><td><strong>FreeStyle Libre (Abbott)</strong></td><td>14 días</td><td>Escaneo con smartphone — sin alertas automáticas en versión básica</td><td>Accesible</td></tr>
+    <tr><td><strong>Dexcom G7</strong></td><td>10 días</td><td>Alertas en tiempo real (hipo/hiperglucemia) sin escanear. Gold standard clínico.</td><td>Premium</td></tr>
+  </table>
+
+  <h3>Guía glucémica para el ejercicio (MCG)</h3>
+  <table>
+    <tr><th>Momento</th><th>Lectura MCG</th><th>Acción</th></tr>
+    <tr><td>Pre-ejercicio</td><td>&lt; 90 mg/dL</td><td>Ingerir 15–20 g de carbohidratos antes de comenzar</td></tr>
+    <tr><td>Pre-ejercicio</td><td>90–250 mg/dL</td><td>Zona segura — iniciar actividad normalmente</td></tr>
+    <tr><td>Pre-ejercicio</td><td>&gt; 250 mg/dL</td><td>Posponer ejercicio; verificar cetonas</td></tr>
+    <tr><td>Durante</td><td>Caída &gt;2 mg/dL/min</td><td>Reducir intensidad; carbohidratos de acción rápida</td></tr>
+    <tr><td>Post-ejercicio</td><td>&lt; 100 mg/dL</td><td>Riesgo hipoglucemia tardía — monitorear 4–8 h</td></tr>
+  </table>
+
+  <div class="callout-warning">
+    Los MCG miden glucosa <em>intersticial</em>, no capilar directamente. Hay un retraso de 10–15 min respecto a la glucemia capilar — importante durante ejercicio intenso de alta variabilidad glucémica.
+  </div>
+
+  <!-- BLOQUE 4 -->
+  <div class="block-header">
+    <span class="block-num">4</span>
+    <h2 style="margin:0">Educación Digital en Diabetes <span class="time-badge">25–33 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: 3 tarjetas — Plataformas · Comunidades · Coaching</div>
+
+  <blockquote>
+    "El MCG da datos, pero el paciente necesita contexto para interpretarlos. Ahí es donde las plataformas digitales cubren la brecha entre el sensor y la acción."
+  </blockquote>
+
+  <ul>
+    <li><strong>Plataformas educativas:</strong> diabetes.org en español, cursos en línea sobre manejo de glucemia y ejercicio seguro, webinars con endocrinólogos.</li>
+    <li><strong>Comunidades virtuales:</strong> foros y grupos de apoyo donde los pacientes comparten estrategias para ajustar el ejercicio según sus lecturas MCG.</li>
+    <li><strong>Coaching personalizado:</strong> profesionales de salud que guían vía app o videollamada — seguimiento semanal, motivación y ajuste de plan.</li>
+  </ul>
+
+  <div class="callout-tip">
+    Recomienden a los pacientes con DM2 la app <strong>mySugr</strong> (integrando con FreeStyle Libre) — tiene coaching digital integrado y reporte PDF para el médico.
+  </div>
+
+  <!-- BLOQUE 5 -->
+  <div class="block-header">
+    <span class="block-num">5</span>
+    <h2 style="margin:0">Ejercicio en Cáncer <span class="time-badge">33–43 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — métricas de beneficios + tabs tratamiento activo / post</div>
+
+  <blockquote>
+    "Hasta hace 20 años, el consejo médico para un paciente oncológico era: descanse, no se esfuerce. Hoy, la evidencia es completamente opuesta."
+  </blockquote>
+
+  <h3>Beneficios del ejercicio en oncología (ACSM 2022)</h3>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="m-val">↓ 30–40%</div>
+      <div class="m-label">Fatiga oncológica</div>
+      <div class="m-desc">Trat. más efectivo para fatiga relacionada con cáncer</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-val">↑ NK</div>
+      <div class="m-label">Función inmune</div>
+      <div class="m-desc">Aumenta células Natural Killer y linfocitos T</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-val">+25%</div>
+      <div class="m-label">Calidad de vida FACT-G</div>
+      <div class="m-desc">Escala validada en supervivientes de cáncer</div>
+    </div>
+  </div>
+
+  <h3>Prescripción según fase del tratamiento</h3>
+  <table>
+    <tr><th>Fase</th><th>Intensidad</th><th>Consideraciones especiales</th></tr>
+    <tr><td>Tratamiento activo (quimio/radio)</td><td>Moderada (RPE 3–5/10)</td><td>Neutropenia: entorno domiciliario; evitar ambientes públicos</td></tr>
+    <tr><td>Post-tratamiento</td><td>Progresión gradual</td><td>≥150 min/semana aeróbico para reducir riesgo de recurrencia</td></tr>
+    <tr><td>Metástasis ósea</td><td>Adaptada con supervisión</td><td>Evitar impactos; riesgo de fractura patológica</td></tr>
+  </table>
+
+  <div class="callout-warning">
+    <strong>Contraindicaciones relativas:</strong> Anemia severa (Hb &lt;8 g/dL), trombocitopenia (&lt;50,000 plaquetas), metástasis ósea activa. Siempre requiere aval médico previo.
+  </div>
+
+  <div class="dynamic-box">
+    <strong>🎮 Dinámica 2 — Ejercicio y Cáncer: ¿Verdadero o Falso?</strong> (activar en plataforma)<br>
+    6 afirmaciones sobre ejercicio en oncología. Incluye mitos como "los pacientes deben evitar todo ejercicio durante quimioterapia" (F) y verdades como "el ejercicio aeróbico reduce la fatiga oncológica" (V). Discusión después de cada respuesta.
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- BLOQUE 6 -->
+  <div class="block-header">
+    <span class="block-num">6</span>
+    <h2 style="margin:0">Realidad Virtual en Rehabilitación <span class="time-badge">43–51 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — plataformas RV + tabs paciente / profesional</div>
+
+  <blockquote>
+    "¿Cómo hace ejercicio un paciente de cáncer durante la quimioterapia, cuando no puede salir de casa por neutropenia? Una opción que está ganando evidencia rápidamente es la <strong>Realidad Virtual terapéutica</strong>."
+  </blockquote>
+
+  <h3>Plataformas líderes</h3>
+  <table>
+    <tr><th>Plataforma</th><th>Indicación principal</th><th>Ventaja clave</th></tr>
+    <tr><td><strong>VR Health</strong></td><td>Fitness general, ECNT</td><td>Juegos de movimiento que queman calorías. Compatible Meta Quest.</td></tr>
+    <tr><td><strong>Karuna VR</strong></td><td>Dolor crónico, rehab oncológica</td><td>Terapia de exposición gradual; reduce percepción del dolor 30%.</td></tr>
+    <tr><td><strong>ViviSports</strong></td><td>Adherencia ejercicio terapéutico</td><td>Gamificación: +40% de adherencia vs. ejercicio convencional.</td></tr>
+  </table>
+
+  <blockquote>
+    "La RV tiene dos ventajas únicas para ECNT: primero, la <strong>inmersión</strong> distrae del dolor y el malestar. Segundo, el paciente puede hacerlo <strong>desde su casa</strong> durante el tratamiento activo. El profesional puede programar la sesión y monitorear el esfuerzo de forma remota."
+  </blockquote>
+
+  <!-- BLOQUE 7 -->
+  <div class="block-header">
+    <span class="block-num">7</span>
+    <h2 style="margin:0">Limitaciones y Tendencias Futuras <span class="time-badge">51–57 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: DashboardBlock — tabla limitaciones + 4 métricas de tendencias</div>
+
+  <blockquote>
+    "No todo es optimismo tecnológico. Hay barreras reales que debemos reconocer."
+  </blockquote>
+
+  <h3>Limitaciones actuales</h3>
+  <table>
+    <tr><th>Barrera</th><th>Impacto</th></tr>
+    <tr><td>Brecha digital</td><td>Zonas rurales y poblaciones de bajos recursos sin acceso a smartphones o internet.</td></tr>
+    <tr><td>Costos elevados</td><td>MCG, smartwatches y suscripciones fuera del alcance de muchos pacientes crónicos.</td></tr>
+    <tr><td>Privacidad y seguridad</td><td>Riesgo de filtración de datos de salud sensibles — necesidad de regulación HIPAA/GDPR.</td></tr>
+    <tr><td>Validación científica</td><td>Falta de ensayos clínicos a largo plazo en poblaciones diversas para muchos wearables.</td></tr>
+  </table>
+
+  <blockquote>
+    "La equidad en salud digital es el mayor desafío pendiente. La tecnología no debe ampliar la brecha entre quienes tienen acceso y quienes no."
+  </blockquote>
+
+  <h3>Tendencias que vienen</h3>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="icon">🤖</div>
+      <div class="label">IA</div>
+      <div class="sub">Big data para personalizar tratamientos y predecir recaídas</div>
+    </div>
+    <div class="summary-card">
+      <div class="icon">🧬</div>
+      <div class="label">Medicina de precisión</div>
+      <div class="sub">Intervenciones basadas en genómica y microbioma</div>
+    </div>
+    <div class="summary-card">
+      <div class="icon">📶</div>
+      <div class="label">IoT + 5G</div>
+      <div class="sub">Red de dispositivos domiciliarios conectados al médico 24/7</div>
+    </div>
+    <div class="summary-card">
+      <div class="icon">🥽</div>
+      <div class="label">RA</div>
+      <div class="sub">Realidad Aumentada para rehab, educación y cirugía guiada</div>
+    </div>
+  </div>
+
+  <div class="dynamic-box">
+    <strong>🎮 Dinámica 3 — Tecnologías del Futuro</strong> (activar en plataforma)<br>
+    5 escenarios clínicos. Los estudiantes identifican la tendencia tecnológica correcta: IA (análisis big data), IoT+5G (dispositivos conectados), medicina de precisión (genómica), RA (cirugía guiada), brecha digital (limitación equidad).
+  </div>
+
+  <!-- BLOQUE 8 -->
+  <div class="block-header">
+    <span class="block-num">8</span>
+    <h2 style="margin:0">Conclusiones y Cierre <span class="time-badge">57–60 min</span></h2>
+  </div>
+  <div class="screen-note">📺 Pantalla: slide de cierre — 4 íconos con resumen semana</div>
+
+  <blockquote>
+    "La tecnología es la aliada más poderosa que tiene el ejercicio físico en la lucha contra las ECNT. No lo reemplaza — lo amplifica. Le da al paciente datos para tomar mejores decisiones, y al profesional herramientas para llegar a más personas."
+  </blockquote>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="icon">🫀</div>
+      <div class="label">HTA</div>
+      <div class="sub">Wearables + telemedicina</div>
+    </div>
+    <div class="summary-card">
+      <div class="icon">💉</div>
+      <div class="label">Diabetes</div>
+      <div class="sub">MCG continuo (FreeStyle / Dexcom)</div>
+    </div>
+    <div class="summary-card">
+      <div class="icon">🏃</div>
+      <div class="label">Cáncer</div>
+      <div class="sub">Ejercicio supervisado + RV</div>
+    </div>
+    <div class="summary-card">
+      <div class="icon">🤖</div>
+      <div class="label">Futuro</div>
+      <div class="sub">IA, IoT y medicina de precisión</div>
+    </div>
+  </div>
+
+  <blockquote>
+    "La pregunta con la que cierro: si tuvieran un paciente con diabetes tipo 2, HTA y sobrepeso — que es el caso más común en la clínica real — ¿qué tres tecnologías integrarían en su plan de ejercicio? Piénsenlo para la próxima sesión."
+  </blockquote>
+
+  <div class="nota-docente">
+    <h4>📋 Nota para el docente — Clase 2</h4>
+    <ul>
+      <li>Activar las 3 dinámicas en el momento indicado desde el <strong>Professor Dashboard</strong></li>
+      <li>Dinámica 1 (Bloque 2): quiz MCG — revisar con la clase los resultados de la pregunta sobre glucemia pre-ejercicio, es la más clínicamente relevante</li>
+      <li>Dinámica 2 (Bloque 5): mitos y verdades sobre ejercicio en cáncer — abrir discusión breve después de cada ítem</li>
+      <li>Dinámica 3 (Bloque 7): identificar tendencias — puede hacerse en duplas antes de responder en la plataforma</li>
+      <li>La pregunta de cierre puede ser tarea escrita (1 párrafo) para evaluación formativa</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <span>Guion Semana 9 — Tecnología en ECNT · NTAFD · UPC</span>
+    <span>Profesores: Sergio Bravo · José Luis Carrión</span>
+  </div>
+
+</body>
+</html>

@@ -259,6 +259,55 @@ export const COURSE_CONFIG: WeekConfig[] = [
       },
     ],
   },
+  {
+    id: 9,
+    title: "Semana 9: Tecnología en ECNT",
+    description: "Tecnología aplicada en la prevención y tratamiento de Enfermedades Crónicas No Transmisibles: HTA, obesidad, diabetes y cáncer.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: ECNT, HTA y Obesidad",
+        description: "Introducción a las ECNT, rol de la tecnología en salud, wearables, apps y telemedicina para HTA y obesidad",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "71% de muertes mundiales son ECNT", icon: Zap, time: "0-5 min", componentName: "S9C1_Block1Gancho" },
+          { id: 2, title: "¿Qué son las ECNT?", subtitle: "Tipos, estadísticas y factores de riesgo", icon: Heart, time: "5-15 min", hasDynamic: true, componentName: "S9C1_Block2ECNT" },
+          { id: 3, title: "Tecnología en Salud", subtitle: "Prevención, detección temprana y monitoreo", icon: Cpu, time: "15-23 min", componentName: "S9C1_Block3TecnologiaSalud" },
+          { id: 4, title: "HTA y Obesidad", subtitle: "Definición, causas e importancia del ejercicio", icon: Activity, time: "23-35 min", hasDynamic: true, componentName: "S9C1_Block4HTAObesidad" },
+          { id: 5, title: "Apps y Wearables", subtitle: "MyFitnessPal, Runtastic y smartwatches", icon: Smartphone, time: "35-43 min", componentName: "S9C1_Block5Wearables" },
+          { id: 6, title: "Telemedicina", subtitle: "Consultas virtuales y seguimiento remoto", icon: Wifi, time: "43-52 min", hasDynamic: true, componentName: "S9C1_Block6Telemedicina" },
+          { id: 7, title: "Reflexión", subtitle: "¿Qué tecnología elegirías para tu paciente?", icon: Lightbulb, time: "52-57 min", componentName: "S9C1_Block7Reflexion" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis y reflexión final", icon: GraduationCap, time: "57-60 min", componentName: "S9C1_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Clasifica la ECNT", description: "¿Cuál de estas condiciones es una ECNT? Identifica factores de riesgo", icon: "🫀", blockId: 2, componentName: "S9C1_Dynamic1ClasificaECNT" },
+          { id: 2, name: "Elige la Tecnología", description: "Para este paciente con HTA u obesidad, ¿qué tecnología usarías?", icon: "📱", blockId: 4, componentName: "S9C1_Dynamic2EligeDispositivo" },
+          { id: 3, name: "Quiz HTA y Wearables", description: "Pon a prueba tus conocimientos sobre tecnología para ECNT", icon: "🧠", blockId: 6, componentName: "S9C1_Dynamic3QuizHTA" },
+        ],
+      },
+      {
+        id: 2,
+        title: "Clase 2: Diabetes, Cáncer y Tendencias Futuras",
+        description: "MCG para diabetes, ejercicio en oncología, realidad virtual en rehabilitación e IA aplicada a ECNT",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿El ejercicio controla la glucosa?", icon: Zap, time: "0-5 min", componentName: "S9C2_Block1Gancho" },
+          { id: 2, title: "Diabetes y Glucemia", subtitle: "Tipos I, II, gestacional y rol del ejercicio", icon: Activity, time: "5-15 min", hasDynamic: true, componentName: "S9C2_Block2Diabetes" },
+          { id: 3, title: "Monitoreo Continuo de Glucosa", subtitle: "FreeStyle Libre y Dexcom G7", icon: Cpu, time: "15-25 min", componentName: "S9C2_Block3MCG" },
+          { id: 4, title: "Educación Digital en Diabetes", subtitle: "Plataformas, coaching y comunidades virtuales", icon: BookOpen, time: "25-33 min", componentName: "S9C2_Block4EducacionDigital" },
+          { id: 5, title: "Ejercicio en Cáncer", subtitle: "Beneficios, fatiga y función inmunológica", icon: Heart, time: "33-43 min", hasDynamic: true, componentName: "S9C2_Block5Cancer" },
+          { id: 6, title: "Realidad Virtual en Rehabilitación", subtitle: "VR Health y Karuna VR", icon: Layers, time: "43-51 min", componentName: "S9C2_Block6RVRehabilitacion" },
+          { id: 7, title: "Limitaciones y Tendencias", subtitle: "Brecha digital, IA, IoT y medicina de precisión", icon: TrendingUp, time: "51-57 min", hasDynamic: true, componentName: "S9C2_Block7Tendencias" },
+          { id: 8, title: "Cierre", subtitle: "Conclusiones y llamado a la acción", icon: GraduationCap, time: "57-60 min", componentName: "S9C2_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "MCG en Acción", description: "¿FreeStyle Libre o Dexcom? Elige el dispositivo para cada escenario", icon: "💉", blockId: 2, componentName: "S9C2_Dynamic1QuizMCG" },
+          { id: 2, name: "Ejercicio y Cáncer", description: "¿Verdadero o falso? Beneficios del ejercicio en pacientes oncológicos", icon: "🏃", blockId: 5, componentName: "S9C2_Dynamic2EjercicioCancer" },
+          { id: 3, name: "Tecnologías del Futuro", description: "Identifica la tendencia tecnológica para cada escenario clínico", icon: "🤖", blockId: 7, componentName: "S9C2_Dynamic3TendenciasFuturas" },
+        ],
+      },
+    ],
+  },
 ];
 
 // ===== Helpers =====
