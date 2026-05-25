@@ -2,7 +2,7 @@ import { useStudent } from "@/contexts/StudentContext";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LogOut, TrendingUp, Zap, Target, Heart, Activity,
+  LogOut, Zap, Target, Heart, Activity,
   Layers, PlayCircle, Lock, ArrowRight, ChevronDown,
   BarChart3, Radio, Smartphone, BookOpen, Trophy, Dumbbell,
   Clock, StickyNote, Star, CheckCircle2, ArrowUpRight
@@ -43,21 +43,6 @@ function formatTime(ms: number) {
   return `${m}m`;
 }
 
-// ── Animated counter ──────────────────────────────────────────────────────────
-function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
-  const [v, setV] = useState(0);
-  useEffect(() => {
-    let frame = 0;
-    const total = 45;
-    const id = setInterval(() => {
-      frame++;
-      setV(Math.round((frame / total) * to));
-      if (frame >= total) clearInterval(id);
-    }, 20);
-    return () => clearInterval(id);
-  }, [to]);
-  return <>{v}{suffix}</>;
-}
 
 // ── Floating metric chip ──────────────────────────────────────────────────────
 function FloatingChip({ label, value, unit, color, x, y, delay }: {
@@ -624,7 +609,6 @@ export default function Home() {
                 const WeekIcon = theme.icon;
                 const isExpanded = expandedWeek === week.id;
                 const weekProg = getWeekProgress(week.id);
-                const availableClasses = week.classes.filter(c => isClassAvailable(week.id, c.id)).length;
 
                 return (
                   <motion.div key={week.id} className="relative overflow-hidden">
@@ -696,7 +680,7 @@ export default function Home() {
                           className="overflow-hidden"
                         >
                           <div className="pt-3 pb-2 grid grid-cols-1 md:grid-cols-2 gap-3 pl-2">
-                            {week.classes.map((cls, ci) => {
+                            {week.classes.map((cls, _ci) => {
                               const avail = isClassAvailable(week.id, cls.id);
                               const classProg = classProgress[`${week.id}-${cls.id}`];
                               const isCompleted = classProg && classProg.completed >= classProg.total && classProg.total > 0;
