@@ -137,7 +137,7 @@ function PresentationView({
                 >
                   {b.id}
                   {b.id === currentBlock && (
-                    <BorderBeam colorVariant="colorful" strength={0.6} />
+                    <BorderBeam colorVariant="colorful" strength={0.6}>{null}</BorderBeam>
                   )}
                 </button>
               ))}
@@ -315,7 +315,6 @@ function DashboardContent({
   }, [students, allResponses, dynamics, studentSearchQuery]);
 
   const classTitle = classConfig?.title ?? `Semana ${selectedWeek} Clase ${selectedClass}`;
-  const selectedKey = `${selectedWeek}-${selectedClass}`;
 
   const TABS = [
     { id: "students" as const, label: "Alumnos", icon: Users },
@@ -566,7 +565,7 @@ function DashboardContent({
                         transition={{ delay: 0.15 + i * 0.05 }}
                         className="relative rounded-2xl overflow-hidden group"
                       >
-                        {active && <BorderBeam colorVariant="colorful" strength={0.8} />}
+                        {active && <BorderBeam colorVariant="colorful" strength={0.8}>{null}</BorderBeam>}
                         <div className={`rounded-2xl border-2 p-4 transition-all duration-300 h-full flex flex-col justify-between ${
                           active
                             ? "border-green-500/60 bg-green-500/8 shadow-lg shadow-green-500/5"
@@ -886,7 +885,7 @@ function DashboardContent({
                                   <span className="truncate max-w-[180px]">{s.fullName}</span>
                                 </div>
                               </td>
-                              <td className="p-4 text-white/40 font-mono text-xs">{s.studentCode}</td>
+                              <td className="p-4 text-white/40 font-mono text-xs">{s.studentId}</td>
                               {dynamics.map(d => {
                                 const resp = s.dynamicScores[d.id];
                                 return (
@@ -1151,7 +1150,7 @@ function DashboardContent({
                                   <p className="font-semibold text-[11px] text-white truncate max-w-full" title={leaderboard[1].fullName}>
                                     {leaderboard[1].fullName.split(" ")[0]}
                                   </p>
-                                  <p className="text-[9px] text-white/30 font-mono">{leaderboard[1].studentCode}</p>
+                                  <p className="text-[9px] text-white/30 font-mono">{leaderboard[1].studentId}</p>
                                 </div>
                                 <div className="bg-white/5 border border-white/5 py-1 rounded-xl">
                                   <p className="text-xs font-bold text-slate-300">{leaderboard[1].totalScore} pts</p>
@@ -1179,7 +1178,7 @@ function DashboardContent({
                                   <p className="font-bold text-xs text-white truncate max-w-full" title={leaderboard[0].fullName}>
                                     {leaderboard[0].fullName.split(" ")[0]}
                                   </p>
-                                  <p className="text-[9px] text-yellow-400/50 font-mono font-medium">{leaderboard[0].studentCode}</p>
+                                  <p className="text-[9px] text-yellow-400/50 font-mono font-medium">{leaderboard[0].studentId}</p>
                                 </div>
                                 <div className="bg-yellow-500/10 border border-yellow-500/20 py-1.5 rounded-xl">
                                   <p className="text-sm font-extrabold text-yellow-400">{leaderboard[0].totalScore} pts</p>
@@ -1206,7 +1205,7 @@ function DashboardContent({
                                   <p className="font-semibold text-[11px] text-white truncate max-w-full" title={leaderboard[2].fullName}>
                                     {leaderboard[2].fullName.split(" ")[0]}
                                   </p>
-                                  <p className="text-[9px] text-white/30 font-mono">{leaderboard[2].studentCode}</p>
+                                  <p className="text-[9px] text-white/30 font-mono">{leaderboard[2].studentId}</p>
                                 </div>
                                 <div className="bg-white/5 border border-white/5 py-1 rounded-xl">
                                   <p className="text-xs font-bold text-amber-500">{leaderboard[2].totalScore} pts</p>
@@ -1238,7 +1237,7 @@ function DashboardContent({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="font-semibold text-xs text-white truncate">{entry.fullName}</p>
-                                  <p className="text-[9px] text-white/40">{entry.studentCode} · {entry.completedDynamics} actividades</p>
+                                  <p className="text-[9px] text-white/40">{entry.studentId} · {entry.completedDynamics} actividades</p>
                                 </div>
                                 <div className="text-right shrink-0">
                                   <p className="text-xs font-bold text-white">{entry.totalScore} <span className="text-[9px] text-white/30">pts</span></p>
