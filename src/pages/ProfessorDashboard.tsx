@@ -1,4 +1,5 @@
 import { useState, useMemo, Suspense } from "react";
+import { useUser } from "@clerk/react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import {
   Users, BarChart3, MessageSquare, Cloud, RefreshCw, ArrowLeft,
-  CheckCircle2, Activity, Gamepad2, Lock, Unlock, Power, KeyRound, Eye, EyeOff,
+  CheckCircle2, Activity, Gamepad2, Lock, Unlock, Power,
   ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut, Trophy,
   ImageIcon, Search, Copy, Check, ChevronLeft as ChevLeft, ChevronRight as ChevRight,
 } from "lucide-react";
@@ -44,111 +45,6 @@ function StatCard({
         </div>
       </div>
     </motion.div>
-  );
-}
-
-// ─── Login ────────────────────────────────────────────────────────────────────
-function ProfessorLogin({ onLogin }: { onLogin: (password: string) => void }) {
-  const [password, setPassword] = useState("profesor2026");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-
-  const loginMutation = trpc.professor.login.useMutation({
-    onSuccess: () => { onLogin(password); },
-    onError: (err) => {
-      console.error("Login error:", err);
-      setError("Contraseña incorrecta. Intenta de nuevo.");
-      setPassword("");
-    },
-  });
-
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#030712] relative overflow-hidden">
-      {/* Ambient glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/10 blur-[120px]" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ type: "spring", stiffness: 80 }}
-        className="relative z-10 w-full max-w-sm"
-      >
-        <div className="rounded-3xl bg-[#0d0d0f]/80 border border-white/8 backdrop-blur-xl shadow-2xl p-8 space-y-8">
-          <div className="text-center space-y-3">
-            <img src="/logo-upc.png" alt="UPC" className="h-9 mx-auto opacity-90" />
-            <div className="w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto">
-              <KeyRound size={28} className="text-primary" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">Panel del Profesor</h2>
-              <p className="text-sm text-white/40 mt-1">NTAFD · UPC — Acceso restringido</p>
-            </div>
-          </div>
-
-          <form
-            onSubmit={(e: React.FormEvent) => {
-              e.preventDefault();
-              if (password.trim()) { setError(""); loginMutation.mutate({ password }); }
-            }}
-            className="space-y-4"
-          >
-            <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setPassword(e.target.value); setError("");
-                }}
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl pr-10 h-11 focus:border-primary/60 focus:ring-0"
-                autoFocus
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-sm text-red-400 text-center"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </AnimatePresence>
-
-            <Button
-              type="submit"
-              className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold"
-              disabled={loginMutation.isPending || !password.trim()}
-            >
-              {loginMutation.isPending
-                ? <RefreshCw size={14} className="animate-spin mr-2" />
-                : null}
-              Ingresar
-            </Button>
-          </form>
-
-          <div className="text-center">
-            <Link href="/">
-              <button className="text-xs text-white/30 hover:text-white/60 transition-colors inline-flex items-center gap-1.5">
-                <ArrowLeft size={12} /> Volver al inicio
-              </button>
-            </Link>
-          </div>
-        </div>
-      </motion.div>
-    </div>
   );
 }
 
@@ -238,28 +134,17 @@ function PresentationView({
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function ProfessorDashboard() {
   const [, setLocation] = useLocation();
-  const [password, setPassword] = useState<string | null>(() => {
-    if (typeof window !== "undefined") return sessionStorage.getItem("profPassword");
-    return null;
-  });
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [view, setView] = useState<"dashboard" | "presentation">("dashboard");
   const [presentationBlock, setPresentationBlock] = useState(1);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [selectedClass, setSelectedClass] = useState(1);
 
-  const handleLogin = (pwd: string) => {
-    setPassword(pwd);
-    sessionStorage.setItem("profPassword", pwd);
-  };
 
   const handleLogout = () => {
-    setPassword(null);
-    sessionStorage.removeItem("profPassword");
     setLocation("/");
   };
 
-  if (!password) return <ProfessorLogin onLogin={handleLogin} />;
 
   if (view === "presentation") {
     return (
@@ -275,7 +160,6 @@ export default function ProfessorDashboard() {
 
   return (
     <DashboardContent
-      password={password}
       autoRefresh={autoRefresh}
       setAutoRefresh={setAutoRefresh}
       selectedWeek={selectedWeek}
@@ -289,9 +173,9 @@ export default function ProfessorDashboard() {
 
 // ─── Dashboard Content ────────────────────────────────────────────────────────
 function DashboardContent({
-  password, autoRefresh, setAutoRefresh, selectedWeek, selectedClass, onSelectClass, onLogout, onPresentation,
+  autoRefresh, setAutoRefresh, selectedWeek, selectedClass, onSelectClass, onLogout, onPresentation,
 }: {
-  password: string; autoRefresh: boolean; setAutoRefresh: (v: boolean) => void;
+  autoRefresh: boolean; setAutoRefresh: (v: boolean) => void;
   selectedWeek: number; selectedClass: number;
   onSelectClass: (w: number, c: number) => void;
   onLogout: () => void; onPresentation: (block: number) => void;
@@ -307,31 +191,31 @@ function DashboardContent({
   const blocks = classConfig?.blocks ?? [];
 
   const { data: stats, refetch: refetchStats } = trpc.professor.stats.useQuery(
-    { password, weekId: selectedWeek, classId: selectedClass },
+    { weekId: selectedWeek, classId: selectedClass },
     { refetchInterval: autoRefresh ? 5000 : false, retry: false, onError: () => onLogout() } as any
   );
   const { data: students, refetch: refetchStudents } = trpc.professor.students.useQuery(
-    { password },
+    {},
     { refetchInterval: autoRefresh ? 5000 : false, retry: false } as any
   );
   const { data: allResponses } = trpc.professor.allResponses.useQuery(
-    { password, weekId: selectedWeek, classId: selectedClass },
+    { weekId: selectedWeek, classId: selectedClass },
     { refetchInterval: autoRefresh ? 5000 : false }
   );
   const { data: reflections } = trpc.professor.allReflections.useQuery(
-    { password, weekId: selectedWeek, classId: selectedClass },
+    { weekId: selectedWeek, classId: selectedClass },
     { refetchInterval: autoRefresh ? 5000 : false }
   );
   const { data: wordCloud } = trpc.professor.wordCloud.useQuery(
-    { password, weekId: selectedWeek, classId: selectedClass },
+    { weekId: selectedWeek, classId: selectedClass },
     { refetchInterval: autoRefresh ? 10000 : false }
   );
   const { data: dynamicStatuses, refetch: refetchStatuses } = trpc.professor.dynamicStatuses.useQuery(
-    { password },
+    {},
     { refetchInterval: autoRefresh ? 3000 : false }
   );
   const { data: leaderboard } = trpc.professor.leaderboard.useQuery(
-    { password },
+    {},
     { refetchInterval: autoRefresh ? 10000 : false }
   );
   const { data: imageResults, isFetching: imagesFetching } = trpc.images.search.useQuery(
@@ -569,7 +453,7 @@ function DashboardContent({
                           checked={active}
                           onCheckedChange={(checked: boolean) => {
                             toggleDynamic.mutate({
-                              password, weekId: selectedWeek, classId: selectedClass,
+                              weekId: selectedWeek, classId: selectedClass,
                               dynamicId: dyn.id, isActive: checked,
                             });
                           }}
