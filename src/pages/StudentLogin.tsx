@@ -1,21 +1,24 @@
-import { useSignIn, useAuth } from "@clerk/react";
+import { useClerk, useAuth } from "@clerk/react";
 import { Redirect } from "wouter";
 import { motion } from "framer-motion";
 import { Cpu, Activity, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function StudentLogin() {
-  const { signIn, isLoaded } = useSignIn();
-  const { isSignedIn } = useAuth();
+  const { openSignIn } = useClerk();
+  const { isSignedIn, isLoaded } = useAuth();
 
+  if (!isLoaded) return null;
   if (isSignedIn) return <Redirect to="/" />;
 
-  const handleOAuth = async (strategy: "oauth_google" | "oauth_microsoft") => {
-    if (!isLoaded || !signIn) return;
-    await signIn.authenticateWithRedirect({
-      strategy,
-      redirectUrl: `${window.location.origin}/sso-callback`,
-      redirectUrlComplete: "/",
+  const handleOAuth = (strategy: "oauth_google" | "oauth_microsoft") => {
+    openSignIn({
+      afterSignInUrl: "/",
+      afterSignUpUrl: "/",
+      initialValues: {
+        // @ts-expect-error clerk v6 strategy hint
+        strategy,
+      },
     });
   };
 
@@ -37,6 +40,7 @@ export default function StudentLogin() {
             Nuevas Tecnologías Aplicadas a la Actividad Física y el Deporte
           </p>
         </div>
+
         <div className="space-y-3">
           <Button
             onClick={() => handleOAuth("oauth_google")}
@@ -51,6 +55,7 @@ export default function StudentLogin() {
             </svg>
             Entrar con Google
           </Button>
+
           <Button
             onClick={() => handleOAuth("oauth_microsoft")}
             disabled={!isLoaded}
@@ -64,6 +69,7 @@ export default function StudentLogin() {
             </svg>
             Entrar con Microsoft / Outlook
           </Button>
+
           <p className="text-white/30 text-xs">
             Gmail · Outlook personal · Hotmail
           </p>
