@@ -4,7 +4,7 @@ import { MessageCircle, X, Send, Bot, User, Loader2, Trash2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { trpc } from "@/lib/trpc";
-import { useStudent } from "@/contexts/StudentContext";
+
 import { toast } from "sonner";
 
 interface Props {
@@ -15,18 +15,18 @@ interface Props {
   weekTitle: string;
 }
 
-export default function ChatBot({ weekId, classId, blockId, blockTitle, weekTitle }: Props) {
-  const { token } = useStudent();
+export default function ChatBot({ weekId, classId, blockId, blockTitle }: Props) {
+  
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const historyQuery = trpc.chat.history.useQuery(
-    { token: token ?? "", weekId, classId, blockId },
-    { enabled: !!token && open }
+  const historyQuery = trpc.student.getChatHistory.useQuery(
+    { weekId, classId, blockId },
+    { enabled: open }
   );
 
-  const askMutation = trpc.chat.ask.useMutation({
+  const askMutation = trpc.student.chat.useMutation({
     onSuccess: () => {
       historyQuery.refetch();
     },
@@ -35,7 +35,7 @@ export default function ChatBot({ weekId, classId, blockId, blockTitle, weekTitl
     },
   });
 
-  const clearMutation = trpc.chat.clear.useMutation({
+  const clearMutation = trpc.student.clearChat.useMutation({
     onSuccess: () => {
       historyQuery.refetch();
     },
@@ -49,9 +49,9 @@ export default function ChatBot({ weekId, classId, blockId, blockTitle, weekTitl
 
   const handleSend = () => {
     const msg = input.trim();
-    if (!msg || !token || askMutation.isPending) return;
+    if (!msg || askMutation.isPending) return;
     setInput("");
-    askMutation.mutate({ token, weekId, classId, blockId, blockTitle, weekTitle, message: msg });
+    askMutation.mutate({ weekId, classId, blockId, message: msg });
   };
 
   const messages = historyQuery.data ?? [];
@@ -98,7 +98,7 @@ export default function ChatBot({ weekId, classId, blockId, blockTitle, weekTitl
                     size="icon"
                     className="h-7 w-7 text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"
                     onClick={() => {
-                      if (token) clearMutation.mutate({ token, weekId, classId, blockId });
+                      clearMutation.mutate({ weekId, classId, blockId });
                     }}
                     title="Borrar conversación"
                   >

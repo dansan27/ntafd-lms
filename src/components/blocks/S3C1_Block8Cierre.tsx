@@ -18,7 +18,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useStudent } from "@/contexts/StudentContext";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -58,30 +57,28 @@ const TAKEAWAYS = [
 ];
 
 export default function S3C1_Block8Cierre() {
-  const { token } = useStudent();
   const [reflectionText, setReflectionText] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const submitReflection = trpc.reflection.submit.useMutation({
+  const submitReflection = trpc.dynamics.saveReflection.useMutation({
     onSuccess: () => {
       setSubmitted(true);
       toast.success("¡Reflexión guardada!");
     },
-    onError: (err) => {
+    onError: (err: { message?: string }) => {
       toast.error(err.message || "Error al enviar la reflexión");
     },
   });
 
   const handleSubmit = () => {
-    if (!token || reflectionText.trim().length < 5) {
+    if (reflectionText.trim().length < 5) {
       toast.error("Escribe al menos una oración antes de enviar");
       return;
     }
     submitReflection.mutate({
-      token,
       weekId: 3,
       classId: 1,
-      text: reflectionText.trim(),
+      reflectionText: reflectionText.trim(),
     });
   };
 

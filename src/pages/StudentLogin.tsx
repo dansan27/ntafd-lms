@@ -5,17 +5,17 @@ import { Cpu, Activity, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function StudentLogin() {
-  const { signIn, isLoaded } = useSignIn();
+  const { signIn, fetchStatus } = useSignIn();
   const { isSignedIn } = useAuth();
 
   if (isSignedIn) return <Redirect to="/" />;
 
   const handleMicrosoftLogin = () => {
-    if (!isLoaded || !signIn) return;
-    signIn.authenticateWithRedirect({
+    if (fetchStatus === "fetching") return;
+    signIn.sso({
       strategy: "oauth_microsoft",
-      redirectUrl: "/sso-callback",
-      redirectUrlComplete: "/",
+      redirectUrl: `${window.location.origin}/sso-callback`,
+      redirectCallbackUrl: "/",
     });
   };
 
@@ -40,7 +40,7 @@ export default function StudentLogin() {
         <div className="space-y-4">
           <Button
             onClick={handleMicrosoftLogin}
-            disabled={!isLoaded}
+            disabled={fetchStatus === "fetching"}
             className="w-full h-12 bg-[#0078D4] hover:bg-[#106EBE] text-white font-medium gap-3"
           >
             <svg width="20" height="20" viewBox="0 0 21 21" fill="none">

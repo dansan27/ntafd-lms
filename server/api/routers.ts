@@ -30,7 +30,7 @@ import {
   getStudentStats,
   getAllAchievements,
 } from "../db/db";
-import type { DynamicResponse, ClassActivityStatus } from "../db/schema";
+import type { ClassActivityStatus } from "../db/schema";
 import { invokeLLM } from "./llm";
 import { notifyOwner } from "./notification";
 import { getClassStructure, getDynamicNames } from "../../shared/courseStructure";
@@ -268,7 +268,44 @@ const professorRouter = router({
       const allStudents = await getAllStudents();
       const allResponses = await getAllDynamicResponses(input.weekId, input.classId);
       const dynamicNames = getDynamicNames(input.weekId, input.classId);
-      return { students: allStudents, responses: allResponses, structure, dynamicNames };
+      const allReflections = await getAllReflections(input.weekId, input.classId);
+
+      // Compute aggregates expected by the dashboard
+      const totalStudents = allStudents.length;
+      const totalBlocks = structure?.blockCount ?? 0;
+      const completedAll = allStudents.filter((_s: { id: number }) => {
+        const progress = allResponses.filter((r: { studentId: number }) => r.studentId === _s.id);
+        return progress.length >= totalBlocks && totalBlocks > 0;
+      }).length;
+      const totalReflections = allReflections.length;
+      const sentimentCounts = allReflections.reduce(
+        (acc: Record<string, number>, r: { sentiment?: string | null }) => {
+          const s = r.sentiment ?? "neutro";
+          acc[s] = (acc[s] ?? 0) + 1;
+          return acc;
+        },
+        { positivo: 0, neutro: 0, negativo: 0 }
+      );
+
+      // Per-dynamic response counts
+      const dynamicStats = Object.entries(
+        allResponses.reduce((acc: Record<number, number>, r: { dynamicId: number }) => {
+          acc[r.dynamicId] = (acc[r.dynamicId] ?? 0) + 1;
+          return acc;
+        }, {})
+      ).map(([dynamicId, totalResponses]) => ({ dynamicId: Number(dynamicId), totalResponses }));
+
+      return {
+        students: allStudents,
+        responses: allResponses,
+        structure,
+        dynamicNames,
+        totalStudents,
+        completedAll,
+        totalReflections,
+        sentimentCounts,
+        dynamicStats,
+      };
     }),
 
   students: professorProcedure
@@ -294,14 +331,32 @@ const professorRouter = router({
       return getAllReflections(input.weekId, input.classId);
     }),
 
-  activeDynamics: professorProcedure
+  wordCloud: professorProcedure
     .input(z.object({ weekId: z.number().default(1), classId: z.number().default(1) }))
     .query(async ({ input }) => {
-      const statuses = await getAllClassActivityStatuses();
-      return statuses.filter((s: ClassActivityStatus) => s.weekId === input.weekId && s.classId === input.classId);
+      const reflections = await getAllReflections(input.weekId, input.classId);
+      const wordFreq: Record<string, number> = {};
+      const stopwords = new Set(["de", "la", "el", "en", "y", "a", "los", "las", "un", "una", "es", "que", "se", "con", "del", "por", "para", "al", "lo", "su", "fue", "no", "más", "como"]);
+      for (const r of reflections) {
+        const words = (r.reflectionText ?? "").toLowerCase().replace(/[^a-záéíóúüñ\s]/gi, "").split(/\s+/);
+        for (const w of words) {
+          if (w.length > 3 && !stopwords.has(w)) {
+            wordFreq[w] = (wordFreq[w] ?? 0) + 1;
+          }
+        }
+      }
+      return Object.entries(wordFreq)
+        .map(([word, count]) => ({ word, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 50);
     }),
 
-  setDynamic: professorProcedure
+  dynamicStatuses: professorProcedure
+    .query(async () => {
+      return getAllClassActivityStatuses();
+    }),
+
+  toggleDynamic: professorProcedure
     .input(z.object({
       weekId: z.number().default(1),
       classId: z.number().default(1),
@@ -310,7 +365,7 @@ const professorRouter = router({
     }))
     .mutation(async ({ input }) => {
       await setDynamicActive(input.weekId, input.classId, input.dynamicId, input.isActive);
-      return { success: true };
+      return { dynamicId: input.dynamicId, isActive: input.isActive };
     }),
 
   leaderboard: professorProcedure

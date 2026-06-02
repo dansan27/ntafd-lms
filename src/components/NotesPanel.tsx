@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { StickyNote, ChevronDown, ChevronUp, Save, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { useStudent } from "@/contexts/StudentContext";
+
 
 interface Props {
   weekId: number;
@@ -12,18 +12,18 @@ interface Props {
 }
 
 export default function NotesPanel({ weekId, classId, blockId }: Props) {
-  const { token } = useStudent();
+  
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [saved, setSaved] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const noteQuery = trpc.notes.get.useQuery(
-    { token: token ?? "", weekId, classId, blockId },
-    { enabled: !!token && open }
+  const noteQuery = trpc.student.getNote.useQuery(
+    { weekId, classId, blockId },
+    { enabled: open }
   );
 
-  const saveMutation = trpc.notes.save.useMutation({
+  const saveMutation = trpc.student.saveNote.useMutation({
     onSuccess: () => {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -42,15 +42,15 @@ export default function NotesPanel({ weekId, classId, blockId }: Props) {
     setSaved(false);
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      if (token) {
-        saveMutation.mutate({ token, weekId, classId, blockId, noteText: val });
+      if (true) {
+        saveMutation.mutate({ weekId, classId, blockId, noteText: val });
       }
     }, 1500);
   };
 
   const handleManualSave = () => {
-    if (token) {
-      saveMutation.mutate({ token, weekId, classId, blockId, noteText: text });
+    if (true) {
+      saveMutation.mutate({ weekId, classId, blockId, noteText: text });
     }
   };
 

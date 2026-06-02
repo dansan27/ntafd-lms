@@ -19,7 +19,7 @@ import ImageSearchPanel from "@/components/ImageSearchPanel";
 import { ACHIEVEMENTS } from "@/data/achievements";
 
 export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: number; classId?: number }) {
-  const { student, token, logout } = useStudent();
+  const { student, logout } = useStudent();
   const [currentBlock, setCurrentBlock] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const awardedRef = useRef<Set<string>>(new Set());
@@ -33,73 +33,57 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
   const weekTitle = weekConfig?.title ?? `Semana ${weekId}`;
 
   const { data: progressInfo } = trpc.student.getProgress.useQuery(
-    { token: token ?? "", weekId, classId },
-    { enabled: !!token }
+    { weekId, classId }
   );
 
   const updateBlockMutation = trpc.student.updateBlock.useMutation();
 
-  const { data: myResponses } = trpc.dynamics.myResponses.useQuery(
-    { token: token ?? "", weekId, classId },
-    { enabled: !!token }
-  );
+  const { data: myResponses } = trpc.dynamics.myResponses.useQuery({});
 
-  const { data: myAchievements, refetch: refetchAchievements } = trpc.achievements.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
-  );
+  const { data: myAchievements, refetch: refetchAchievements } = trpc.student.achievements.useQuery();
 
-  const { data: statsData } = trpc.stats.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
-  );
+  const { data: statsData } = trpc.student.stats.useQuery();
 
-  const awardMutation = trpc.achievements.award.useMutation({
-    onSuccess: (data, vars) => {
-      if (data.isNew) {
-        const def = ACHIEVEMENTS.find(a => a.id === vars.achievementId);
+  const completedDynamics = useMemo(() => {
+    if (!myResponses) return new Set<number>();
+    return new Set(myResponses.map((r: { dynamicId: number }) => r.dynamicId));
+  }, [myResponses]);
+
+  // Award achievement via professor procedure — skip auto-award on frontend since awardAchievement is professor-only
+  // Instead just track locally for toast display purposes
+  const earnedIds = useMemo(() => new Set((myAchievements ?? []).map((a: { achievementId: string }) => a.achievementId)), [myAchievements]);
+
+  // Check achievements when responses change (display only — no award mutation since that's professor-only)
+  useEffect(() => {
+    if (!myResponses) return;
+    const totalDynamics = (statsData as { totalDynamicsCompleted?: number } | null)?.totalDynamicsCompleted ?? myResponses.length;
+
+    const tryShowAchievement = (id: string) => {
+      if (!earnedIds.has(id) && !awardedRef.current.has(id)) {
+        awardedRef.current.add(id);
+        const def = ACHIEVEMENTS.find(a => a.id === id);
         if (def) {
+          refetchAchievements();
           toast.success(`¡Logro desbloqueado! ${def.icon} ${def.name}`, {
             description: def.description,
             duration: 4000,
           });
-          refetchAchievements();
         }
-      }
-    },
-  });
-
-  const completedDynamics = useMemo(() => {
-    if (!myResponses) return new Set<number>();
-    return new Set(myResponses.map(r => r.dynamicId));
-  }, [myResponses]);
-
-  const earnedIds = useMemo(() => new Set((myAchievements ?? []).map(a => a.achievementId)), [myAchievements]);
-
-  // Check and award achievements when responses change
-  useEffect(() => {
-    if (!token || !myResponses) return;
-    const totalDynamics = statsData?.totalDynamicsCompleted ?? myResponses.length;
-
-    const tryAward = (id: string, name: string) => {
-      if (!earnedIds.has(id) && !awardedRef.current.has(id)) {
-        awardedRef.current.add(id);
-        awardMutation.mutate({ token, achievementId: id, achievementName: name });
       }
     };
 
-    if (myResponses.length > 0) tryAward("primera_dinamica", "Primer Paso");
-    if (myResponses.length >= dynamics.length && dynamics.length > 0) tryAward("clase_completa", "Clase Completa");
-    if (myResponses.some(r => r.score > 0 && r.score === r.maxScore)) tryAward("perfecto", "Perfección");
-    if (myResponses.some(r => (r.timeSpentMs ?? 999999) < 45000 && r.score > 0)) tryAward("rapido", "Relámpago");
-    if (totalDynamics >= 10) tryAward("maratonista", "Maratonista");
-  }, [myResponses, statsData, earnedIds, token, dynamics.length]);
+    if (myResponses.length > 0) tryShowAchievement("primera_dinamica");
+    if (myResponses.length >= dynamics.length && dynamics.length > 0) tryShowAchievement("clase_completa");
+    if (myResponses.some((r: { score: number; maxScore: number }) => r.score > 0 && r.score === r.maxScore)) tryShowAchievement("perfecto");
+    if (myResponses.some((r: { timeSpentMs?: number | null; score: number }) => (r.timeSpentMs ?? 999999) < 45000 && r.score > 0)) tryShowAchievement("rapido");
+    if (totalDynamics >= 10) tryShowAchievement("maratonista");
+  }, [myResponses, statsData, earnedIds, dynamics.length]);
 
-  const streak = statsData?.classesAttempted ?? 0;
+  const streak = (statsData as { classesAttempted?: number } | null)?.classesAttempted ?? 0;
 
   const goToBlock = (block: number) => {
     setCurrentBlock(block);
-    if (token) updateBlockMutation.mutate({ token, weekId, classId, block });
+    updateBlockMutation.mutate({ weekId, classId, block });
     setSidebarOpen(false);
   };
 
@@ -140,7 +124,7 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
           <div>
             <p className="text-xs text-white/40">Alumno</p>
             <p className="text-sm font-medium text-white/90 truncate">{student?.fullName}</p>
-            <p className="text-xs text-white/50">{student?.studentCode}</p>
+            <p className="text-xs text-white/50">{student?.email}</p>
           </div>
           <div className="flex items-center gap-2">
             {streak > 0 && (
@@ -294,20 +278,19 @@ export default function ClassLayout({ weekId = 1, classId = 1 }: { weekId?: numb
               </div>
             )}
           </Suspense>
-          {token && <NotesPanel weekId={weekId} classId={classId} blockId={currentBlock} />}
+          <NotesPanel weekId={weekId} classId={classId} blockId={currentBlock} />
         </div>
       </main>
 
-      {token && (
-        <ChatBot
-          weekId={weekId}
-          classId={classId}
-          blockId={currentBlock}
-          blockTitle={currentBlockConfig?.title ?? ""}
-          weekTitle={weekTitle}
-        />
-      )}
+      <ChatBot
+        weekId={weekId}
+        classId={classId}
+        blockId={currentBlock}
+        blockTitle={currentBlockConfig?.title ?? ""}
+        weekTitle={weekTitle}
+      />
       <ImageSearchPanel />
     </div>
   );
 }
+

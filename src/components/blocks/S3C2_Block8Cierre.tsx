@@ -10,7 +10,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useRoute } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { useStudent } from "@/contexts/StudentContext";
 import { toast } from "sonner";
 import S3_Dynamic4ComparaDispositivo from "../dynamics/S3_Dynamic4ComparaDispositivo";
 
@@ -57,7 +56,6 @@ const TECH_BADGES = [
 ];
 
 export default function S3C2_Block8Cierre() {
-  const { token } = useStudent();
   const [reflectionText, setReflectionText] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [analysis, setAnalysis] = useState<{ sentiment: string | null; keywords: string[] } | null>(null);
@@ -72,26 +70,25 @@ export default function S3C2_Block8Cierre() {
   const isDynamic4Active = statuses?.find((s) => s.dynamicId === 4)?.isActive ?? false;
 
   // Reflection submit
-  const submitReflection = trpc.reflection.submit.useMutation({
-    onSuccess: (data) => {
+  const submitReflection = trpc.dynamics.saveReflection.useMutation({
+    onSuccess: (data: { sentiment?: string | null; keywords?: string[] } | null) => {
       setSubmitted(true);
-      setAnalysis({ sentiment: data.sentiment ?? null, keywords: data.keywords ?? [] });
+      setAnalysis({ sentiment: data?.sentiment ?? null, keywords: data?.keywords ?? [] });
       toast.success("Reflexión enviada");
     },
-    onError: (err) => toast.error(err.message || "Error al enviar"),
+    onError: (err: { message?: string }) => toast.error(err.message || "Error al enviar"),
   });
 
-  const { data: existingReflection } = trpc.reflection.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
+  const { data: existingReflection } = trpc.dynamics.getReflection.useQuery(
+    { weekId: 3, classId }
   );
 
   const handleSubmit = () => {
-    if (!token || reflectionText.trim().length < 5) {
+    if (reflectionText.trim().length < 5) {
       toast.error("Escribe al menos una oración");
       return;
     }
-    submitReflection.mutate({ token, text: reflectionText.trim() });
+    submitReflection.mutate({ weekId: 3, classId, reflectionText: reflectionText.trim() });
   };
 
   const hasExisting = existingReflection || submitted;

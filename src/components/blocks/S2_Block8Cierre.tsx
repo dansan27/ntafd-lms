@@ -17,12 +17,10 @@ import {
   Quote,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useStudent } from "@/contexts/StudentContext";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
 export default function S2_Block8Cierre() {
-  const { token } = useStudent();
   const [reflectionText, setReflectionText] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [analysis, setAnalysis] = useState<{
@@ -30,31 +28,30 @@ export default function S2_Block8Cierre() {
     keywords: string[];
   } | null>(null);
 
-  const submitReflection = trpc.reflection.submit.useMutation({
-    onSuccess: (data) => {
+  const submitReflection = trpc.dynamics.saveReflection.useMutation({
+    onSuccess: (data: { sentiment?: string | null; keywords?: string[] } | null) => {
       setSubmitted(true);
       setAnalysis({
-        sentiment: data.sentiment ?? null,
-        keywords: data.keywords ?? [],
+        sentiment: data?.sentiment ?? null,
+        keywords: data?.keywords ?? [],
       });
       toast.success("Reflexion enviada");
     },
-    onError: (err) => {
+    onError: (err: { message?: string }) => {
       toast.error(err.message || "Error al enviar");
     },
   });
 
-  const { data: existingReflection } = trpc.reflection.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
+  const { data: existingReflection } = trpc.dynamics.getReflection.useQuery(
+    { weekId: 2, classId: 1 }
   );
 
   const handleSubmit = () => {
-    if (!token || reflectionText.trim().length < 5) {
+    if (reflectionText.trim().length < 5) {
       toast.error("Escribe al menos una oracion");
       return;
     }
-    submitReflection.mutate({ token, text: reflectionText.trim() });
+    submitReflection.mutate({ weekId: 2, classId: 1, reflectionText: reflectionText.trim() });
   };
 
   const hasExisting = existingReflection || submitted;

@@ -39,22 +39,13 @@ function StatCard({ icon: Icon, label, value, color }: {
 }
 
 export default function MiProgreso() {
-  const { student, token } = useStudent();
+  const { student } = useStudent();
 
-  const statsQuery = trpc.stats.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
-  );
+  const statsQuery = trpc.student.stats.useQuery();
 
-  const achievementsQuery = trpc.achievements.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
-  );
+  const achievementsQuery = trpc.student.achievements.useQuery();
 
-  const notesQuery = trpc.notes.allMine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
-  );
+  const notesQuery = trpc.student.getAllNotes.useQuery();
 
   const stats = statsQuery.data;
   const achievements = achievementsQuery.data ?? [];
@@ -77,7 +68,7 @@ export default function MiProgreso() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Mi Progreso</h1>
-            <p className="text-sm text-muted-foreground">{student?.fullName} · {student?.studentCode}</p>
+            <p className="text-sm text-muted-foreground">{student?.fullName} · {student?.email}</p>
           </div>
         </div>
 

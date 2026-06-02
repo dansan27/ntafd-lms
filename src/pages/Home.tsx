@@ -331,20 +331,17 @@ function LoginPage() {
 
 // ── Dashboard (logged in) ─────────────────────────────────────────────────────
 export default function Home() {
-  const { student, token, loading, logout } = useStudent();
+  const { student, loading, logout } = useStudent();
   const [classProgress, setClassProgress] = useState<Record<string, { completed: number; total: number; updatedAt: number }>>({});
   const [stats, setStats] = useState({ totalDynamics: 0, totalClasses: 0, completionPercent: 0, recentClass: null as any });
   const [expandedWeek, setExpandedWeek] = useState<number | null>(null);
   const [activeModule, setActiveModule] = useState<string>("modulo-1");
 
   // Fetch student stats directly from tRPC
-  const statsQuery = trpc.stats.mine.useQuery(
-    { token: token ?? "" },
-    { enabled: !!token }
-  );
+  const statsQuery = trpc.student.stats.useQuery();
 
   useEffect(() => {
-    if (!student?.sessionToken) return;
+    if (!student) return;
     
     const fetchAllProgress = async () => {
       try {
@@ -365,7 +362,7 @@ export default function Home() {
                 fetch("/api/trpc/student.getProgress", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ json: { token: student.sessionToken!, weekId: week.id, classId: cls.id } }),
+                  body: JSON.stringify({ json: { weekId: week.id, classId: cls.id } }),
                 }).then(res => res.json())
               );
             }
@@ -427,7 +424,7 @@ export default function Home() {
     };
     
     fetchAllProgress();
-  }, [student?.sessionToken]);
+  }, [student]);
 
   // Focus active module based on recent class activity
   useEffect(() => {
@@ -779,7 +776,7 @@ export default function Home() {
 
                 <div className="space-y-1">
                   <h3 className="text-lg font-bold text-white">{student.fullName}</h3>
-                  <p className="text-xs text-white/40 font-mono">{student.studentCode}</p>
+                  <p className="text-xs text-white/40 font-mono">{student.email}</p>
                 </div>
 
                 <div className="pt-1">

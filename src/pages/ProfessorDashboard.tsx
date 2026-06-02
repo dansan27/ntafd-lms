@@ -1,5 +1,4 @@
 import { useState, useMemo, Suspense } from "react";
-import { useUser } from "@clerk/react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import {
-  Users, BarChart3, MessageSquare, Cloud, RefreshCw, ArrowLeft,
+  Users, BarChart3, MessageSquare, Cloud, RefreshCw,
   CheckCircle2, Activity, Gamepad2, Lock, Unlock, Power,
   ChevronLeft, ChevronRight, PanelLeftOpen, Presentation, Home, LogOut, Trophy,
   ImageIcon, Search, Copy, Check, ChevronLeft as ChevLeft, ChevronRight as ChevRight,
@@ -195,7 +194,7 @@ function DashboardContent({
     { refetchInterval: autoRefresh ? 5000 : false, retry: false, onError: () => onLogout() } as any
   );
   const { data: students, refetch: refetchStudents } = trpc.professor.students.useQuery(
-    {},
+    undefined,
     { refetchInterval: autoRefresh ? 5000 : false, retry: false } as any
   );
   const { data: allResponses } = trpc.professor.allResponses.useQuery(
@@ -211,11 +210,11 @@ function DashboardContent({
     { refetchInterval: autoRefresh ? 10000 : false }
   );
   const { data: dynamicStatuses, refetch: refetchStatuses } = trpc.professor.dynamicStatuses.useQuery(
-    {},
+    undefined,
     { refetchInterval: autoRefresh ? 3000 : false }
   );
   const { data: leaderboard } = trpc.professor.leaderboard.useQuery(
-    {},
+    undefined,
     { refetchInterval: autoRefresh ? 10000 : false }
   );
   const { data: imageResults, isFetching: imagesFetching } = trpc.images.search.useQuery(
