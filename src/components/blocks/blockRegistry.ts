@@ -106,6 +106,26 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S9C2_Block6RVRehabilitacion: lazy(() => import("./S9C2_Block6RVRehabilitacion")),
   S9C2_Block7Tendencias: lazy(() => import("./S9C2_Block7Tendencias")),
   S9C2_Block8Cierre: lazy(() => import("./S9C2_Block8Cierre")),
+
+  // Semana 10, Clase 1 — Sensores Cinemáticos: IMUs, Potenciómetros y Encoders
+  S10C1_Block1Gancho: lazy(() => import("./S10C1_Block1Gancho")),
+  S10C1_Block2SensoresCinematicos: lazy(() => import("./S10C1_Block2SensoresCinematicos")),
+  S10C1_Block3IMU: lazy(() => import("./S10C1_Block3IMU")),
+  S10C1_Block4Potenciometros: lazy(() => import("./S10C1_Block4Potenciometros")),
+  S10C1_Block5Encoders: lazy(() => import("./S10C1_Block5Encoders")),
+  S10C1_Block6AplicacionesDeporte: lazy(() => import("./S10C1_Block6AplicacionesDeporte")),
+  S10C1_Block7Reflexion: lazy(() => import("./S10C1_Block7Reflexion")),
+  S10C1_Block8Cierre: lazy(() => import("./S10C1_Block8Cierre")),
+
+  // Semana 10, Clase 2 — Clustering para Actividad Física y Deporte
+  S10C2_Block1Gancho: lazy(() => import("./S10C2_Block1Gancho")),
+  S10C2_Block2QueClustering: lazy(() => import("./S10C2_Block2QueClustering")),
+  S10C2_Block3AlgoritmosML: lazy(() => import("./S10C2_Block3AlgoritmosML")),
+  S10C2_Block4VariablesAFD: lazy(() => import("./S10C2_Block4VariablesAFD")),
+  S10C2_Block5AplicacionesAFD: lazy(() => import("./S10C2_Block5AplicacionesAFD")),
+  S10C2_Block6Interpretacion: lazy(() => import("./S10C2_Block6Interpretacion")),
+  S10C2_Block7Limitaciones: lazy(() => import("./S10C2_Block7Limitaciones")),
+  S10C2_Block8Cierre: lazy(() => import("./S10C2_Block8Cierre")),
 };
 
 export function getBlockComponent(componentName: string): LazyBlock | null {

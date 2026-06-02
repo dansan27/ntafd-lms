@@ -308,6 +308,55 @@ export const COURSE_CONFIG: WeekConfig[] = [
       },
     ],
   },
+  {
+    id: 10,
+    title: "Semana 10: Sensores Cinemáticos y Clustering",
+    description: "IMUs, potenciómetros y encoders para análisis de movimiento; Machine Learning no supervisado para perfilado de atletas.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: Sensores Cinemáticos — IMUs, Potenciómetros y Encoders",
+        description: "Fundamentos de cinemática, fusión sensorial en IMUs, goniometría electrónica y encoders rotativos aplicados al deporte",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Cómo sabe tu smartphone cuándo girar la pantalla?", icon: Zap, time: "0-5 min", componentName: "S10C1_Block1Gancho" },
+          { id: 2, title: "Sensores Cinemáticos", subtitle: "Cinemática, tipos de sensores y variables de movimiento", icon: Radio, time: "5-15 min", hasDynamic: true, componentName: "S10C1_Block2SensoresCinematicos" },
+          { id: 3, title: "IMU — Unidad de Medición Inercial", subtitle: "Acelerómetro + giroscopio + magnetómetro y fusión sensorial", icon: Cpu, time: "15-27 min", componentName: "S10C1_Block3IMU" },
+          { id: 4, title: "Potenciómetros", subtitle: "Goniometría electrónica para medición articular", icon: Activity, time: "27-38 min", hasDynamic: true, componentName: "S10C1_Block4Potenciometros" },
+          { id: 5, title: "Encoders", subtitle: "Ópticos, magnéticos y cuadratura — velocidad rotacional", icon: Layers, time: "38-48 min", componentName: "S10C1_Block5Encoders" },
+          { id: 6, title: "Aplicaciones en Deporte", subtitle: "Análisis de marcha, gesto técnico y biomecánica de campo", icon: Rocket, time: "48-55 min", hasDynamic: true, componentName: "S10C1_Block6AplicacionesDeporte" },
+          { id: 7, title: "Reflexión", subtitle: "¿Qué sensor usarías para monitorear a tu atleta?", icon: Lightbulb, time: "55-58 min", componentName: "S10C1_Block7Reflexion" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis y conexión con clustering", icon: GraduationCap, time: "58-60 min", componentName: "S10C1_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Identifica el Sensor", description: "Dado el escenario deportivo, ¿qué sensor cinemático usarías?", icon: "📡", blockId: 2, componentName: "S10C1_Dynamic1IdentificaSensor" },
+          { id: 2, name: "Quiz IMUs", description: "Pon a prueba tus conocimientos sobre fusión sensorial y acelerómetros", icon: "🧠", blockId: 4, componentName: "S10C1_Dynamic2QuizIMU" },
+          { id: 3, name: "Cinemático o No", description: "Clasifica si el sensor mide variables cinemáticas o de otro tipo", icon: "🔬", blockId: 6, componentName: "S10C1_Dynamic3ClasificaSensor" },
+        ],
+      },
+      {
+        id: 2,
+        title: "Clase 2: Clustering para AFD",
+        description: "Aprendizaje no supervisado, K-Means, DBSCAN y clustering jerárquico aplicados al perfilado de atletas",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Puede una IA identificar tu perfil de atleta sin etiquetas?", icon: Zap, time: "0-5 min", componentName: "S10C2_Block1Gancho" },
+          { id: 2, title: "¿Qué es el Clustering?", subtitle: "Aprendizaje no supervisado y agrupamiento por similitud", icon: BookOpen, time: "5-15 min", hasDynamic: true, componentName: "S10C2_Block2QueClustering" },
+          { id: 3, title: "Algoritmos de Clustering", subtitle: "K-Means, DBSCAN y clustering jerárquico", icon: Cpu, time: "15-27 min", componentName: "S10C2_Block3AlgoritmosML" },
+          { id: 4, title: "Variables en AFD", subtitle: "VO2max, FC, potencia y normalización Z-score", icon: BarChart2, time: "27-37 min", componentName: "S10C2_Block4VariablesAFD" },
+          { id: 5, title: "Aplicaciones en AFD", subtitle: "Perfiles de atletas, riesgo de lesión y zonas de entrenamiento", icon: Activity, time: "37-47 min", hasDynamic: true, componentName: "S10C2_Block5AplicacionesAFD" },
+          { id: 6, title: "Interpretación de Resultados", subtitle: "PCA, dendrogramas y Silhouette Score", icon: TrendingUp, time: "47-54 min", hasDynamic: true, componentName: "S10C2_Block6Interpretacion" },
+          { id: 7, title: "Limitaciones y Ética", subtitle: "Overfitting, privacidad de datos biométricos y sesgos", icon: Lightbulb, time: "54-58 min", componentName: "S10C2_Block7Limitaciones" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis del módulo de sensores y análisis de datos", icon: GraduationCap, time: "58-60 min", componentName: "S10C2_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Clasifica el Atleta", description: "Asigna cada perfil de atleta al cluster correcto (sprint/mixto/resistencia)", icon: "🏃", blockId: 2, componentName: "S10C2_Dynamic1ClasificaAtleta" },
+          { id: 2, name: "Quiz Clustering", description: "K-Means, DBSCAN y métricas de validación — ¿cuánto sabes?", icon: "🤖", blockId: 5, componentName: "S10C2_Dynamic2QuizClustering" },
+          { id: 3, name: "Elige el Algoritmo", description: "Para este escenario deportivo, ¿qué algoritmo de clustering usarías?", icon: "🧬", blockId: 6, componentName: "S10C2_Dynamic3IdentificaAlgoritmo" },
+        ],
+      },
+    ],
+  },
 ];
 
 // ===== Helpers =====
