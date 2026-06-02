@@ -10,10 +10,10 @@ export default function StudentLogin() {
 
   if (isSignedIn) return <Redirect to="/" />;
 
-  const handleGoogleLogin = async () => {
+  const handleOAuth = async (strategy: "oauth_google" | "oauth_microsoft") => {
     if (!isLoaded || !signIn) return;
     await signIn.authenticateWithRedirect({
-      strategy: "oauth_google",
+      strategy,
       redirectUrl: `${window.location.origin}/sso-callback`,
       redirectUrlComplete: "/",
     });
@@ -37,9 +37,9 @@ export default function StudentLogin() {
             Nuevas Tecnologías Aplicadas a la Actividad Física y el Deporte
           </p>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Button
-            onClick={handleGoogleLogin}
+            onClick={() => handleOAuth("oauth_google")}
             disabled={!isLoaded}
             className="w-full h-12 bg-white hover:bg-gray-100 text-gray-700 font-medium gap-3 border border-gray-200"
           >
@@ -51,8 +51,21 @@ export default function StudentLogin() {
             </svg>
             Entrar con Google
           </Button>
+          <Button
+            onClick={() => handleOAuth("oauth_microsoft")}
+            disabled={!isLoaded}
+            className="w-full h-12 bg-[#0078D4] hover:bg-[#106EBE] text-white font-medium gap-3"
+          >
+            <svg width="20" height="20" viewBox="0 0 21 21" fill="none">
+              <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+              <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+              <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+              <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+            </svg>
+            Entrar con Microsoft / Outlook
+          </Button>
           <p className="text-white/30 text-xs">
-            Usa tu cuenta Gmail o Outlook personal
+            Gmail · Outlook personal · Hotmail
           </p>
         </div>
       </motion.div>
