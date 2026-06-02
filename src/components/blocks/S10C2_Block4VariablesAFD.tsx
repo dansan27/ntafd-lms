@@ -1,4 +1,5 @@
 import FullscreenBlock from "@/components/layout/FullscreenBlock";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 const variables = [
   { name: "VO₂máx", unit: "ml/kg/min", desc: "Capacidad aeróbica máxima" },
@@ -130,6 +131,13 @@ export default function S10C2_Block4VariablesAFD() {
                 </div>
               ))}
             </div>
+          ),
+          visual: (
+            <ZoomableImage
+              src="/images/semana_10/cyclist_profiles.png"
+              alt="Perfiles de Ciclistas"
+              className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+            />
           ),
           accentColor: "text-purple-400",
         },

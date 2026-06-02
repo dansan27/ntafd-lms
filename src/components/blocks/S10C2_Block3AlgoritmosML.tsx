@@ -1,5 +1,6 @@
 import DashboardBlock from "@/components/layout/DashboardBlock";
 import { BarChart2 } from "lucide-react";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 export default function S10C2_Block3AlgoritmosML() {
   return (
@@ -38,6 +39,17 @@ export default function S10C2_Block3AlgoritmosML() {
               description: "Árbol de agrupamiento · Interpretable · Sin necesidad de especificar K",
             },
           ],
+          content: (
+            <div className="flex justify-center mt-4">
+              <div className="max-w-xl w-full">
+                <ZoomableImage
+                  src="/images/semana_10/kmeans_vs_dbscan.png"
+                  alt="K-Means vs DBSCAN"
+                  className="w-full h-auto object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+                />
+              </div>
+            </div>
+          ),
         },
         {
           id: "seleccion-k",

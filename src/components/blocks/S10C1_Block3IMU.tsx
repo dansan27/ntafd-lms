@@ -1,5 +1,6 @@
 import DashboardBlock from "@/components/layout/DashboardBlock";
 import { Cpu } from "lucide-react";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 export default function S10C1_Block3IMU() {
   return (
@@ -38,6 +39,17 @@ export default function S10C1_Block3IMU() {
               description: "Mide campo magnético · Referencia Norte · sensible a metales",
             },
           ],
+          content: (
+            <div className="flex justify-center mt-4">
+              <div className="max-w-xl w-full">
+                <ZoomableImage
+                  src="/images/semana_10/imu_sensor_axes.png"
+                  alt="Ejes del IMU"
+                  className="w-full h-auto object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+                />
+              </div>
+            </div>
+          ),
         },
         {
           id: "fusion-sensorial",

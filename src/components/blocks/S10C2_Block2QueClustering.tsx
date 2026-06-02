@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import FullscreenBlock from "@/components/layout/FullscreenBlock";
 import S10C2_Dynamic1ClasificaAtleta from "../dynamics/S10C2_Dynamic1ClasificaAtleta";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 export default function S10C2_Block2QueClustering() {
   const { data: statuses } = trpc.dynamics.activeStatuses.useQuery(
@@ -55,12 +56,19 @@ export default function S10C2_Block2QueClustering() {
                 </p>
               </div>
             ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/unsupervised_clustering.png"
+                alt="Agrupamiento no supervisado"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
+            ),
             accentColor: "text-violet-400",
           },
           {
             id: "que-es-clustering",
             bg: "from-[#1a0a2e] to-[#0d0718]",
-            badge: "Clustering",
+            badge: "Clasificación",
             badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30",
             eyebrow: "Definición y Objetivo",
             title: (
@@ -98,6 +106,13 @@ export default function S10C2_Block2QueClustering() {
                   Aplicaciones en AFD: perfiles de atletas · zonas de entrenamiento · riesgo de lesión
                 </p>
               </div>
+            ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/clustering_scatter_plot.png"
+                alt="Gráfico de dispersión 3D de clusters"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
             ),
             accentColor: "text-purple-400",
           },

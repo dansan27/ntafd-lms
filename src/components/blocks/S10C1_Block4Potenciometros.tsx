@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import FullscreenBlock from "@/components/layout/FullscreenBlock";
 import S10C1_Dynamic2QuizIMU from "../dynamics/S10C1_Dynamic2QuizIMU";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 const articulaciones: [string, string, string, string][] = [
   ["Rodilla", "0–135°", "Goniometría", "Evaluación de flexión post-lesión"],
@@ -62,6 +63,13 @@ export default function S10C1_Block4Potenciometros() {
                   ))}
                 </div>
               </div>
+            ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/knee_potentiometer.png"
+                alt="Potenciómetro en articulación"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
             ),
             accentColor: "text-blue-400",
           },

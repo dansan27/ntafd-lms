@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import FullscreenBlock from "@/components/layout/FullscreenBlock";
 import S10C1_Dynamic1IdentificaSensor from "../dynamics/S10C1_Dynamic1IdentificaSensor";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 const sensors = [
   { name: "IMU", desc: "Orientación 3D (acc + giro + mag)", color: "text-blue-400" },
@@ -61,6 +62,13 @@ export default function S10C1_Block2SensoresCinematicos() {
                 ))}
               </div>
             ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/cinematica_biomecanica.png"
+                alt="Cinemática Biomecánica"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
+            ),
             accentColor: "text-blue-400",
           },
           {
@@ -89,6 +97,13 @@ export default function S10C1_Block2SensoresCinematicos() {
                   </div>
                 ))}
               </div>
+            ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/sensores_cinematicos_grid.png"
+                alt="Sensores Cinemáticos"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
             ),
             accentColor: "text-indigo-400",
           },

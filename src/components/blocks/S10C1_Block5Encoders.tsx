@@ -1,5 +1,6 @@
 import DashboardBlock from "@/components/layout/DashboardBlock";
 import { Activity } from "lucide-react";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 export default function S10C1_Block5Encoders() {
   return (
@@ -38,6 +39,17 @@ export default function S10C1_Block5Encoders() {
               description: "Detecta dirección · Estándar industrial · Canales A y B desfasados 90°",
             },
           ],
+          content: (
+            <div className="flex justify-center mt-4">
+              <div className="max-w-xl w-full">
+                <ZoomableImage
+                  src="/images/semana_10/rotary_encoder.png"
+                  alt="Mecanismo de Encoder Rotativo"
+                  className="w-full h-auto object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+                />
+              </div>
+            </div>
+          ),
         },
         {
           id: "aplicaciones-deporte",

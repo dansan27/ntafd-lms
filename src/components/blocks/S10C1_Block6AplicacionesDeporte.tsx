@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
 import FullscreenBlock from "@/components/layout/FullscreenBlock";
 import S10C1_Dynamic3ClasificaSensor from "../dynamics/S10C1_Dynamic3ClasificaSensor";
+import ZoomableImage from "@/components/ui/ZoomableImage";
 
 export default function S10C1_Block6AplicacionesDeporte() {
   const { data: statuses } = trpc.dynamics.activeStatuses.useQuery(
@@ -56,6 +57,13 @@ export default function S10C1_Block6AplicacionesDeporte() {
                 </p>
               </div>
             ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/gait_analysis.png"
+                alt="Análisis de Marcha y Carrera"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
+            ),
             accentColor: "text-blue-400",
           },
           {
@@ -89,6 +97,13 @@ export default function S10C1_Block6AplicacionesDeporte() {
                   </div>
                 ))}
               </div>
+            ),
+            visual: (
+              <ZoomableImage
+                src="/images/semana_10/wrist_motion_sensor.png"
+                alt="Sensor en Muñeca para Gesto Técnico"
+                className="w-full max-h-[380px] object-contain rounded-2xl border border-white/10 bg-white/5 p-4"
+              />
             ),
             accentColor: "text-indigo-400",
           },
