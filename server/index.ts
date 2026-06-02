@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
+import { clerkMiddleware } from "@clerk/express";
 import { appRouter } from "./api/routers";
 import { createContext } from "./api/context";
 
@@ -18,6 +19,7 @@ const PORT = parseInt(process.env.PORT || "3001", 10);
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
+app.use(clerkMiddleware());
 
 // tRPC handler
 app.use(
