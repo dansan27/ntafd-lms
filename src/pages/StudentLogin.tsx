@@ -5,17 +5,17 @@ import { Cpu, Activity, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function StudentLogin() {
-  const { signIn, fetchStatus } = useSignIn();
+  const { signIn, isLoaded } = useSignIn();
   const { isSignedIn } = useAuth();
 
   if (isSignedIn) return <Redirect to="/" />;
 
-  const handleGoogleLogin = () => {
-    if (fetchStatus === "fetching") return;
-    signIn.sso({
+  const handleGoogleLogin = async () => {
+    if (!isLoaded || !signIn) return;
+    await signIn.authenticateWithRedirect({
       strategy: "oauth_google",
       redirectUrl: `${window.location.origin}/sso-callback`,
-      redirectCallbackUrl: "/",
+      redirectUrlComplete: "/",
     });
   };
 
@@ -40,7 +40,7 @@ export default function StudentLogin() {
         <div className="space-y-4">
           <Button
             onClick={handleGoogleLogin}
-            disabled={fetchStatus === "fetching"}
+            disabled={!isLoaded}
             className="w-full h-12 bg-white hover:bg-gray-100 text-gray-700 font-medium gap-3 border border-gray-200"
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
