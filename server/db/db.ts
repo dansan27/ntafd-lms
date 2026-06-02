@@ -2,15 +2,13 @@ import { eq, desc, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
 import {
-  users, students, studentProgress, dynamicResponses,
+  students, studentProgress, dynamicResponses,
   reflections, classActivitiesStatus,
   studentAchievements, studentNotes, chatMessages,
-  type InsertUser,
+  type Student,
   type InsertDynamicResponse, type InsertReflection,
   type InsertChatMessage,
 } from "./schema";
-import { ENV } from '../api/env';
-import { nanoid } from "nanoid";
 import fs from "fs";
 import path from "path";
 
@@ -24,22 +22,11 @@ export const db = drizzle(sqlite);
 
 // Create tables if they don't exist
 sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    openId TEXT NOT NULL UNIQUE,
-    name TEXT,
-    email TEXT,
-    loginMethod TEXT,
-    role TEXT NOT NULL DEFAULT 'user',
-    createdAt INTEGER NOT NULL,
-    updatedAt INTEGER NOT NULL,
-    lastSignedIn INTEGER NOT NULL
-  );
   CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    clerkUserId TEXT NOT NULL UNIQUE,
     fullName TEXT NOT NULL,
-    studentCode TEXT NOT NULL UNIQUE,
-    sessionToken TEXT,
+    email TEXT NOT NULL,
     createdAt INTEGER NOT NULL,
     lastActiveAt INTEGER NOT NULL
   );
@@ -116,67 +103,35 @@ export async function getDb() {
   return db;
 }
 
-// ========== USER (Manus OAuth / Admin) ==========
-
-export async function upsertUser(user: InsertUser): Promise<void> {
-  // SQLite doesn't natively support onDuplicateKeyUpdate without insert...on conflict
-  // We'll simulate upsert for simplicity since this is mostly a mock
-  const existing = db.select().from(users).where(eq(users.openId, user.openId)).all();
-  
-  if (existing.length > 0) {
-    db.update(users).set({
-      name: user.name,
-      email: user.email,
-      lastSignedIn: user.lastSignedIn ?? new Date(),
-      role: user.openId === ENV.ownerOpenId ? 'admin' : (user.role ?? 'user')
-    }).where(eq(users.openId, user.openId)).run();
-  } else {
-    db.insert(users).values({
-      ...user,
-      lastSignedIn: user.lastSignedIn ?? new Date(),
-      role: user.openId === ENV.ownerOpenId ? 'admin' : (user.role ?? 'user'),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }).run();
-  }
-}
-
-export async function getUserByOpenId(openId: string) {
-  const result = db.select().from(users).where(eq(users.openId, openId)).limit(1).all();
-  return result.length > 0 ? result[0] : undefined;
-}
-
 // ========== STUDENTS ==========
 
-export async function loginOrCreateStudent(fullName: string, studentCode: string) {
-  const token = nanoid(64);
+export async function upsertStudentByClerkId(
+  clerkUserId: string,
+  fullName: string,
+  email: string
+): Promise<Student> {
   const now = new Date();
-
-  const existing = db.select().from(students).where(eq(students.studentCode, studentCode)).limit(1).all();
-
+  const existing = db.select().from(students).where(eq(students.clerkUserId, clerkUserId)).limit(1).all();
   if (existing.length > 0) {
     db.update(students)
-      .set({ fullName, sessionToken: token, lastActiveAt: now })
-      .where(eq(students.studentCode, studentCode)).run();
-      
-    return { ...existing[0], fullName, sessionToken: token };
+      .set({ fullName, email, lastActiveAt: now })
+      .where(eq(students.clerkUserId, clerkUserId))
+      .run();
+    return { ...existing[0], fullName, email, lastActiveAt: now };
   }
-
-  db.insert(students).values({
+  const result = db.insert(students).values({
+    clerkUserId,
     fullName,
-    studentCode,
-    sessionToken: token,
+    email,
     createdAt: now,
     lastActiveAt: now,
-  }).run();
-
-  const newStudent = db.select().from(students).where(eq(students.studentCode, studentCode)).limit(1).all();
-  return newStudent[0];
+  }).returning().all();
+  return result[0];
 }
 
-export async function getStudentByToken(token: string) {
-  const result = db.select().from(students).where(eq(students.sessionToken, token)).limit(1).all();
-  return result.length > 0 ? result[0] : undefined;
+export async function getStudentByClerkId(clerkUserId: string): Promise<Student | null> {
+  const result = db.select().from(students).where(eq(students.clerkUserId, clerkUserId)).limit(1).all();
+  return result[0] ?? null;
 }
 
 export async function getStudentById(id: number) {
@@ -442,7 +397,7 @@ export async function getLeaderboard() {
     return {
       studentId: s.id,
       fullName: s.fullName,
-      studentCode: s.studentCode,
+      clerkUserId: s.clerkUserId,
       totalScore,
       totalMax,
       completedDynamics: sResponses.length,

@@ -1,25 +1,10 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-export const users = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  openId: text("openId").notNull().unique(),
-  name: text("name"),
-  email: text("email"),
-  loginMethod: text("loginMethod"),
-  role: text("role").default("user").notNull(),
-  createdAt: integer("createdAt", { mode: 'timestamp' }).notNull(),
-  updatedAt: integer("updatedAt", { mode: 'timestamp' }).notNull(),
-  lastSignedIn: integer("lastSignedIn", { mode: 'timestamp' }).notNull(),
-});
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
-
 export const students = sqliteTable("students", {
   id: integer("id").primaryKey({ autoIncrement: true }),
+  clerkUserId: text("clerkUserId").notNull().unique(),
   fullName: text("fullName").notNull(),
-  studentCode: text("studentCode").notNull().unique(),
-  sessionToken: text("sessionToken"),
+  email: text("email").notNull(),
   createdAt: integer("createdAt", { mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
   lastActiveAt: integer("lastActiveAt", { mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
 });
@@ -43,8 +28,8 @@ export type InsertStudentProgress = typeof studentProgress.$inferInsert;
 export const dynamicResponses = sqliteTable("dynamic_responses", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   studentId: integer("studentId").notNull(),
-  weekId: integer("weekId").default(1).notNull(), 
-  classId: integer("classId").default(1).notNull(), 
+  weekId: integer("weekId").default(1).notNull(),
+  classId: integer("classId").default(1).notNull(),
   dynamicId: integer("dynamicId").notNull(),
   response: text("response", { mode: "json" }).$type<Record<string, unknown>>().notNull(),
   score: integer("score").default(0).notNull(),
