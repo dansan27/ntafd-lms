@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LogOut, Zap, Target, Heart, Activity,
   Layers, PlayCircle, Lock, ArrowRight, ChevronDown,
-  BarChart3, Radio, Smartphone, BookOpen, Trophy, Dumbbell,
+  BarChart2, BarChart3, Radio, Smartphone, BookOpen, Trophy, Dumbbell,
   Clock, StickyNote, Star, CheckCircle2, ArrowUpRight
 } from "lucide-react";
 import { COURSE_CONFIG, isClassAvailable } from "@/data/courseConfig";
@@ -163,6 +163,7 @@ const MODULES = [
   { id: "modulo-1", name: "I. Fundamentos e Ingeniería Corporal", weeks: [1, 2], icon: Zap },
   { id: "modulo-2", name: "II. Monitoreo Cardiovascular", weeks: [3, 4, 5], icon: Heart },
   { id: "modulo-3", name: "III. Fuerza y Salud Crónica", weeks: [6, 9], icon: Dumbbell },
+  { id: "modulo-4", name: "IV. Sensores Cinemáticos y Machine Learning", weeks: [10], icon: BarChart2 },
 ];
 
 // ── Login Page ────────────────────────────────────────────────────────────────
