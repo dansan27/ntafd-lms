@@ -68,6 +68,17 @@ function RequireProfessor({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function HomeRedirect() {
+  const { user, isLoaded } = useUser();
+  if (!isLoaded) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="animate-spin text-primary" size={32} />
+    </div>
+  );
+  if (user?.publicMetadata?.role === "professor") return <Redirect to="/profesor" />;
+  return <Home />;
+}
+
 function Router() {
   return (
     <Switch>
@@ -76,7 +87,7 @@ function Router() {
         <AuthenticateWithRedirectCallback />
       </Route>
       <Route path="/">
-        <RequireAuth><Home /></RequireAuth>
+        <RequireAuth><HomeRedirect /></RequireAuth>
       </Route>
       <Route path="/week/:week/class/:class">
         <RequireAuth><ClassViewer /></RequireAuth>
