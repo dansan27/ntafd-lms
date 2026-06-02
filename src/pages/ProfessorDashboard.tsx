@@ -1,4 +1,5 @@
 import { useState, useMemo, Suspense, useEffect } from "react";
+import { useClerk } from "@clerk/clerk-react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Badge } from "@/components/ui/badge";
@@ -179,6 +180,7 @@ function PresentationView({
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function ProfessorDashboard() {
   const [, setLocation] = useLocation();
+  const { signOut } = useClerk();
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [view, setView] = useState<"dashboard" | "presentation">("dashboard");
   const [presentationBlock, setPresentationBlock] = useState(1);
@@ -186,7 +188,7 @@ export default function ProfessorDashboard() {
   const [selectedClass, setSelectedClass] = useState(1);
 
   const handleLogout = () => {
-    setLocation("/");
+    signOut(() => setLocation("/"));
   };
 
   if (view === "presentation") {
