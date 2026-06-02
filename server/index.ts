@@ -19,7 +19,9 @@ const PORT = parseInt(process.env.PORT || "3001", 10);
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
-app.use(clerkMiddleware());
+app.use(clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY ?? process.env.VITE_CLERK_PUBLISHABLE_KEY,
+}));
 
 // tRPC handler
 app.use(
