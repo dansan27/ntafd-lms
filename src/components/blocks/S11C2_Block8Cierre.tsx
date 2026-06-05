@@ -3,23 +3,23 @@ import FullscreenBlock from "@/components/layout/FullscreenBlock";
 const puntos = [
   {
     n: "1",
-    titulo: "Potencia Muscular (P = F × v)",
-    texto: "La potencia combina fuerza y velocidad. La potencia pico y el RFD son los indicadores más relevantes en deportes explosivos.",
+    titulo: "Fundamentos físicos: P = F × v",
+    texto: "La potencia integra velocidad, fuerza y trabajo. Lineal y rotacional — ambas formas son relevantes en el deporte.",
   },
   {
     n: "2",
-    titulo: "Plataforma de Fuerza y Salto",
-    texto: "CMJ en strain-gauge o piezoeléctrica: curva F-t completa, RFD, potencia pico e índices de elasticidad (RSI) en tiempo real.",
+    titulo: "Fisiología: fibras y metabolismo",
+    texto: "Las fibras Tipo IIx y el sistema ATP-PC son clave para la potencia explosiva. La relación F-V se optimiza a velocidades intermedias.",
   },
   {
     n: "3",
-    titulo: "Curva Fuerza-Velocidad (F-V)",
-    texto: "La hipérbola de Hill y la parábola de potencia definen los límites del músculo. El déficit F-V orienta la programación del entrenamiento.",
+    titulo: "Tecnologías de evaluación",
+    texto: "Cámaras 3D, plataformas de fuerza, IMUs y dinamómetros isocinéticos — cada una mide un aspecto diferente de la potencia muscular.",
   },
   {
     n: "4",
-    titulo: "Tensiomiografía (TMG)",
-    texto: "Dm, Tc y Td caracterizan las propiedades contractiles no invasivamente. Útil para asimetría bilateral y readiness neuromuscular.",
+    titulo: "Metodologías: test de salto, sprint e isocinético",
+    texto: "CMJ en plataforma, sprint con fotocélulas y evaluación Biodex forman la tríada metodológica para el perfilado completo de potencia.",
   },
 ];
 
@@ -35,7 +35,7 @@ export default function S11C2_Block8Cierre() {
           eyebrow: "Resumen de Clase",
           title: (
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-              Valoración de la{" "}
+              Tecnología para la{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
                 Potencia Muscular
               </span>
@@ -43,8 +43,8 @@ export default function S11C2_Block8Cierre() {
           ),
           subtitle: (
             <p>
-              Cuatro pilares tecnológicos para cuantificar la producción de potencia
-              y tomar decisiones de entrenamiento basadas en datos objetivos.
+              De los fundamentos físicos a las metodologías de campo: las herramientas
+              que permiten cuantificar y optimizar la producción de potencia en el deporte.
             </p>
           ),
           body: (
@@ -65,8 +65,8 @@ export default function S11C2_Block8Cierre() {
               ))}
               <p className="text-white/40 text-xs text-center pt-2">
                 Semana 11 completada —{" "}
-                <span className="text-cyan-400">
-                  VBT + plataformas de fuerza + TMG = tríada tecnológica del deporte de potencia.
+                <span className="text-violet-400">
+                  Encoders + Potencia Muscular: sensores para cuantificar el rendimiento explosivo.
                 </span>
               </p>
             </div>

@@ -3,35 +3,35 @@ import FullscreenBlock from "@/components/layout/FullscreenBlock";
 const opciones = [
   {
     name: "Plataforma de fuerza",
-    pros: "Curva F-t completa, RFD, potencia real",
-    cons: "Costo elevado, solo en laboratorio/gym fijo",
+    pros: "Potencia real, RFD, asimetría bilateral",
+    cons: "Costo alto, necesita instalación fija",
     color: "text-emerald-400",
     border: "border-emerald-500/20",
     bg: "bg-emerald-500/5",
   },
   {
-    name: "Tapete de contacto",
-    pros: "Económico, portable, fácil en campo",
-    cons: "Solo tiempo vuelo → no da curva fuerza",
+    name: "Dinamómetro isocinético",
+    pros: "Potencia angular segmentaria, ratio agonista/antagonista",
+    cons: "Laboratorio, no funcional, lento por atleta",
     color: "text-cyan-400",
     border: "border-cyan-500/20",
     bg: "bg-cyan-500/5",
   },
   {
-    name: "Tensiomiografía (TMG)",
-    pros: "Propiedades contractiles, asimetría bilateral",
-    cons: "Relativa al sujeto, requiere experienza",
+    name: "IMU + acelerómetro",
+    pros: "Portable, bajo costo, campo en tiempo real",
+    cons: "Estimación de potencia, menor precisión",
+    color: "text-teal-400",
+    border: "border-teal-500/20",
+    bg: "bg-teal-500/5",
+  },
+  {
+    name: "Fotocélulas + GPS",
+    pros: "Velocidad y potencia metabólica en campo",
+    cons: "No mide potencia muscular directamente",
     color: "text-fuchsia-400",
     border: "border-fuchsia-500/20",
     bg: "bg-fuchsia-500/5",
-  },
-  {
-    name: "VBT (encoder/LPT)",
-    pros: "Valoración funcional en movimiento real",
-    cons: "No mide potencia muscular directa",
-    color: "text-amber-400",
-    border: "border-amber-500/20",
-    bg: "bg-amber-500/5",
   },
 ];
 
@@ -49,16 +49,16 @@ export default function S11C2_Block7Reflexion() {
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
               Trabajas con un equipo de{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
-                voleibol
+                atletismo de saltos
               </span>{" "}
-              que compite cada semana...
+              con acceso a laboratorio universitario...
             </h2>
           ),
           subtitle: (
             <p>
-              ¿Qué herramienta de valoración de potencia implementarías para monitorear
-              el estado neuromuscular de tus atletas antes de cada partido?
-              Considera <strong className="text-emerald-300">frecuencia, tiempo disponible y recursos</strong>.
+              ¿Qué combinación de tecnologías usarías para evaluar la potencia muscular
+              de 8 saltadores en altura antes de la temporada? Considera{" "}
+              <strong className="text-emerald-300">tiempo disponible, presupuesto y qué datos necesitas</strong>.
             </p>
           ),
           body: (
@@ -82,7 +82,8 @@ export default function S11C2_Block7Reflexion() {
                 ))}
               </div>
               <p className="text-white/40 text-xs text-center italic">
-                La elección ideal suele combinar más de una herramienta: CMJ como readiness diario + TMG semanal como control de asimetrías.
+                Un protocolo ideal podría combinar plataforma de fuerza (CMJ) +
+                dinamómetro isocinético (rodilla) para un perfil completo de potencia.
               </p>
             </div>
           ),

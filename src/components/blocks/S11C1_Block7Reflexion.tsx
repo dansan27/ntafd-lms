@@ -2,36 +2,36 @@ import FullscreenBlock from "@/components/layout/FullscreenBlock";
 
 const opciones = [
   {
-    name: "GymAware (encoder cable)",
-    pros: "Máxima precisión, validado clínicamente",
-    cons: "Costo elevado, requiere instalación fija",
+    name: "Encoder óptico incremental",
+    pros: "Alta resolución, rápida respuesta",
+    cons: "Sensible a suciedad, requiere home",
     color: "text-violet-400",
     border: "border-violet-500/20",
     bg: "bg-violet-500/5",
   },
   {
-    name: "PUSH Band (IMU wearable)",
-    pros: "Portátil, sin cables, fácil adopción",
-    cons: "Menor precisión, sensible a posición",
+    name: "Encoder magnético absoluto",
+    pros: "Robusto en campo, recuerda posición",
+    cons: "Menor resolución, interferencias metálicas",
     color: "text-cyan-400",
     border: "border-cyan-500/20",
     bg: "bg-cyan-500/5",
   },
   {
-    name: "App de video",
-    pros: "Sin costo de hardware, inmediata",
-    cons: "Requiere alineación, FPS limitado",
+    name: "Encoder lineal (hilo/cable)",
+    pros: "Mide desplazamiento real de carga",
+    cons: "Requiere montaje fijo, cable frágil",
+    color: "text-indigo-400",
+    border: "border-indigo-500/20",
+    bg: "bg-indigo-500/5",
+  },
+  {
+    name: "Potenciómetro rotatorio",
+    pros: "Simple, económico, analógico",
+    cons: "Resolución limitada, ruido, desgaste",
     color: "text-purple-400",
     border: "border-purple-500/20",
     bg: "bg-purple-500/5",
-  },
-  {
-    name: "Sin tecnología (RPE)",
-    pros: "Accesible siempre, subjetivo inmediato",
-    cons: "No cuantifica velocidad, alta variabilidad",
-    color: "text-fuchsia-400",
-    border: "border-fuchsia-500/20",
-    bg: "bg-fuchsia-500/5",
   },
 ];
 
@@ -40,25 +40,25 @@ export default function S11C1_Block7Reflexion() {
     <FullscreenBlock
       sections={[
         {
-          id: "reflexion-vbt",
+          id: "reflexion-encoder",
           bg: "from-[#070718] to-[#0d0a2e]",
           badge: "Semana 11 · Reflexión",
           badgeColor: "bg-violet-500/20 text-violet-300 border-violet-500/30",
           eyebrow: "Pausa de Reflexión",
           title: (
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-              Tienes un equipo de{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
-                rugby semiprofesional
+              Necesitas medir la{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400">
+                velocidad angular
               </span>{" "}
-              con presupuesto limitado...
+              de la rodilla durante una zancada en campo de fútbol...
             </h2>
           ),
           subtitle: (
             <p>
-              ¿Qué solución VBT implementarías para monitorear la fatiga y ajustar
-              las cargas en el bloque de potencia de pretemporada?
-              Considera <strong className="text-violet-300">costo, precisión y practicidad</strong>.
+              ¿Qué tipo de encoder elegirías y por qué? Considera la{" "}
+              <strong className="text-violet-300">robustez en campo</strong>, la resolución
+              necesaria y la facilidad de montaje sobre el deportista en movimiento.
             </p>
           ),
           body: (
@@ -82,8 +82,8 @@ export default function S11C1_Block7Reflexion() {
                 ))}
               </div>
               <p className="text-white/40 text-xs text-center italic">
-                No hay solución universal — el presupuesto, el deporte y el contexto
-                de campo definen la herramienta óptima.
+                En campo, la robustez suele superar a la resolución. La IMU + magnetómetro
+                también compite con el encoder en este escenario.
               </p>
             </div>
           ),

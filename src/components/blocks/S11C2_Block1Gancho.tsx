@@ -12,31 +12,33 @@ export default function S11C2_Block1Gancho() {
           eyebrow: "El Gancho",
           title: (
             <h2 className="text-4xl md:text-6xl font-bold text-white leading-[1.05] tracking-tight">
-              ¿Cuánta potencia genera un{" "}
+              Usain Bolt no solo corre{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
-                salto vertical
+                rápido
               </span>{" "}
-              de élite?
+              — genera más de 2600 W en los primeros pasos
             </h2>
           ),
           subtitle: (
             <p>
-              Un saltador de élite genera más de{" "}
-              <strong className="text-emerald-300">4000 W</strong> de potencia pico
-              en los primeros 200 ms del impulso. Medir esa explosividad requiere
-              tecnología capaz de capturar fuerzas y velocidades en milisegundos.
+              La{" "}
+              <strong className="text-emerald-300">potencia muscular</strong> es la
+              combinación de fuerza y velocidad que define el rendimiento en saltos,
+              sprints y lanzamientos. Medirla requiere tecnología capaz de capturar
+              fuerzas y velocidades en milisegundos.
             </p>
           ),
           body: (
             <div className="space-y-3 text-white/50 text-base">
               <p>
-                Las plataformas de fuerza, transductores lineales y la tensiomiografía
-                son las herramientas que permiten cuantificar,{" "}
-                <strong className="text-emerald-300">comparar y optimizar</strong> la
-                producción de potencia muscular en el deporte de alta competición.
+                Hoy exploraremos los fundamentos físicos de la potencia, la fisiología
+                que la determina y las{" "}
+                <strong className="text-emerald-300">tecnologías de valoración</strong>:
+                plataformas de fuerza, captura de movimiento, dinamómetros isocinéticos
+                y dispositivos inerciales.
               </p>
               <p className="text-emerald-400/70 font-medium">
-                De la célula de carga al perfil neuromuscular: tecnología para entender la potencia.
+                De la fibra muscular al dato de rendimiento: tecnología para entender la potencia.
               </p>
             </div>
           ),

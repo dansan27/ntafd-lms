@@ -127,23 +127,23 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S10C2_Block7Limitaciones: lazy(() => import("./S10C2_Block7Limitaciones")),
   S10C2_Block8Cierre: lazy(() => import("./S10C2_Block8Cierre")),
 
-  // Semana 11, Clase 1 — VBT y Encoders para Entrenamiento de Fuerza
+  // Semana 11, Clase 1 — Sensores Cinemáticos: Encoders
   S11C1_Block1Gancho: lazy(() => import("./S11C1_Block1Gancho")),
-  S11C1_Block2TransductoresLineales: lazy(() => import("./S11C1_Block2TransductoresLineales")),
-  S11C1_Block3VBT: lazy(() => import("./S11C1_Block3VBT")),
-  S11C1_Block4PerfilCargaVelocidad: lazy(() => import("./S11C1_Block4PerfilCargaVelocidad")),
-  S11C1_Block5DispositivosVBT: lazy(() => import("./S11C1_Block5DispositivosVBT")),
-  S11C1_Block6AplicacionesFuerza: lazy(() => import("./S11C1_Block6AplicacionesFuerza")),
+  S11C1_Block2QueEsEncoder: lazy(() => import("./S11C1_Block2QueEsEncoder")),
+  S11C1_Block3TiposEncoder: lazy(() => import("./S11C1_Block3TiposEncoder")),
+  S11C1_Block4MetodosMedicion: lazy(() => import("./S11C1_Block4MetodosMedicion")),
+  S11C1_Block5AplicacionesDeporte: lazy(() => import("./S11C1_Block5AplicacionesDeporte")),
+  S11C1_Block6IntegracionSistemas: lazy(() => import("./S11C1_Block6IntegracionSistemas")),
   S11C1_Block7Reflexion: lazy(() => import("./S11C1_Block7Reflexion")),
   S11C1_Block8Cierre: lazy(() => import("./S11C1_Block8Cierre")),
 
   // Semana 11, Clase 2 — Tecnología para la Valoración de la Potencia Muscular
   S11C2_Block1Gancho: lazy(() => import("./S11C2_Block1Gancho")),
-  S11C2_Block2PotenciaFundamentos: lazy(() => import("./S11C2_Block2PotenciaFundamentos")),
-  S11C2_Block3PlataformasFuerza: lazy(() => import("./S11C2_Block3PlataformasFuerza")),
-  S11C2_Block4CurvaFuerzaVelocidad: lazy(() => import("./S11C2_Block4CurvaFuerzaVelocidad")),
-  S11C2_Block5Tensiomiografia: lazy(() => import("./S11C2_Block5Tensiomiografia")),
-  S11C2_Block6AplicacionesAlta: lazy(() => import("./S11C2_Block6AplicacionesAlta")),
+  S11C2_Block2FundamentosFisicos: lazy(() => import("./S11C2_Block2FundamentosFisicos")),
+  S11C2_Block3ImportanciaPotencia: lazy(() => import("./S11C2_Block3ImportanciaPotencia")),
+  S11C2_Block4FisiologiaPotencia: lazy(() => import("./S11C2_Block4FisiologiaPotencia")),
+  S11C2_Block5TecnologiasEvaluacion: lazy(() => import("./S11C2_Block5TecnologiasEvaluacion")),
+  S11C2_Block6MetodologiasEvaluacion: lazy(() => import("./S11C2_Block6MetodologiasEvaluacion")),
   S11C2_Block7Reflexion: lazy(() => import("./S11C2_Block7Reflexion")),
   S11C2_Block8Cierre: lazy(() => import("./S11C2_Block8Cierre")),
 };

@@ -3,23 +3,23 @@ import FullscreenBlock from "@/components/layout/FullscreenBlock";
 const puntos = [
   {
     n: "1",
-    titulo: "Transductor Lineal de Posición (LPT)",
-    texto: "Convierte el desplazamiento del hilo en velocidad de barra con precisión ±0.1 mm — base del VBT en laboratorio y campo.",
+    titulo: "Encoder — Definición",
+    texto: "Sensor que convierte movimiento mecánico en señal eléctrica para medir posición, velocidad, dirección y conteos.",
   },
   {
     n: "2",
-    titulo: "Zonas de Velocidad",
-    texto: "Cada zona (<0.35, 0.35–0.55, 0.55–0.75, >0.75 m/s) corresponde a un continuum fuerza-velocidad y un tipo de adaptación específico.",
+    titulo: "Tecnologías: Óptico, Magnético, Resistivo, Mecánico",
+    texto: "Los ópticos lideran en precisión de laboratorio; los magnéticos dominan en campo por su robustez ante suciedad y humedad.",
   },
   {
     n: "3",
-    titulo: "Perfil Carga-Velocidad (L-V)",
-    texto: "Relación lineal individual entre %1RM y VMP — permite estimar el 1RM diario con solo 2–3 cargas submáximas.",
+    titulo: "Tipos: Lineal y Rotatorio",
+    texto: "Lineal para desplazamientos en línea recta (ergo de remo, LPT). Rotatorio para velocidad angular (cicloergómetro, isocinético).",
   },
   {
     n: "4",
-    titulo: "Control de fatiga por % pérdida",
-    texto: "Umbrales de pérdida de velocidad intra-set (10–40%) regulan el volumen efectivo y evitan el sobreentrenamiento neuromuscular.",
+    titulo: "Métodos: Absoluto vs Incremental",
+    texto: "Absoluto: posición única sin referencia. Incremental: cuenta pulsos desde home, más económico y común en deporte.",
   },
 ];
 
@@ -35,17 +35,17 @@ export default function S11C1_Block8Cierre() {
           eyebrow: "Resumen de Clase",
           title: (
             <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-              VBT —{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
-                Entrenamiento
+              Encoders —{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400">
+                Sensores Cinemáticos
               </span>{" "}
-              Basado en Velocidad
+              de Precisión
             </h2>
           ),
           subtitle: (
             <p>
-              Cuatro conceptos clave que transforman los encoders en herramientas
-              de autorregulación y monitoreo del entrenamiento de fuerza y potencia.
+              Cuatro conceptos que explican cómo los encoders convierten el movimiento
+              mecánico en datos cuantificables para el análisis del rendimiento deportivo.
             </p>
           ),
           body: (
@@ -66,8 +66,8 @@ export default function S11C1_Block8Cierre() {
               ))}
               <p className="text-white/40 text-xs text-center pt-2">
                 Próxima clase:{" "}
-                <span className="text-fuchsia-400">
-                  Tecnología para la valoración de la potencia muscular — plataformas de fuerza y tensiomiografía.
+                <span className="text-emerald-400">
+                  Tecnología aplicada en la valoración y análisis de la potencia muscular.
                 </span>
               </p>
             </div>

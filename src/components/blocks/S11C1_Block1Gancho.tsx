@@ -5,37 +5,37 @@ export default function S11C1_Block1Gancho() {
     <FullscreenBlock
       sections={[
         {
-          id: "gancho-vbt",
+          id: "gancho-encoders",
           bg: "from-[#070718] to-[#0d0a2e]",
-          badge: "Semana 11 · VBT",
+          badge: "Semana 11 · Sensores Cinemáticos",
           badgeColor: "bg-violet-500/20 text-violet-300 border-violet-500/30",
           eyebrow: "El Gancho",
           title: (
             <h2 className="text-4xl md:text-6xl font-bold text-white leading-[1.05] tracking-tight">
-              ¿Por qué el{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-purple-400">
-                80% de tu 1RM
+              ¿Qué tienen en común un{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400">
+                ascensor, un robot industrial
               </span>{" "}
-              hoy no es igual al de mañana?
+              y un ciclómetro deportivo?
             </h2>
           ),
           subtitle: (
             <p>
-              El porcentaje de carga es un número fijo, pero tu{" "}
-              <strong className="text-violet-300">capacidad de producir velocidad</strong>{" "}
-              varía cada día con el nivel de fatiga, el sueño y el estado neuromuscular.
-              Los <em>transductores de velocidad</em> lo miden en tiempo real.
+              Todos usan <strong className="text-violet-300">encoders</strong> — sensores
+              que convierten movimiento mecánico en señal eléctrica para conocer posición,
+              velocidad y dirección en tiempo real.
             </p>
           ),
           body: (
             <div className="space-y-3 text-white/50 text-base">
               <p>
-                El Entrenamiento Basado en Velocidad (VBT) reemplaza los porcentajes
-                fijos por la <strong className="text-violet-300">velocidad real de la barra</strong> como
-                indicador de intensidad y fatiga, permitiendo autorregular la sesión al instante.
+                En el deporte, los encoders están en ergómetros, sistemas de análisis
+                de marcha y máquinas isocinéticas. Hoy aprenderemos cómo funcionan,
+                sus tecnologías, tipos y métodos de medición:{" "}
+                <strong className="text-violet-300">absolutos e incrementales</strong>.
               </p>
               <p className="text-violet-400/70 font-medium">
-                Del encoder rotativo al laboratorio de fuerza en campo: tecnología al servicio de la potencia.
+                Del pulso eléctrico al dato de rendimiento deportivo.
               </p>
             </div>
           ),
