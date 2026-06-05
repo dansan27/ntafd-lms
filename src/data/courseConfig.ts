@@ -357,6 +357,55 @@ export const COURSE_CONFIG: WeekConfig[] = [
       },
     ],
   },
+  {
+    id: 11,
+    title: "Semana 11: VBT y Valoración de Potencia Muscular",
+    description: "Entrenamiento Basado en Velocidad con encoders lineales; tecnología para valorar la potencia muscular con plataformas de fuerza, curva F-V y tensiomiografía.",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: Encoders y VBT — Entrenamiento Basado en Velocidad",
+        description: "Transductores lineales de posición, zonas de velocidad, perfil carga-velocidad y dispositivos VBT comerciales aplicados al entrenamiento de fuerza",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Por qué el 80% de tu 1RM hoy no es igual al de mañana?", icon: Zap, time: "0-5 min", componentName: "S11C1_Block1Gancho" },
+          { id: 2, title: "Transductores Lineales de Posición", subtitle: "String encoders y LPT — el hilo que convierte desplazamiento en velocidad", icon: Activity, time: "5-15 min", hasDynamic: true, componentName: "S11C1_Block2TransductoresLineales" },
+          { id: 3, title: "VBT — Entrenamiento Basado en Velocidad", subtitle: "Zonas de velocidad, autorregulación y control de fatiga en tiempo real", icon: Zap, time: "15-27 min", componentName: "S11C1_Block3VBT" },
+          { id: 4, title: "Perfil Carga-Velocidad (L-V)", subtitle: "Relación lineal individual y estimación diaria del 1RM", icon: TrendingUp, time: "27-38 min", hasDynamic: true, componentName: "S11C1_Block4PerfilCargaVelocidad" },
+          { id: 5, title: "Dispositivos VBT Comerciales", subtitle: "GymAware, PUSH Band, OpenBarbell y apps de video", icon: Cpu, time: "38-48 min", componentName: "S11C1_Block5DispositivosVBT" },
+          { id: 6, title: "Aplicaciones en Fuerza y Potencia", subtitle: "Protocolos de autorregulación por velocidad objetivo y % pérdida", icon: Rocket, time: "48-55 min", hasDynamic: true, componentName: "S11C1_Block6AplicacionesFuerza" },
+          { id: 7, title: "Reflexión", subtitle: "¿Qué solución VBT implementarías con presupuesto limitado?", icon: Lightbulb, time: "55-58 min", componentName: "S11C1_Block7Reflexion" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis del VBT y conexión con valoración de potencia", icon: GraduationCap, time: "58-60 min", componentName: "S11C1_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Identifica la Zona VBT", description: "Dado el porcentaje de 1RM y el objetivo, ¿qué zona de velocidad buscamos?", icon: "⚡", blockId: 2, componentName: "S11C1_Dynamic1IdentificaZona" },
+          { id: 2, name: "Construye el Perfil L-V", description: "Con estos valores de velocidad y carga, ¿cómo construirías el perfil fuerza-velocidad?", icon: "📈", blockId: 4, componentName: "S11C1_Dynamic2PerfilLV" },
+          { id: 3, name: "Elige el Dispositivo VBT", description: "Para este contexto deportivo y presupuesto, ¿qué dispositivo VBT recomendarías?", icon: "🔧", blockId: 6, componentName: "S11C1_Dynamic3EligeDispositivo" },
+        ],
+      },
+      {
+        id: 2,
+        title: "Clase 2: Tecnología para la Valoración de la Potencia Muscular",
+        description: "Plataformas de fuerza, curva fuerza-velocidad, tensiomiografía y aplicaciones en el deporte de alta competición",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "¿Cuánta potencia genera un salto vertical de élite?", icon: Zap, time: "0-5 min", componentName: "S11C2_Block1Gancho" },
+          { id: 2, title: "Potencia Muscular — Fundamentos", subtitle: "P = F × v, potencia pico, potencia media y RFD por deporte", icon: Zap, time: "5-15 min", hasDynamic: true, componentName: "S11C2_Block2PotenciaFundamentos" },
+          { id: 3, title: "Plataformas de Fuerza y Salto", subtitle: "CMJ, SJ, Drop Jump y RSI — protocolos y tecnologías", icon: BarChart2, time: "15-27 min", componentName: "S11C2_Block3PlataformasFuerza" },
+          { id: 4, title: "Curva Fuerza-Velocidad (F-V)", subtitle: "Hipérbola de Hill, parábola de potencia y déficit F-V", icon: TrendingUp, time: "27-38 min", hasDynamic: true, componentName: "S11C2_Block4CurvaFuerzaVelocidad" },
+          { id: 5, title: "Tensiomiografía (TMG)", subtitle: "Dm, Tc y Td — propiedades contractiles no invasivas", icon: Activity, time: "38-48 min", componentName: "S11C2_Block5Tensiomiografia" },
+          { id: 6, title: "Aplicaciones en Alta Competición", subtitle: "Pipeline de valoración, readiness diario y monitoreo de élite", icon: Rocket, time: "48-55 min", hasDynamic: true, componentName: "S11C2_Block6AplicacionesAlta" },
+          { id: 7, title: "Reflexión", subtitle: "¿Qué herramienta de potencia implementarías en un equipo de voleibol?", icon: Lightbulb, time: "55-58 min", componentName: "S11C2_Block7Reflexion" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis de tecnología para la valoración de la potencia muscular", icon: GraduationCap, time: "58-60 min", componentName: "S11C2_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "Interpreta el CMJ", description: "Dados estos valores de CMJ (potencia, RFD, RSI), ¿qué nos indican sobre el estado del atleta?", icon: "🦵", blockId: 2, componentName: "S11C2_Dynamic1InterpretaCMJ" },
+          { id: 2, name: "Optimiza el Perfil F-V", description: "Este atleta tiene un perfil orientado a fuerza — ¿qué tipo de entrenamiento necesita?", icon: "⚡", blockId: 4, componentName: "S11C2_Dynamic2OptimizaFV" },
+          { id: 3, name: "Lee la TMG", description: "Interpreta este resultado de TMG bilateral: ¿hay asimetría que requiera intervención?", icon: "🔬", blockId: 6, componentName: "S11C2_Dynamic3LeeTMG" },
+        ],
+      },
+    ],
+  },
 ];
 
 // ===== Helpers =====
