@@ -409,6 +409,7 @@ export const COURSE_CONFIG: WeekConfig[] = [
   {
     id: 12,
     title: "Semana 12: Velocidad y Agilidad",
+    description: "Tecnología aplicada en la valoración y análisis de la velocidad y agilidad: fundamentos físicos, indicadores de evaluación y tecnologías de medición",
     classes: [
       {
         id: 1,
