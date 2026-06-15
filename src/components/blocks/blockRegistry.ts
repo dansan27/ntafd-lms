@@ -146,6 +146,16 @@ const BLOCK_REGISTRY: Record<string, LazyBlock> = {
   S11C2_Block6MetodologiasEvaluacion: lazy(() => import("./S11C2_Block6MetodologiasEvaluacion")),
   S11C2_Block7Reflexion: lazy(() => import("./S11C2_Block7Reflexion")),
   S11C2_Block8Cierre: lazy(() => import("./S11C2_Block8Cierre")),
+
+  // Semana 12, Clase 1 — Tecnología Aplicada en la Valoración y Análisis de la Velocidad y Agilidad
+  S12C1_Block1Gancho: lazy(() => import("./S12C1_Block1Gancho")),
+  S12C1_Block2VelocidadLinealAngular: lazy(() => import("./S12C1_Block2VelocidadLinealAngular")),
+  S12C1_Block3Agilidad: lazy(() => import("./S12C1_Block3Agilidad")),
+  S12C1_Block4RendimientoExplosivo: lazy(() => import("./S12C1_Block4RendimientoExplosivo")),
+  S12C1_Block5EvaluacionAgilidadI: lazy(() => import("./S12C1_Block5EvaluacionAgilidadI")),
+  S12C1_Block6EvaluacionAgilidadII: lazy(() => import("./S12C1_Block6EvaluacionAgilidadII")),
+  S12C1_Block7Reflexion: lazy(() => import("./S12C1_Block7Reflexion")),
+  S12C1_Block8Cierre: lazy(() => import("./S12C1_Block8Cierre")),
 };
 
 export function getBlockComponent(componentName: string): LazyBlock | null {

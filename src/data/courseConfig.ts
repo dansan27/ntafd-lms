@@ -406,6 +406,33 @@ export const COURSE_CONFIG: WeekConfig[] = [
       },
     ],
   },
+  {
+    id: 12,
+    title: "Semana 12: Velocidad y Agilidad",
+    classes: [
+      {
+        id: 1,
+        title: "Clase 1: Tecnología Aplicada en la Valoración y Análisis de la Velocidad y Agilidad",
+        description: "Velocidad lineal y angular, fundamentos de la agilidad, elementos del rendimiento explosivo, indicadores de evaluación (T-test, Illinois, AI, CODT, AFI) y tecnologías: cámaras 3D, plataformas de fuerza, IMUs y fotocélulas",
+        available: true,
+        blocks: [
+          { id: 1, title: "El Gancho", subtitle: "Un defensa tiene menos de 0.3 segundos para reaccionar y cambiar de dirección", icon: Zap, time: "0-5 min", componentName: "S12C1_Block1Gancho" },
+          { id: 2, title: "Velocidad Lineal y Angular", subtitle: "v = d/t y ω = θ/t — definiciones, fórmulas y ejemplos deportivos", icon: Activity, time: "5-15 min", hasDynamic: true, componentName: "S12C1_Block2VelocidadLinealAngular" },
+          { id: 3, title: "Agilidad", subtitle: "COD + percepción — definición, importancia y diferencia con agilidad reactiva", icon: Rocket, time: "15-25 min", componentName: "S12C1_Block3Agilidad" },
+          { id: 4, title: "Elementos del Rendimiento Explosivo", subtitle: "Los cuatro pilares: velocidad, fuerza, explosividad y agilidad", icon: TrendingUp, time: "25-37 min", hasDynamic: true, componentName: "S12C1_Block4RendimientoExplosivo" },
+          { id: 5, title: "Evaluación de la Agilidad I", subtitle: "T-test, Illinois Agility Test, Índice de Agilidad y CODT", icon: BarChart2, time: "37-47 min", componentName: "S12C1_Block5EvaluacionAgilidadI" },
+          { id: 6, title: "Evaluación de la Agilidad II y Tecnologías", subtitle: "AFI, Índice de Desaceleración, Fuerza Lateral — cámaras 3D, plataformas, IMUs y fotocélulas", icon: Eye, time: "47-55 min", hasDynamic: true, componentName: "S12C1_Block6EvaluacionAgilidadII" },
+          { id: 7, title: "Reflexión", subtitle: "¿Qué protocolo y tecnología combinarías para evaluar velocidad y agilidad en fútbol sala?", icon: Lightbulb, time: "55-58 min", componentName: "S12C1_Block7Reflexion" },
+          { id: 8, title: "Cierre", subtitle: "Síntesis de tecnología para la valoración de la velocidad y la agilidad", icon: GraduationCap, time: "58-60 min", componentName: "S12C1_Block8Cierre" },
+        ],
+        dynamics: [
+          { id: 1, name: "¿Velocidad Lineal o Angular?", description: "Dado este movimiento deportivo, ¿qué tipo de velocidad se describe?", icon: "⚡", blockId: 2, componentName: "S12C1_Dynamic1VelocidadOAngular" },
+          { id: 2, name: "¿Qué Elemento del Rendimiento?", description: "Para este test o gesto deportivo, ¿qué capacidad se evalúa principalmente?", icon: "💥", blockId: 4, componentName: "S12C1_Dynamic2RendimientoExplosivo" },
+          { id: 3, name: "Elige la Tecnología", description: "Para este objetivo de evaluación, ¿qué tecnología es la más adecuada?", icon: "🔬", blockId: 6, componentName: "S12C1_Dynamic3TecnologiaAgilidad" },
+        ],
+      },
+    ],
+  },
 ];
 
 // ===== Helpers =====
